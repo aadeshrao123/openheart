@@ -2,22 +2,13 @@ import { clsx, type ClassValue } from 'clsx';
 import { extendTailwindMerge } from 'tailwind-merge';
 import tokens from '@/tokens';
 
-// twMerge, not plain clsx: without it, cn('bg-brand', 'bg-danger') emits both
-// classes and the winner depends on stylesheet order. Every primitive's
-// className override prop relies on the later class winning deterministically.
+// twMerge so a caller's className wins deterministically instead of by
+// stylesheet order.
 //
-// Extended, not plain twMerge: it recognises Tailwind's own scales and nothing
-// else, so both of this project's custom scales were mishandled, in opposite
-// directions and both silently.
-//
-// text-title was filed under colours, judged to conflict with text-fg and
-// dropped, so every piece of text rendered at React Native's default 14px on
-// every platform in both themes. rounded-card and rounded-control were filed
-// under no group at all, so they never conflicted and a caller's className
-// override came down to stylesheet order.
-//
-// Colours need no entry here: their class names are Tailwind's own groups,
-// which resolve correctly already.
+// Extended because tailwind-merge only knows Tailwind's own scales, and got both
+// custom ones wrong in opposite directions: it filed text-title under colours
+// and dropped it, so all text fell back to 14px, and it filed rounded-card under
+// no group at all, so overrides never took. See lib/cn.test.ts.
 const twMerge = extendTailwindMerge({
   extend: {
     classGroups: {

@@ -4,10 +4,8 @@ import { useTranslation } from 'react-i18next';
 import type { ErrorBoundaryProps } from 'expo-router';
 import { Button, Card, Screen, Text } from '@/components/ui';
 
-// Carries its own SafeAreaProvider. The router swaps this in for the root
-// layout, so when the layout is what threw, the provider it renders no longer
-// exists and Screen's SafeAreaView would have no insets to read. An error
-// boundary that depends on the thing it is reporting on is not a boundary.
+// Carries its own SafeAreaProvider: the router swaps this in for the root
+// layout, so when the layout is what threw, the provider it rendered is gone.
 export function AppErrorView({ error, retry }: ErrorBoundaryProps) {
   const { t } = useTranslation();
 

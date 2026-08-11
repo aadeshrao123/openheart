@@ -1,20 +1,13 @@
-// Token names that two consumers need in different forms, defined once so they
-// cannot drift apart.
+// Token names shared by tailwind.config.js, which turns them into utilities, and
+// lib/cn.ts, which needs them so tailwind-merge can tell a font size from a text
+// colour and can see two radii as conflicting. Defining them twice is what makes
+// cn() silently wrong.
 //
-// tailwind.config.js turns these into the utility classes components use.
-// lib/cn.ts needs only the names, because tailwind-merge recognises Tailwind's
-// own scales and nothing else. An unfamiliar text-* or rounded-* class is
-// either filed under the wrong group or under no group at all, and in both
-// cases cn() silently produces the wrong answer.
+// Colours are absent on purpose: their class names are Tailwind's own groups,
+// and their values belong in global.css.
 //
-// Colours are deliberately absent. Their names are Tailwind's own groups, which
-// tailwind-merge already resolves correctly, and their values belong in
-// global.css and nowhere else.
-//
-// CommonJS because tailwind.config.js is loaded by the Tailwind CLI, which does
-// not accept ESM at this path.
+// CommonJS because the Tailwind CLI loads tailwind.config.js.
 
-// Sizes and weights, since Tailwind has no variable indirection for them.
 const fontSize = {
   display: ['34px', { lineHeight: '40px', fontWeight: '700' }],
   title: ['24px', { lineHeight: '30px', fontWeight: '700' }],
