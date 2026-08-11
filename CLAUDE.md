@@ -164,6 +164,7 @@ locales/              translation bundles, one JSON per language
 supabase/migrations/  schema + RLS. The source of truth.
 supabase/tests/       pgTAP. Policy tests.
 supabase/functions/   Edge Functions. The only place a service-role key exists.
+infra/                Cloudflare config, applied by wrangler. Never by dashboard.
 global.css            <- every colour in the app is defined here
 tailwind.config.js    <- every token *name* is defined here
 ```

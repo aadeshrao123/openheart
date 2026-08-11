@@ -104,7 +104,7 @@ Set by hand, once per project:
 | Secret | Where it comes from |
 |---|---|
 | `R2_ACCOUNT_ID` | Cloudflare dashboard, R2 overview |
-| `R2_BUCKET` | The bucket holding `quarantine/` |
+| `R2_BUCKET` | The bucket holding `quarantine/`. See `infra/README.md`. |
 | `R2_ACCESS_KEY_ID` | R2 API token, scoped to that one bucket |
 | `R2_SECRET_ACCESS_KEY` | Same token |
 | `PURGE_TOKEN` | Any long random string you generate. See below. |
