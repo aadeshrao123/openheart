@@ -24,8 +24,10 @@ const variants = {
   },
 } as const;
 
+// sm is h-11 rather than h-10 because 44 is the floor, not a target. It is
+// the size report, block, unmatch and the moderation verdicts all use.
 const sizes = {
-  sm: { container: 'h-10 px-4', text: 'label' },
+  sm: { container: 'h-11 px-4', text: 'label' },
   md: { container: 'h-13 px-6', text: 'label' },
   lg: { container: 'h-15 px-7', text: 'heading' },
 } as const;
