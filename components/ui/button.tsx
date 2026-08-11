@@ -54,7 +54,10 @@ export function Button({
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityState={{ disabled: isDisabled, busy: loading }}
+      // aria-*, not accessibilityState: react-native-web reads only these and
+      // drops the object form, so busy never reached a screen reader on web.
+      aria-disabled={isDisabled}
+      aria-busy={loading}
       disabled={isDisabled}
       className={cn(
         'flex-row items-center justify-center rounded-control',
