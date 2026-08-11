@@ -33,6 +33,7 @@
     "expo-localization": "~57.0.1",
     "expo-location": "~57.0.9",
     "expo-router": "~57.0.12",
+    "expo-splash-screen": "~57.0.6",
     "expo-status-bar": "~57.0.1",
     "expo-system-ui": "~57.0.2",
     "i18next": "^26.3.6",

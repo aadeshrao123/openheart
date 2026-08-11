@@ -21,6 +21,11 @@
     "title": "Something broke",
     "body": "This screen ran into an unexpected problem. Try again, and if it keeps happening it is our fault, not yours."
   },
+  "not_found": {
+    "title": "That page does not exist",
+    "body": "The link may be out of date, or it may have been mistyped. Nothing is broken.",
+    "go_home": "Go to the start"
+  },
   "auth": {
     "sign_in": "Sign in",
     "email_label": "Email",
