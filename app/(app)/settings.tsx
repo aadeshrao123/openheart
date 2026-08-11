@@ -74,6 +74,16 @@ export default function SettingsScreen() {
             />
           ))}
         </View>
+
+        {/* Native only. Layout direction is read once while laying out, so
+            switching between an LTR and an RTL language changes every string
+            immediately and leaves the layout facing the old way until the app
+            is relaunched. Saying so beats a screen that looks half broken. */}
+        {language.needsRestart ? (
+          <Text variant="caption" tone="accent" className="px-4">
+            {t('settings.language_restart')}
+          </Text>
+        ) : null}
       </View>
 
       <View className="gap-3">
