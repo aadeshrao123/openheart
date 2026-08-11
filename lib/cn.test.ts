@@ -42,6 +42,16 @@ describe('cn', () => {
     expect(cn('rounded-bubble', 'rounded-ee-tail')).toContain('rounded-ee-tail');
   });
 
+  // The deck skeleton fills a card that already has the radius and clips, so it
+  // has to cancel the one the primitive sets. rounded-none is Tailwind's own
+  // and the custom radii are not, which is exactly the pairing that silently
+  // failed for the two bugs above.
+  it('lets rounded-none cancel a token radius', () => {
+    for (const radius of Object.keys(tokens.borderRadius)) {
+      expect(cn(`rounded-${radius}`, 'rounded-none')).toBe('rounded-none');
+    }
+  });
+
   it('still lets a later class of the same kind win', () => {
     expect(cn('text-fg', 'text-brand')).toBe('text-brand');
     expect(cn('text-body', 'text-title')).toBe('text-title');

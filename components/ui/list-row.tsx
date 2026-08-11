@@ -33,7 +33,7 @@ export function ListRow({
       <Text tone={tones[tone]}>{label}</Text>
 
       {value ? (
-        <Text tone="muted" numberOfLines={1} className="shrink text-end">
+        <Text tone="muted" numberOfLines={1} className="shrink">
           {value}
         </Text>
       ) : null}
