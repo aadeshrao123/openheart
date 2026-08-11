@@ -2,8 +2,8 @@ import { detectImageFormat, MAX_UPLOAD_BYTES } from '../_shared/media.ts';
 import { errorResponse, jsonResponse, readJsonObject, serveJson } from '../_shared/http.ts';
 import { createR2Client, getObject } from '../_shared/r2.ts';
 import {
+  createModerationProvider,
   type ModerationVerdict,
-  unconfiguredModerationProvider,
 } from '../_shared/moderation.ts';
 import {
   type AdminClient,
@@ -95,7 +95,9 @@ serveJson(async (request) => {
   let verdict: ModerationVerdict | null = null;
 
   try {
-    verdict = await unconfiguredModerationProvider.scanImage(bytes, contentType);
+    // Built here rather than at module scope so a missing credential is a 503
+    // on one request instead of a function that refuses to boot at all.
+    verdict = await createModerationProvider().scanImage(bytes, contentType);
   } catch (error) {
     console.error('image moderation failed', error);
   }

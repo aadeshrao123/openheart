@@ -49,6 +49,37 @@ wrangler r2 bucket cors list openheart-photos-dev
 Note the schema here is Wrangler's (`rules[].allowed.origins`), which is not the
 same shape the dashboard shows for the same policy.
 
+## AWS, adult-content scanning
+
+Rekognition has nothing to provision. The only resource is an identity allowed
+to call one operation.
+
+The account's own credentials are root credentials, which cannot be scoped and
+cover billing and account closure. They are not used by anything here.
+
+```bash
+aws iam create-user --user-name openheart-moderation --tags Key=project,Value=openheart
+aws iam put-user-policy --user-name openheart-moderation \
+  --policy-name detect-moderation-labels-only \
+  --policy-document file://infra/aws-moderation-policy.json
+aws iam create-access-key --user-name openheart-moderation
+```
+
+The policy allows `rekognition:DetectModerationLabels` and nothing else.
+Verified with the resulting key: `s3 ls`, `iam list-users` and even
+`rekognition list-collections` all fail, while `detect-moderation-labels`
+succeeds. `Resource` is `*` because Rekognition does not support resource-level
+permissions for this action, so the action name is the whole constraint.
+
+Region is `ap-south-1`, which is where the account was already pointed. It is an
+env var, so moving it is one line, and it is worth revisiting when the launch
+city is known: the images sent for scanning are photographs of users, and which
+country processes them is a data protection question rather than a latency one.
+
+AWS states plainly that these APIs "don't detect whether an image includes
+illegal content, such as CSAM". That is why `createModerationProvider` requires
+a second provider and fails closed without it.
+
 ## API tokens
 
 Wrangler cannot create the S3-compatible Access Key ID and Secret Access Key

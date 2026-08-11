@@ -108,6 +108,9 @@ Set by hand, once per project:
 | `R2_ACCESS_KEY_ID` | R2 API token, scoped to that one bucket |
 | `R2_SECRET_ACCESS_KEY` | Same token |
 | `PURGE_TOKEN` | Any long random string you generate. See below. |
+| `AWS_REGION` | Where Rekognition is called. See `infra/README.md`. |
+| `AWS_ACCESS_KEY_ID` | The `openheart-moderation` IAM user, not root. |
+| `AWS_SECRET_ACCESS_KEY` | Same user. |
 
 `purge-deleted-media` takes no user JWT: nothing about it is per user and it must
 not be callable by whoever happens to be signed in. It compares an
@@ -132,15 +135,25 @@ object. Which origin that is has not been decided. See the gap list.
 
 ## What a maintainer still has to supply
 
-**There is no moderation provider.** `_shared/moderation.ts` defines the
-interface and ships an adapter that rejects every call. Nothing here calls a
-real vendor API, because a signature written from memory would look correct in
-review and fail in production on the single control the safety model rests on.
+**Half the scan exists.** Adult content goes to AWS Rekognition, wired and
+verified against the real API. CSAM detection has no provider, and AWS says
+outright that Rekognition "doesn't detect whether an image includes illegal
+content, such as CSAM", so the two are separate jobs and only one is done.
 
-Until a provider is wired in, `moderate-photo` answers `503` and no photo is
-ever approved. That is the correct direction to fail. The full list of what the
-replacement must provide, including the CSAM requirement that generic
-"unsafe image" APIs do not cover, is in the comment above the adapter.
+`createModerationProvider` requires both and fails closed without either, which
+is deliberate: adult-content scanning alone would let photos reach `approved`
+having been checked for one thing and not the other, and "upload now, scan the
+rest later" cannot be undone without a full backfill and a key rotation. So
+`moderate-photo` still answers `503` and no photo is ever approved.
+
+Whoever wires the CSAM provider settles the legal question first. A hit obliges
+preserving the object and filing a report, which the REPORT Act extended from
+90 days to a year, and that contradicts the `deleted_media` purge path.
+
+The label policy in `ALLOWED_LABELS` is a product decision, not a technical one.
+It is an allow list so an unrecognised label fails closed, and it currently
+permits swimwear, shirtless and back shots, alcohol and rude gestures, because a
+dating app that rejects every beach photo has no users.
 
 **Known gaps, in priority order:**
 
