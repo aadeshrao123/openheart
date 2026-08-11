@@ -1,0 +1,10 @@
+# Blank issues are off so a vulnerability cannot be filed as a public issue by
+# someone who never saw SECURITY.md. The contact link below is the route out.
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/aadeshrao123/openheart/security/advisories/new
+    about: Private reporting. Never file a vulnerability as a public issue.
+  - name: Project standards
+    url: https://github.com/aadeshrao123/openheart/blob/main/CONTRIBUTING.md
+    about: How to set up, what has to pass before a pull request, and the rules.

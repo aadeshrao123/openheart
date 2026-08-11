@@ -1,0 +1,77 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  style:
+    name: Style invariants
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: ASCII only and line length
+        shell: sh
+        run: |
+          report() {
+            header=$1
+            pattern=$2
+            grep_status=0
+
+            matches=$(LC_ALL=C git grep -nI "$pattern" \
+              -- ':!supabase/config.toml' ':!locales/*.json') || grep_status=$?
+
+            # git grep exits 1 for "nothing matched" and 2 or more for a real
+            # failure, which must not be reported as a clean run.
+            if [ "$grep_status" -gt 1 ]; then
+              exit "$grep_status"
+            fi
+
+            if [ "$grep_status" -eq 1 ]; then
+              return 0
+            fi
+
+            # printf, not echo: sh here is dash, whose echo expands backslash
+            # escapes, and a matched line containing \c truncates the report.
+            printf '%s\n%s\n' "$header" "$matches"
+
+            return 1
+          }
+
+          status=0
+
+          # In the C locale every byte above 0x7f falls outside both
+          # [:print:] and [:space:], so this pattern means "not ASCII".
+          if ! report 'Non-ASCII characters:' '[^[:print:][:space:]]'; then
+            status=1
+          fi
+
+          if ! report 'Lines over 100 characters:' '.\{101,\}'; then
+            status=1
+          fi
+
+          exit "$status"
+
+  database:
+    name: Migrations and pgTAP
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # No version pin here on purpose: the action reads the root lockfile
+      # when one exists and otherwise installs the latest release.
+      - uses: supabase/setup-cli@v3
+
+      # db start applies supabase/migrations once Postgres is up, so a separate
+      # migrate step would only repeat that work. Seeding is off in config.toml.
+      # Source: supabase/cli, apps/cli-go/internal/db/start/start.go
+      - name: Start local database
+        run: supabase db start
+
+      - name: Run pgTAP tests
+        run: supabase test db --local
