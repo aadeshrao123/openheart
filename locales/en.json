@@ -4,6 +4,8 @@
     "save": "Save",
     "retry": "Try again",
     "loading": "Loading",
+    "continue": "Continue",
+    "back": "Back",
     "error_generic": "Something went wrong. Please try again."
   },
 
@@ -25,11 +27,81 @@
 
   "auth": {
     "sign_in": "Sign in",
+    "email_label": "Email",
+    "email_placeholder": "you@example.com",
+    "send_code": "Continue with email",
+    "no_password_explainer": "No password. We email you a six digit code each time you sign in.",
+    "verify_title": "Check your email",
+    "verify_body": "We sent a six digit code to {{email}}.",
+    "code_label": "Six digit sign-in code",
+    "verifying": "Checking your code",
+    "resend_code": "Send a new code",
+    "code_resent": "A new code is on its way.",
+    "use_different_email": "Use a different email",
+    "code_invalid": "That code is not right, or it has expired. Ask for a new one.",
+    "too_many_requests": "Too many attempts. Wait a minute and try again.",
+    "email_invalid": "That does not look like an email address.",
+    "age_gate": "You must be 18 or older to use {{appName}}.",
     "continue_with_apple": "Continue with Apple",
     "continue_with_google": "Continue with Google",
-    "email_placeholder": "you@example.com",
-    "magic_link_sent": "Check your email for a sign-in link.",
-    "age_gate": "You must be 18 or older to use {{appName}}."
+    "continue_with_microsoft": "Continue with Microsoft"
+  },
+
+  "onboarding": {
+    "step": "Step {{step}} of {{total}}",
+    "day": "Day",
+    "month": "Month",
+    "year": "Year",
+    "birthdate_title": "When were you born?",
+    "birthdate_body": "This sets your age on your profile. We never show your date of birth to anyone.",
+    "birthdate_invalid": "That is not a real date.",
+    "birthdate_too_young": "You need to be {{age}} or older to use this app.",
+    "birthdate_locked_warning": "You cannot change this later, so please check it.",
+    "about_you_title": "Tell people who you are",
+    "about_you_body": "Your name and a couple of lines. You can change all of this whenever you like.",
+    "display_name_hint": "This is what everyone sees. A first name is plenty.",
+    "bio_hint": "{{remaining}} characters left",
+    "preferences_title": "Who would you like to meet?",
+    "preferences_body": "We only show you people inside these limits, and only show you to them.",
+    "preferences_changeable": "You can change any of this in settings later.",
+    "finish": "Create my profile"
+  },
+
+  "profile": {
+    "display_name": "Name",
+    "bio": "About you",
+    "birthdate": "Date of birth",
+    "birthdate_locked": "Set at signup and cannot be changed.",
+    "gender": "I am",
+    "gender_woman": "Woman",
+    "gender_man": "Man",
+    "gender_nonbinary": "Non-binary",
+    "seeking": "I want to meet",
+    "distance_preference": "Maximum distance",
+    "age_preference": "Age range",
+    "age_min": "Youngest",
+    "age_max": "Oldest",
+    "age_min_decrease": "Lower the youngest age",
+    "age_min_increase": "Raise the youngest age",
+    "age_max_decrease": "Lower the oldest age",
+    "age_max_increase": "Raise the oldest age",
+    "age_years": "{{age}} years old",
+    "photos": "Photos",
+    "photo_alt": "Profile photo of {{name}}",
+    "photo_pending_review": "This photo is being reviewed.",
+    "photo_rejected": "This photo was not approved.",
+    "verify_prompt": "Verify your photo to appear in other people's decks."
+  },
+
+  "home": {
+    "not_visible_title": "You are not in anyone's deck yet",
+    "location_title": "Add your location",
+    "location_body": "We store it rounded to about a kilometre, and only ever show other people a rough distance.",
+    "location_denied": "Location permission was refused. You can turn it on in your device settings.",
+    "location_enable": "Use my location",
+    "edit_profile": "Edit profile",
+    "next_title": "What is coming",
+    "next_body": "Photos, then the deck, then chat. This is an early build and there is nobody to swipe on yet."
   },
 
   "deck": {
@@ -59,19 +131,6 @@
     "unread_other": "{{count}} unread messages"
   },
 
-  "profile": {
-    "display_name": "Name",
-    "bio": "About you",
-    "birthdate": "Date of birth",
-    "distance_preference": "Maximum distance",
-    "age_preference": "Age range",
-    "photos": "Photos",
-    "photo_alt": "Profile photo of {{name}}",
-    "photo_pending_review": "This photo is being reviewed.",
-    "photo_rejected": "This photo was not approved.",
-    "verify_prompt": "Verify your photo to appear in other people's decks."
-  },
-
   "safety": {
     "report": "Report",
     "block": "Block",
@@ -86,9 +145,15 @@
 
   "settings": {
     "title": "Settings",
+    "account": "Account",
+    "email": "Email",
     "language": "Language",
-    "delete_account": "Delete account",
-    "delete_confirm": "This permanently deletes your profile, photos and messages. It cannot be undone.",
+    "sign_out": "Sign out",
+    "danger_zone": "Delete account",
+    "delete_account": "Delete my account",
+    "delete_confirm": "This permanently erases your name, photos and profile. It cannot be undone.",
+    "delete_retains_messages": "Messages you already sent stay in the other person's conversation, because they are their data too. Your name is removed from them.",
+    "delete_confirm_action": "Yes, delete my account",
     "donate": "Support OpenHeart"
   }
 }

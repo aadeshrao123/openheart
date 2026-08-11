@@ -1,0 +1,17 @@
+<!--
+  Supabase sends a magic link unless the template contains the token below.
+
+  Used for two templates: signInWithOtp picks "confirmation" for an address it
+  has not seen and "magic_link" for one it has, so both must carry the code or a
+  first-time signup receives a link it cannot use.
+
+  Local only. Production templates live in the dashboard.
+-->
+<h2>Your sign-in code</h2>
+
+<p>Enter this code in OpenHeart to sign in:</p>
+
+<p style="font-size: 28px; font-weight: 700; letter-spacing: 4px">{{ .Token }}</p>
+
+<p>The code expires in an hour. If you did not ask to sign in, ignore this
+email and nothing will happen.</p>

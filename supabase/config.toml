@@ -248,6 +248,19 @@ otp_expiry = 3600
 # subject = "You have been invited"
 # content_path = "./supabase/templates/invite.html"
 
+# Sign-in codes, not magic links. signInWithOtp sends a link unless the template
+# contains {{ .Token }}. Both templates are overridden because Supabase picks
+# "confirmation" for an address it has not seen before and "magic_link" for one
+# it has, so overriding only one sends first-time users a link they cannot use.
+# Production templates live in the dashboard and must be kept in step by hand.
+[auth.email.template.magic_link]
+subject = "Your OpenHeart sign-in code"
+content_path = "./supabase/templates/sign-in-code.html"
+
+[auth.email.template.confirmation]
+subject = "Your OpenHeart sign-in code"
+content_path = "./supabase/templates/sign-in-code.html"
+
 # Uncomment to customize notification email template
 # [auth.email.notification.password_changed]
 # enabled = true
