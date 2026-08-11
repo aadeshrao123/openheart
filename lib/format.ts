@@ -12,15 +12,17 @@ function currentLocale(): string {
 // of imperial regions are listed explicitly. Everywhere else is metric.
 const IMPERIAL_REGIONS = new Set(['US', 'LR', 'MM']);
 
-function usesImperial(locale: string): boolean {
+export const KM_PER_MILE = 1.609344;
+
+export function usesImperialUnits(locale = currentLocale()): boolean {
   const region = new Intl.Locale(locale).region;
 
   return region !== undefined && IMPERIAL_REGIONS.has(region);
 }
 
 export function formatDistance(kilometres: number, locale = currentLocale()): string {
-  const imperial = usesImperial(locale);
-  const value = imperial ? kilometres * 0.621371 : kilometres;
+  const imperial = usesImperialUnits(locale);
+  const value = imperial ? kilometres / KM_PER_MILE : kilometres;
 
   return new Intl.NumberFormat(locale, {
     style: 'unit',
