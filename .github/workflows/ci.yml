@@ -85,6 +85,38 @@ jobs:
             status=1
           fi
 
+          # locales/*.json is exempt from the ASCII check above, and has to be:
+          # a translation cannot be written without the letters of its own
+          # language. Its punctuation is a different question. An em dash, an en
+          # dash, a curly quote or an ellipsis character is the same defect in a
+          # translation as it is in source, and no language needs one to be
+          # written correctly.
+          #
+          # The pattern is the literal UTF-8 bytes, built with printf, because
+          # LC_ALL=C makes git grep byte-oriented and that is what lets one
+          # pattern match characters the C locale has no notion of. All seven
+          # are E2 80 xx. Letters and script-specific punctuation are untouched,
+          # so Arabic, Chinese and French copy passes unchanged.
+          typographic=$(printf '\342\200\223\|\342\200\224\|\342\200\230')
+          typographic="$typographic$(printf '\|\342\200\231\|\342\200\234')"
+          typographic="$typographic$(printf '\|\342\200\235\|\342\200\246')"
+
+          locale_status=0
+
+          locale_matches=$(LC_ALL=C git grep -nI "$typographic" \
+            -- 'locales/*.json') || locale_status=$?
+
+          if [ "$locale_status" -gt 1 ]; then
+            exit "$locale_status"
+          fi
+
+          if [ "$locale_status" -eq 0 ]; then
+            printf '%s\n%s\n' \
+              'Dashes, curly quotes or ellipsis characters in locales:' \
+              "$locale_matches"
+            status=1
+          fi
+
           exit "$status"
 
   app:
