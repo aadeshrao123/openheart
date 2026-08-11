@@ -73,6 +73,7 @@ export default function HomeScreen() {
           label={t('home.edit_profile')}
           onPress={() => router.push('/edit-profile')}
         />
+        <ListRow label={t('profile.photos')} onPress={() => router.push('/photos')} />
         <ListRow label={t('settings.title')} onPress={() => router.push('/settings')} />
       </View>
 

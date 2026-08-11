@@ -104,6 +104,20 @@
     "next_body": "Photos, then the deck, then chat. This is an early build and there is nobody to swipe on yet."
   },
 
+  "photos": {
+    "subtitle": "Up to six. The first one is the one people see first, and you can reorder them any time.",
+    "add_at": "Add a photo in slot {{position}}",
+    "slot": "Your photo in slot {{position}}",
+    "delete_at": "Remove the photo in slot {{position}}",
+    "move_earlier": "Move this photo earlier",
+    "move_later": "Move this photo later",
+    "awaiting_review": "Uploaded. It will appear once it has been reviewed.",
+    "upload_failed": "That photo could not be uploaded. Please try again.",
+    "limit_reached": "You already have {{count}} photos. Remove one first.",
+    "review_title": "Why nothing is live yet",
+    "review_body": "Every photo is checked before anyone can see it. Checking is not switched on in this build, so uploads stay unreviewed for now."
+  },
+
   "deck": {
     "empty_title": "No one new nearby",
     "empty_body": "Try widening your distance or age range.",

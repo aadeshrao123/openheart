@@ -9,6 +9,7 @@ in the client's column grant in `0006_grants.sql` and never will be.
 |---|---|
 | `request-photo-upload` | Reserves a slot, issues a presigned PUT into quarantine |
 | `moderate-photo` | Scans the uploaded object and writes the verdict |
+| `purge-deleted-media` | Drains the `deleted_media` queue out of R2 |
 
 Shared code lives in `_shared/` and is bundled into each function that imports
 it. It is not deployable on its own.
@@ -106,6 +107,12 @@ Set by hand, once per project:
 | `R2_BUCKET` | The bucket holding `quarantine/` |
 | `R2_ACCESS_KEY_ID` | R2 API token, scoped to that one bucket |
 | `R2_SECRET_ACCESS_KEY` | Same token |
+| `PURGE_TOKEN` | Any long random string you generate. See below. |
+
+`purge-deleted-media` takes no user JWT: nothing about it is per user and it must
+not be callable by whoever happens to be signed in. It compares an
+`X-Purge-Token` header against `PURGE_TOKEN` at full length, so the comparison
+cannot be timed. Generate one with `openssl rand -hex 32`.
 
 ```bash
 supabase secrets set --env-file supabase/functions/.env
@@ -155,9 +162,11 @@ replacement must provide, including the CSAM requirement that generic
 - The declared content type is not covered by the signature, which is why
   `moderate-photo` sniffs the leading bytes rather than trusting a header.
 - HEIC is not accepted. iOS clients must convert before uploading.
-- `deleted_media` is drained by a scheduled purge function that does not exist
-  yet. Rejected keys accumulate until it does. Its grants are already in 0009,
-  since the same missing-privilege bug would have hit it too.
+- `purge-deleted-media` exists but nothing calls it on a schedule yet, so keys
+  accumulate until something does. It is idempotent and safe to call repeatedly.
+  Every deleted photo now reaches the queue: 0011 puts that on an AFTER DELETE
+  trigger, because the client, `delete_my_account()` and a profile cascade are
+  three separate paths and only one of them remembered.
 - A rejected photo keeps its `photos` row and therefore its `(profile_id,
   position)` slot, while its object is queued for purge. Six rejections lock a
   profile out of uploading at all. Deciding whether rejection deletes the row is

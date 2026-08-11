@@ -52,6 +52,12 @@ module.exports = {
 
       borderRadius: tokens.borderRadius,
 
+      // The shape of a photo everywhere it appears. A ratio is a design decision
+      // like a radius, so it gets a name rather than an arbitrary value.
+      aspectRatio: {
+        card: '4 / 5',
+      },
+
       fontSize: tokens.fontSize,
     },
   },

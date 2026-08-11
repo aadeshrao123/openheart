@@ -62,3 +62,7 @@ export async function presignUpload(
 export async function getObject(r2: R2Client, key: string): Promise<Response> {
   return await r2.signer.fetch(`${r2.bucketUrl}/${key}`, { method: 'GET' });
 }
+
+export async function deleteObject(r2: R2Client, key: string): Promise<Response> {
+  return await r2.signer.fetch(`${r2.bucketUrl}/${key}`, { method: 'DELETE' });
+}

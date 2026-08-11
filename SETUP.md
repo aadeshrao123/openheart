@@ -56,6 +56,12 @@ If the discovery tests fail with a wildly wrong row count, the benchmark seed
 is probably still loaded from a previous session. `supabase db reset` clears
 it; see `supabase/benchmark/README.md`.
 
+`supabase db reset` restarts the containers but does not re-read
+`supabase/config.toml`. After changing anything under `[auth]`, including the
+email templates, run `supabase stop && supabase start` or the old config stays
+live. The symptom is a sign-in email arriving with the subject "Your sign-in
+link" instead of a code.
+
 ## 4. Run
 
 ```bash
