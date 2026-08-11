@@ -6,6 +6,11 @@
 
 const token = (variable) => `rgb(var(${variable}) / <alpha-value>)`;
 
+// Shared with lib/cn.ts, which needs these names so tailwind-merge can tell a
+// font size from a text colour and can see two radii as conflicting. Editing
+// them here alone would break className overrides silently. See tokens.js.
+const tokens = require('./tokens');
+
 module.exports = {
   content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}'],
   presets: [require('nativewind/preset')],
@@ -45,19 +50,9 @@ module.exports = {
         pass: token('--pass'),
       },
 
-      borderRadius: {
-        card: 'var(--radius-card)',
-        control: 'var(--radius-control)',
-      },
+      borderRadius: tokens.borderRadius,
 
-      fontSize: {
-        display: ['34px', { lineHeight: '40px', fontWeight: '700' }],
-        title: ['24px', { lineHeight: '30px', fontWeight: '700' }],
-        heading: ['18px', { lineHeight: '24px', fontWeight: '600' }],
-        body: ['16px', { lineHeight: '24px' }],
-        label: ['14px', { lineHeight: '20px', fontWeight: '500' }],
-        caption: ['12px', { lineHeight: '16px' }],
-      },
+      fontSize: tokens.fontSize,
     },
   },
   plugins: [],
