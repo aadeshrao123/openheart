@@ -1,4 +1,5 @@
 import { Redirect } from 'expo-router';
+import { GateErrorView } from '@/components/gate-error-view';
 import { SplashView } from '@/components/splash-view';
 import { useAuthGate } from '@/hooks/use-auth-gate';
 
@@ -13,6 +14,10 @@ export default function Index() {
 
   if (gate === 'signed-out') {
     return <Redirect href="/sign-in" />;
+  }
+
+  if (gate === 'error') {
+    return <GateErrorView />;
   }
 
   if (gate === 'onboarding') {

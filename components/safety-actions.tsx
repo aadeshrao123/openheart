@@ -71,7 +71,11 @@ export function SafetyActions({
           className="absolute inset-0 bg-shadow/50"
         />
 
-        <View className="w-full max-w-content gap-4 rounded-card bg-surface-raised p-5">
+        <View
+          accessibilityViewIsModal
+          aria-modal
+          className="w-full max-w-content gap-4 rounded-card bg-surface-raised p-5"
+        >
           {stage === 'menu' ? (
             <>
               <Text variant="overline" tone="subtle">
