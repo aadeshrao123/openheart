@@ -32,6 +32,33 @@ export async function readJsonObject(
   return payload as Record<string, unknown>;
 }
 
+// console.error(error) on its own logged `{ message: "" }` for a PostgrestError,
+// which is what the README tells a maintainer to go and read. The interesting
+// fields are non-enumerable or named something else, so they are pulled out by
+// hand.
+function describeError(error: unknown): Record<string, unknown> {
+  if (typeof error !== 'object' || error === null) {
+    return { value: String(error) };
+  }
+
+  const record = error as Record<string, unknown>;
+
+  return {
+    // String() and the key list are the fallback for anything that is neither an
+    // Error nor a PostgrestError, which is how this arrived as `{message: ""}`
+    // and told a maintainer nothing.
+    raw: String(error),
+    keys: Object.getOwnPropertyNames(error),
+    name: record.name,
+    message: record.message,
+    code: record.code,
+    details: record.details,
+    hint: record.hint,
+    status: record.status,
+    stack: record.stack,
+  };
+}
+
 export function serveJson(handler: (request: Request) => Promise<Response>): void {
   Deno.serve(async (request) => {
     if (request.method === 'OPTIONS') {
@@ -43,7 +70,7 @@ export function serveJson(handler: (request: Request) => Promise<Response>): voi
     } catch (error) {
       // Without this the runtime returns a bare 500 with no CORS headers, and
       // the browser reports a network failure instead of the real status.
-      console.error(error);
+      console.error(JSON.stringify(describeError(error)));
       return errorResponse('internal_error', 500);
     }
   });

@@ -75,8 +75,13 @@ client maps the code to a translation key, so no user-visible copy lives here.
 | `position_taken` | 409 | Another request won that slot |
 | `photo_not_found` | 404 | No such photo owned by this caller |
 | `object_not_uploaded` | 409 | The PUT never completed |
-| `moderation_unavailable` | 503 | Scanner failed, row left pending |
+| `moderation_unavailable` | 503 | Scanner or R2 unreachable, row left pending |
 | `internal_error` | 500 | Unhandled, see the function logs |
+
+A missing object comes back from R2 as a 404 and maps to `object_not_uploaded`.
+An unreachable bucket makes `fetch` throw instead, which is a different
+situation: retryable, and reported as `moderation_unavailable` so the client
+knows that. The row stays pending either way.
 
 ---
 
@@ -151,7 +156,8 @@ replacement must provide, including the CSAM requirement that generic
   `moderate-photo` sniffs the leading bytes rather than trusting a header.
 - HEIC is not accepted. iOS clients must convert before uploading.
 - `deleted_media` is drained by a scheduled purge function that does not exist
-  yet. Rejected keys accumulate until it does.
+  yet. Rejected keys accumulate until it does. Its grants are already in 0009,
+  since the same missing-privilege bug would have hit it too.
 - A rejected photo keeps its `photos` row and therefore its `(profile_id,
   position)` slot, while its object is queued for purge. Six rejections lock a
   profile out of uploading at all. Deciding whether rejection deletes the row is
@@ -174,9 +180,39 @@ supabase functions deploy request-photo-upload
 supabase functions deploy moderate-photo
 ```
 
-None of these has been run. Deno is not installed on the machine this was
-written on, so the test file and the type check are both unexecuted, and
-serving needs the local stack. Treat all of it as unverified at runtime.
-
 Both functions verify the JWT themselves, so neither depends on the gateway
 setting for that. `_shared/` is not a function and is never deployed directly.
+
+`supabase functions serve` supplies Deno in its container, so running the
+functions needs Docker and the local stack but not a Deno install. The
+`deno test` line above still needs one and remains unexecuted.
+
+## What has actually been run
+
+Both functions have been served locally and driven with a real user JWT. R2
+credentials in `supabase/functions/.env` were deliberately fake for this:
+presigning is pure local SigV4, so everything except the transfer itself
+executes.
+
+Verified: `unauthorized`, `method_not_allowed`, `invalid_position` for both an
+out-of-range value and a non-integer, a 201 carrying a correctly signed URL,
+`position_taken` on a duplicate slot, `photo_limit_reached` on the seventh photo,
+`invalid_photo_id`, `photo_not_found`, and `moderation_unavailable` with the row
+left pending. Nothing reached `approved`, which is the point.
+
+Not verified, and not verifiable without real credentials and a provider: the
+PUT to R2, `object_not_uploaded`, the format sniff against a real object, and
+every path through a moderation verdict.
+
+Three defects surfaced on that first run:
+
+- **`service_role` had no table privileges at all.** It carries `rolbypassrls`,
+  so 0004 recorded it as bypassing "both grants and RLS", but GRANT is checked
+  before RLS and applies to every role. Both functions returned 42501 on their
+  first request. Fixed in `0009_service_role_grants.sql` and guarded by
+  `supabase/tests/service_role_grants.test.sql`.
+- The 500 handler logged `{"message":""}` for a PostgrestError, which is what
+  this file tells a maintainer to go and read. It now logs the name, code, hint
+  and stack.
+- An unreachable R2 threw out of `getObject` and became `internal_error` rather
+  than something the client could retry.

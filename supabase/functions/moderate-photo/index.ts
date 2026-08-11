@@ -65,7 +65,18 @@ serveJson(async (request) => {
     return jsonResponse({ moderation_state: moderationState }, 200);
   }
 
-  const object = await getObject(createR2Client(), r2Key);
+  // A missing object comes back as a 404 response, but an unreachable bucket
+  // throws instead, so without this an R2 outage surfaced as internal_error 500
+  // with nothing telling the client it was worth retrying. Either way the row
+  // stays pending, so the retry is safe.
+  let object: Response;
+
+  try {
+    object = await getObject(createR2Client(), r2Key);
+  } catch (error) {
+    console.error('r2 fetch failed', error);
+    return errorResponse('moderation_unavailable', 503);
+  }
 
   if (!object.ok) {
     return errorResponse('object_not_uploaded', 409);
