@@ -4,16 +4,7 @@ import { useSession } from '@/hooks/use-session';
 import { threadsKey } from '@/hooks/use-threads';
 import { discoveryKey } from '@/hooks/use-discovery';
 import { RATE_LIMITED, RATE_LIMIT_SQLSTATE } from '@/lib/db-errors';
-
-export const REPORT_REASONS = [
-  'harassment',
-  'spam',
-  'fake',
-  'underage',
-  'other',
-] as const;
-
-export type ReportReason = (typeof REPORT_REASONS)[number];
+import type { ReportReason } from '@/lib/report-reasons';
 
 export const blocksKey = ['blocks'] as const;
 

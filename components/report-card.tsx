@@ -152,7 +152,7 @@ export function ReportCard({ report }: ReportCardProps) {
       ) : (
         <View className="gap-2">
           <Text variant="caption" tone="muted">
-            {t(`moderation.status_${report.status}`)}
+            {t(`moderation.status_${report.status}`, { defaultValue: report.status })}
           </Text>
 
           {report.moderator_note ? (

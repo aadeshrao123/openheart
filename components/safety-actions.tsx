@@ -4,7 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { Button, Chip, Text } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { RATE_LIMITED } from '@/lib/db-errors';
-import { REPORT_REASONS, useBlock, useReport, type ReportReason } from '@/hooks/use-safety';
+import { REPORT_REASONS, type ReportReason } from '@/lib/report-reasons';
+import { useBlock, useReport } from '@/hooks/use-safety';
 
 type Stage = 'menu' | 'report' | 'block' | 'done';
 
