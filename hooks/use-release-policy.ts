@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Platform } from 'react-native';
 import * as Application from 'expo-application';
+import Constants from 'expo-constants';
 import { supabase } from '@/lib/supabase';
 
 type PlatformKey = 'ios' | 'android' | 'web';
@@ -35,8 +36,21 @@ function compareVersions(left: string, right: string): number {
   return 0;
 }
 
+// There is no native application on web, so expo-application returns null
+// there and every web build would compare as below any minimum and lock itself
+// out permanently. What identifies a web build is the version in app.json,
+// which Expo embeds in the manifest.
+//
+// Null when the version cannot be established at all, which the caller treats
+// as "do not block". Guessing "0.0.0" here would fail closed, and a client that
+// bricks itself because it could not read its own version is the exact failure
+// the version gate exists to avoid.
+function installedVersion(): string | null {
+  return Application.nativeApplicationVersion ?? Constants.expoConfig?.version ?? null;
+}
+
 export function useReleasePolicy() {
-  const installedVersion = Application.nativeApplicationVersion ?? '0.0.0';
+  const version = installedVersion();
 
   const query = useQuery({
     queryKey: ['release-policy', currentPlatform()],
@@ -62,14 +76,17 @@ export function useReleasePolicy() {
     ...query,
 
     // Fail open. A server outage must not brick the app, so an unreachable
-    // policy is treated as "you are current" rather than "you must update".
+    // policy, or a version we cannot read, is treated as "you are current"
+    // rather than "you must update".
     mustUpdate:
       policy !== undefined &&
-      compareVersions(installedVersion, policy.minimum_supported_version) < 0,
+      version !== null &&
+      compareVersions(version, policy.minimum_supported_version) < 0,
 
     shouldUpdate:
       policy !== undefined &&
-      compareVersions(installedVersion, policy.recommended_version) < 0,
+      version !== null &&
+      compareVersions(version, policy.recommended_version) < 0,
 
     // Unknown flags default to enabled so a client older than a flag keeps
     // working exactly as it did when it shipped.
