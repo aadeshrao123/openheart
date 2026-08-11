@@ -1,7 +1,7 @@
 import { useMyProfile } from '@/hooks/use-my-profile';
 import { useSession } from '@/hooks/use-session';
 
-export type AuthGate = 'loading' | 'signed-out' | 'onboarding' | 'ready';
+export type AuthGate = 'loading' | 'signed-out' | 'onboarding' | 'suspended' | 'ready';
 
 // One place decides where a user belongs, so the entry point and the group
 // layouts cannot disagree and bounce between each other.
@@ -28,6 +28,13 @@ export function useAuthGate(): AuthGate {
   // signup, including for someone who quit halfway and came back.
   if (!profile.data) {
     return 'onboarding';
+  }
+
+  // Before 'ready', so a suspended account cannot reach a screen that writes.
+  // The database refuses those writes anyway; this is what makes the refusal
+  // legible instead of a screen full of errors.
+  if (profile.data.suspended_at !== null) {
+    return 'suspended';
   }
 
   return 'ready';

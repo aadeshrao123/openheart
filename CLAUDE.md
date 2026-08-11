@@ -98,7 +98,8 @@ swipes     swiper_id target_id direction created_at   PK(swiper_id,target_id)
 matches    id user_a user_b created_at unmatched_by
 messages   id match_id sender_id body created_at delivered_at read_at deleted_at
 message_reactions message_id user_id reaction     PK(message_id,user_id)
-reports    id reporter_id target_id reason status created_at
+reports    id reporter_id target_id reason status created_at match_id evidence
+           moderator_note resolved_by resolved_at
 blocks     blocker_id blocked_id                      PK(blocker_id,blocked_id)
 ```
 
@@ -267,6 +268,22 @@ later" means a full backfill and key rotation to fix, which is why it cannot be
 deferred.
 
 Full rules in `.claude/rules/client-compatibility.md`.
+
+## Blocking has to reach every table
+
+Blocking someone you were already matched with did nothing until 0014: no
+policy on `messages` or `matches` consulted `blocks`, so a blocked person could
+keep messaging. A safety control that only covers the path you thought of is
+worse than none, because the user stops taking other precautions.
+
+A block closes the match by setting `unmatched_by` to the blocker, which is
+indistinguishable from an unmatch. Never give the blocked person a signal:
+losing the conversation history would be one, so it stays.
+
+Moderators have no blanket read on `messages`. A reporter submits a snapshot of
+what they are reporting, and that is the only conversation content a moderator
+ever sees. `suspended_at` is in no grant and a trigger refuses reactivation,
+because `is_active` is client-writable and always will be.
 
 ## Chat is never deleted, only blanked
 

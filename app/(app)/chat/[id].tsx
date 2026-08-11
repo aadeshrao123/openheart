@@ -7,6 +7,7 @@ import { ChatHeader } from '@/components/chat-header';
 import { MessageActions } from '@/components/message-actions';
 import { MessageBubble } from '@/components/message-bubble';
 import { MessageComposer } from '@/components/message-composer';
+import { SafetyActions } from '@/components/safety-actions';
 import {
   useChatRealtime,
   useMarkThread,
@@ -68,6 +69,7 @@ export default function ChatScreen() {
   const mark = useMarkThread(matchId);
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [safetyOpen, setSafetyOpen] = useState(false);
 
   const items = useMemo(() => buildItems(messages ?? []), [messages]);
 
@@ -131,6 +133,7 @@ export default function ChatScreen() {
         }
         onBack={() => (router.canGoBack() ? router.back() : router.replace('/matches'))}
         onOpenProfile={() => router.push({ pathname: '/match/[id]', params: { id: matchId } })}
+        onSafety={() => setSafetyOpen(true)}
       />
 
       <KeyboardAvoidingView
@@ -208,6 +211,26 @@ export default function ChatScreen() {
           setSelectedId(null);
         }}
         onClose={() => setSelectedId(null)}
+      />
+
+      {/* The last twenty, both sides, because a message only reads as abuse
+          next to what was said around it. Nothing else gives a moderator any
+          access to a conversation. */}
+      <SafetyActions
+        visible={safetyOpen}
+        name={name}
+        targetId={thread.other_id}
+        matchId={matchId}
+        evidence={(messages ?? [])
+          .filter((message) => message.deleted_at === null)
+          .slice(-20)
+          .map((message) => ({
+            sender_id: message.sender_id,
+            body: message.body,
+            created_at: message.created_at,
+          }))}
+        onClose={() => setSafetyOpen(false)}
+        onBlocked={() => router.replace('/matches')}
       />
 
       {unsend.isError && unsend.error.message === ALREADY_READ ? (

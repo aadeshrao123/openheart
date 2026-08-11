@@ -9,6 +9,7 @@ import { useHideThread, useThread, useThreads, useUnmatch } from '@/hooks/use-th
 import { ageOn, fromDateColumn } from '@/lib/age';
 import { photoUrl } from '@/lib/photos';
 import { isGender } from '@/lib/profile-options';
+import { SafetyActions } from '@/components/safety-actions';
 
 export default function MatchProfileScreen() {
   const { t } = useTranslation();
@@ -23,6 +24,7 @@ export default function MatchProfileScreen() {
   const unmatch = useUnmatch();
   const hide = useHideThread();
   const [confirming, setConfirming] = useState(false);
+  const [safetyOpen, setSafetyOpen] = useState(false);
 
   if (threadsPending) {
     return (
@@ -127,12 +129,28 @@ export default function MatchProfileScreen() {
         <Text variant="caption" tone="subtle">
           {t('chat.hide_explainer')}
         </Text>
+
+        <Button
+          variant="ghost"
+          size="sm"
+          label={t('safety.title', { name })}
+          onPress={() => setSafetyOpen(true)}
+        />
       </View>
 
       <Button
         variant="secondary"
         label={t('common.back')}
         onPress={() => (router.canGoBack() ? router.back() : router.replace('/matches'))}
+      />
+
+      <SafetyActions
+        visible={safetyOpen}
+        name={name}
+        targetId={thread.other_id}
+        matchId={matchId}
+        onClose={() => setSafetyOpen(false)}
+        onBlocked={() => router.replace('/matches')}
       />
     </Screen>
   );

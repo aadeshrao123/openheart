@@ -8,9 +8,17 @@ export type ChatHeaderProps = {
   subtitle: string;
   onBack: () => void;
   onOpenProfile: () => void;
+  onSafety: () => void;
 };
 
-export function ChatHeader({ name, photoKey, subtitle, onBack, onOpenProfile }: ChatHeaderProps) {
+export function ChatHeader({
+  name,
+  photoKey,
+  subtitle,
+  onBack,
+  onOpenProfile,
+  onSafety,
+}: ChatHeaderProps) {
   const { t } = useTranslation();
 
   return (
@@ -40,6 +48,18 @@ export function ChatHeader({ name, photoKey, subtitle, onBack, onOpenProfile }: 
             {subtitle}
           </Text>
         </View>
+      </Pressable>
+
+      {/* Here rather than one tap deeper on the profile. Reporting has to be
+          reachable from the conversation it is about, at the moment someone
+          decides they need it. */}
+      <Pressable
+        onPress={onSafety}
+        accessibilityRole="button"
+        accessibilityLabel={t('safety.title', { name })}
+        className="h-11 w-11 items-center justify-center"
+      >
+        <Icon name="flag" className="text-fg-muted" />
       </Pressable>
     </View>
   );

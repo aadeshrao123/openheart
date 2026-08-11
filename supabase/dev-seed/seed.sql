@@ -47,13 +47,30 @@ select
   ('deadbeef-0000-4000-8000-' || lpad(to_hex(n), 12, '0'))::uuid as id
 from generate_series(1, :count) as n;
 
-insert into auth.users (id, instance_id, aud, role, email)
+-- Every column below is nullable in the schema and not nullable to GoTrue,
+-- which scans each row into a struct with plain string fields. One null in one
+-- seed row failed the entire admin user listing with a 500 from an endpoint
+-- that never touched these accounts, which is what broke
+-- scripts/grant-moderator.mjs. A user created through the API gets empty
+-- strings here, so the seed matches that rather than leaving nulls.
+insert into auth.users (
+  id, instance_id, aud, role, email,
+  raw_app_meta_data, raw_user_meta_data, created_at, updated_at,
+  confirmation_token, recovery_token, email_change,
+  email_change_token_new, email_change_token_current,
+  phone_change, phone_change_token, reauthentication_token
+)
 select
   id,
   '00000000-0000-0000-0000-000000000000',
   'authenticated',
   'authenticated',
-  'deck' || n || '@dev.local'
+  'deck' || n || '@dev.local',
+  '{"provider": "email", "providers": ["email"]}'::jsonb,
+  '{}'::jsonb,
+  now(),
+  now(),
+  '', '', '', '', '', '', '', ''
 from seed_input;
 
 insert into profiles (

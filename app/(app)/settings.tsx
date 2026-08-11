@@ -7,6 +7,7 @@ import { useSignOut } from '@/hooks/use-auth';
 import { useLanguage } from '@/hooks/use-language';
 import { useDeleteAccount, useMyProfile } from '@/hooks/use-my-profile';
 import { useSession } from '@/hooks/use-session';
+import { useIsModerator } from '@/hooks/use-moderation';
 
 export default function SettingsScreen() {
   const { t } = useTranslation();
@@ -16,6 +17,7 @@ export default function SettingsScreen() {
   const language = useLanguage();
   const signOut = useSignOut();
   const deleteAccount = useDeleteAccount();
+  const isModerator = useIsModerator();
 
   // Two steps rather than Alert.alert. Deletion is irreversible, an Alert on web
   // is a browser dialog that is easy to dismiss by reflex, and this way the
@@ -35,8 +37,24 @@ export default function SettingsScreen() {
           <ListRow label={t('settings.email')} value={session?.user.email ?? ''} />
           <ListRow label={t('profile.display_name')} value={profile?.display_name ?? ''} />
           <ListRow label={t('home.edit_profile')} onPress={() => router.push('/edit-profile')} />
+          <ListRow label={t('safety.blocked_title')} onPress={() => router.push('/blocked')} />
         </Card>
       </View>
+
+      {isModerator ? (
+        <View className="gap-3">
+          <Text variant="label" tone="muted" className="px-4">
+            {t('moderation.title')}
+          </Text>
+
+          <Card elevation="flat" className="gap-0 px-0">
+            <ListRow
+              label={t('moderation.open_queue')}
+              onPress={() => router.push('/moderation')}
+            />
+          </Card>
+        </View>
+      ) : null}
 
       <View className="gap-3">
         <Text variant="label" tone="muted" className="px-4">

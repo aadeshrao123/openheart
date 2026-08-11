@@ -94,7 +94,7 @@
     "location_enable": "Use my location",
     "edit_profile": "Edit profile",
     "next_title": "What is coming",
-    "next_body": "Reporting and blocking are next. Photos cannot go live until moderation is switched on, so profiles show initials for now.",
+    "next_body": "Push notifications are next. Photos cannot go live until moderation is switched on, so profiles show initials for now.",
     "browse": "Browse people",
     "messages": "Messages"
   },
@@ -185,7 +185,25 @@
     "reason_harassment": "Harassment",
     "reason_fake": "Fake profile",
     "reason_underage": "Appears to be under 18",
-    "reason_other": "Something else"
+    "reason_other": "Something else",
+    "title": "Report or block {{name}}",
+    "menu_explainer": "They are never told about either. Blocking also ends the conversation.",
+    "report_title": "What is happening?",
+    "detail_label": "Anything else we should know",
+    "detail_placeholder": "Optional, but it helps a real person decide.",
+    "report_submit": "Send report",
+    "report_done_body": "A moderator reads every report. They will not be told who sent it.",
+    "report_rate_limited": "You have reported a lot of people just now. Try again shortly.",
+    "evidence_note_one": "The last message in this conversation is attached.",
+    "evidence_note_other": "The last {{count}} messages in this conversation are attached.",
+    "block_explainer": "They will not be told. The conversation ends and looks to them exactly like an unmatch.",
+    "block_action": "Block {{name}}",
+    "blocked_title": "Blocked people",
+    "blocked_body": "They cannot see you, message you, or appear in your deck. None of them know.",
+    "blocked_empty": "You have not blocked anyone.",
+    "blocked_unknown": "Deleted account",
+    "unblock": "Unblock",
+    "unblock_explainer": "Unblocking lets them appear in your deck again. It does not bring back a conversation that ended."
   },
   "settings": {
     "title": "Settings",
@@ -204,5 +222,34 @@
     "title": "Who you see",
     "body": "Only people inside these limits appear in your deck, and you only appear in theirs.",
     "apply": "Apply"
+  },
+  "moderation": {
+    "title": "Moderation",
+    "open_queue": "Open the report queue",
+    "not_a_moderator": "This queue is only for moderators.",
+    "filter_pending": "Pending",
+    "filter_all": "Everything",
+    "empty": "Nothing waiting. That is the good outcome.",
+    "filed_at": "Filed {{date}} at {{time}}",
+    "report_count_one": "{{count}} report against this account",
+    "report_count_other": "{{count}} reports against this account",
+    "already_suspended": "Already suspended",
+    "evidence_title_one": "{{count}} message submitted by the reporter",
+    "evidence_title_other": "{{count}} messages submitted by the reporter",
+    "evidence_line": "{{who}}: {{body}}",
+    "reporter": "Reporter",
+    "note_placeholder": "Why you decided this. Kept with the report.",
+    "action_suspend": "Suspend this account",
+    "action_reviewed": "Reviewed, no action",
+    "action_dismiss": "Dismiss",
+    "action_lift": "Lift the suspension",
+    "status_reviewed": "Reviewed, no action taken.",
+    "status_actioned": "Actioned.",
+    "status_dismissed": "Dismissed."
+  },
+  "suspended": {
+    "title": "Your account is suspended",
+    "body": "A moderator has suspended this account after a report. You cannot browse or message while it is suspended.",
+    "appeal": "If you think this is wrong, reply to any email we have sent you and a person will read it."
   }
 }

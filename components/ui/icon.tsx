@@ -22,6 +22,7 @@ const shapes = {
   send: ['M4 12 L18.5 12', 'M12.5 6 L18.5 12 L12.5 18'],
   chevron: ['M15 4.5 L8 12 L15 19.5'],
   close: ['M6 6 L18 18', 'M18 6 L6 18'],
+  flag: ['M6 21 L6 3.5', 'M6 4.5 L18.5 4.5 L15.5 9.5 L18.5 14.5 L6 14.5'],
 } as const;
 
 // A tick and a cross are symbols, not directions, so they must not mirror.

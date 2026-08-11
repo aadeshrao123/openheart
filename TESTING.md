@@ -89,6 +89,33 @@ tabs in the same window share one account and signing in again just replaces it.
 - Nothing else can read any of it. Sign in as Cleo, who is matched with both,
   and the conversation is not visible anywhere.
 
+**Safety.** The flag in the chat header, or the same action on any profile.
+
+- Report someone. The last twenty messages go with it, and the sheet says so.
+  Nothing else gives a moderator any access to a conversation.
+- Block someone. The conversation ends immediately. Sign in as them and it
+  reads exactly like an unmatch: no notice, no missing history, and the block
+  itself is invisible to them. They also cannot message you again, which is the
+  part that was broken until this phase.
+- Settings, then Blocked people, to see and undo it.
+
+**Moderation.** Needs the claim, which is deliberately not settable in the app:
+
+```bash
+node scripts/grant-moderator.mjs --email cleo@test.dev
+```
+
+Sign out and back in, because the claim is read from the JWT. Settings then
+shows a Moderation section that nobody else can see.
+
+- The queue shows the reason, the reported name, how many reports name that
+  account, the reporter's own words, and the messages they attached. It never
+  shows the reporter's name.
+- Suspend the account. Sign in as them: they get a screen saying they are
+  suspended and why, they cannot browse or message, and they cannot turn
+  themselves back on. They still cannot tell who reported them.
+- Switch the queue filter to Everything to find it again and lift it.
+
 **Profile and photos.** Home, then Edit profile or Photos.
 
 - Date of birth is visibly locked. It is set once at signup and only a trigger
@@ -117,9 +144,6 @@ configured yet. Cards show an initial instead.
 
 **Push notifications.** A new message only appears while the app is open. Push
 needs an Expo project and APNs and FCM credentials that do not exist yet.
-
-**Report and block.** Phase 6. Both exist in the database and neither is in the
-UI yet.
 
 **Sign in with Apple or Google.** Needs developer accounts that do not exist.
 Email is the only method, and adding the others is an entry in a list.

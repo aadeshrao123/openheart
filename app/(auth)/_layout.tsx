@@ -16,7 +16,11 @@ export default function AuthLayout() {
     return <Redirect href="/birthdate" />;
   }
 
-  if (gate === 'ready') {
+  // Every state except signed-out belongs inside the app, written this way
+  // round on purpose. Listing the states that leave was how a suspended
+  // account ended up stuck here: it matched none of them, fell through, and
+  // was shown the sign-in screen it had just used, with no explanation.
+  if (gate !== 'signed-out') {
     return <Redirect href="/home" />;
   }
 

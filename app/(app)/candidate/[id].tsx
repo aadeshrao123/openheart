@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { View } from 'react-native';
 import { Image } from 'expo-image';
 import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
@@ -6,6 +7,7 @@ import { Button, Card, Screen, Text } from '@/components/ui';
 import { formatDistance } from '@/lib/format';
 import { photoUrl } from '@/lib/photos';
 import { useDiscovery } from '@/hooks/use-discovery';
+import { SafetyActions } from '@/components/safety-actions';
 
 // Reads the candidate out of the deck's cache rather than fetching it. There is
 // no "get one profile by id" route that would be safe to add: profiles_select_
@@ -17,6 +19,7 @@ export default function CandidateScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data: deck } = useDiscovery();
+  const [safetyOpen, setSafetyOpen] = useState(false);
 
   const candidate = deck?.find((entry) => entry.id === id);
 
@@ -81,12 +84,26 @@ export default function CandidateScreen() {
 
       {/* No like or pass here on purpose. Deciding from a detail view and
           deciding from the deck are two paths to the same write, and the deck
-          owns the optimistic removal. Reporting and blocking belong here and
-          are Phase 6. */}
+          owns the optimistic removal. */}
+      <Button
+        variant="ghost"
+        size="sm"
+        label={t('safety.title', { name: candidate.display_name })}
+        onPress={() => setSafetyOpen(true)}
+      />
+
       <Button
         variant="secondary"
         label={t('common.back')}
         onPress={() => (router.canGoBack() ? router.back() : router.replace('/deck'))}
+      />
+
+      <SafetyActions
+        visible={safetyOpen}
+        name={candidate.display_name}
+        targetId={candidate.id}
+        onClose={() => setSafetyOpen(false)}
+        onBlocked={() => router.replace('/deck')}
       />
     </Screen>
   );
