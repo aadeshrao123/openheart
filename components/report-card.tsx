@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { TextInput, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { Button, Card, Text } from '@/components/ui';
+import { Button, Card, Rail, Text } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { formatDate, formatTime } from '@/lib/format';
 import { useLiftSuspension, useResolveReport, type Report } from '@/hooks/use-moderation';
@@ -67,9 +67,9 @@ export function ReportCard({ report }: ReportCardProps) {
       </View>
 
       {report.detail ? (
-        <View className="border-s-2 border-accent ps-4">
+        <Rail tone="accent" className="ps-4">
           <Text>{report.detail}</Text>
-        </View>
+        </Rail>
       ) : null}
 
       {evidence.length > 0 ? (

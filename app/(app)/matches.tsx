@@ -2,20 +2,47 @@ import { useEffect } from 'react';
 import { View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Button, Card, Screen, Text } from '@/components/ui';
+import { Button, Card, Screen, Skeleton, Text } from '@/components/ui';
+import { LoadFailed } from '@/components/load-failed';
 import { ThreadRow } from '@/components/thread-row';
 import { useThreads } from '@/hooks/use-threads';
 import { useSession } from '@/hooks/use-session';
 import { supabase } from '@/lib/supabase';
 
+// Matches the shape of ThreadRow: avatar, then a name line and a preview line.
+function ThreadListSkeleton() {
+  const { t } = useTranslation();
+
+  return (
+    <View
+      accessibilityRole="progressbar"
+      accessibilityLabel={t('common.loading')}
+      aria-busy
+      className="gap-1"
+    >
+      {[0, 1, 2, 3, 4].map((row) => (
+        <View key={row} className="flex-row items-center gap-4 px-2 py-3">
+          <Skeleton shape="avatar" />
+
+          <View className="flex-1 gap-2">
+            <Skeleton shape="line" className="w-1/3" />
+            <Skeleton shape="caption" className="w-2/3" />
+          </View>
+        </View>
+      ))}
+    </View>
+  );
+}
+
 export default function MatchesScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const { data: session } = useSession();
-  const { data: threads, isPending, refetch } = useThreads();
+  const { data: threads, isPending, isError, isFetching, refetch } = useThreads();
 
   // Reaching this screen proves the messages are on the device, which is what
-  // the second tick means.
+  // the second tick means. The RPC only touches rows whose delivered_at is
+  // still null, so the change event it produces cannot drive this round again.
   useEffect(() => {
     for (const thread of threads ?? []) {
       if (thread.unread_count > 0) {
@@ -47,15 +74,31 @@ export default function MatchesScreen() {
 
   if (isPending) {
     return (
-      <Screen className="justify-center">
-        <Text tone="muted" className="text-center">
-          {t('common.loading')}
-        </Text>
+      <Screen scroll className="gap-6 py-6">
+        <View className="gap-2">
+          <View className="h-px w-12 bg-brand" />
+          <Text variant="title">{t('matches.title')}</Text>
+        </View>
+
+        <ThreadListSkeleton />
       </Screen>
     );
   }
 
-  if (!threads || threads.length === 0) {
+  // Before the empty state, not after it. A failed read used to render "No
+  // matches yet", which is a confident lie about someone's conversations.
+  if (isError) {
+    return (
+      <LoadFailed
+        retrying={isFetching}
+        onRetry={() => {
+          void refetch();
+        }}
+      />
+    );
+  }
+
+  if (threads.length === 0) {
     return (
       <Screen className="justify-center gap-5">
         <Text variant="title">{t('matches.title')}</Text>
@@ -66,7 +109,14 @@ export default function MatchesScreen() {
   }
 
   return (
-    <Screen scroll className="gap-6 py-6">
+    <Screen
+      scroll
+      className="gap-6 py-6"
+      refreshing={isFetching}
+      onRefresh={() => {
+        void refetch();
+      }}
+    >
       <View className="gap-2">
         <View className="h-px w-12 bg-brand" />
         <Text variant="title">{t('matches.title')}</Text>
