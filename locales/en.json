@@ -120,7 +120,10 @@
     "photo_count_other": "{{count}} photos",
     "name_age": "{{name}}, {{age}}",
     "widen_search": "Adjust your distance and age range",
-    "distance_very_close": "Very close by"
+    "distance_very_close": "Very close by",
+    "open_profile": "Open {{name}}'s profile",
+    "filters": "Filters",
+    "rate_limited": "You have been swiping a lot. Take a short break and come back."
   },
   "matches": {
     "title": "Matches",
@@ -162,5 +165,10 @@
     "delete_retains_messages": "Messages you already sent stay in the other person's conversation, because they are their data too. Your name is removed from them.",
     "delete_confirm_action": "Yes, delete my account",
     "donate": "Support OpenHeart"
+  },
+  "filters": {
+    "title": "Who you see",
+    "body": "Only people inside these limits appear in your deck, and you only appear in theirs.",
+    "apply": "Apply"
   }
 }

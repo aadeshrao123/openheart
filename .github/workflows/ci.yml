@@ -21,6 +21,8 @@ jobs:
           report() {
             header=$1
             pattern=$2
+            # Any further arguments narrow the search to those paths.
+            shift 2
             grep_status=0
 
             # Exemptions are all generated files, rewritten wholesale by their
@@ -32,7 +34,8 @@ jobs:
               -- ':!supabase/config.toml' \
                  ':!locales/*.json' \
                  ':!package-lock.json' \
-                 ':!nativewind-env.d.ts') || grep_status=$?
+                 ':!nativewind-env.d.ts' \
+                 "$@") || grep_status=$?
 
             # git grep exits 1 for "nothing matched" and 2 or more for a real
             # failure, which must not be reported as a clean run.
@@ -60,6 +63,25 @@ jobs:
           fi
 
           if ! report 'Lines over 100 characters:' '.\{101,\}'; then
+            status=1
+          fi
+
+          # RTL. localization.md bans the physical direction utilities, because
+          # layout written in left/right terms cannot flip for Arabic or Hebrew
+          # and that cannot be retrofitted without a full visual pass. The
+          # logical equivalents are ps- pe- ms- me- text-start text-end.
+          #
+          # Scoped to the source that renders, so the docs describing the rule
+          # and this check's own definition do not trip it. A physical direction
+          # in an animation transform is legitimate and is written as a style
+          # value rather than a class, so it is not matched either.
+          rtl='[" '"'"']\(pl\|pr\|ml\|mr\)-[0-9]'
+          rtl="$rtl\|text-\(left\|right\)"
+          rtl="$rtl\|flex-row-reverse"
+          rtl="$rtl\|rounded-\(l\|r\)-[a-z0-9]"
+          rtl="$rtl\|[\" ']\(left\|right\)-[0-9]"
+
+          if ! report 'Physical direction utilities:' "$rtl" 'app' 'components'; then
             status=1
           fi
 

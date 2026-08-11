@@ -1,4 +1,4 @@
-import { View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { Image } from 'expo-image';
 import { useTranslation } from 'react-i18next';
 import { Text } from '@/components/ui';
@@ -9,15 +9,26 @@ import type { Candidate } from '@/hooks/use-discovery';
 
 export type ProfileCardProps = {
   candidate: Candidate;
+  onPress?: () => void;
   className?: string;
 };
 
-export function ProfileCard({ candidate, className }: ProfileCardProps) {
+export function ProfileCard({ candidate, onPress, className }: ProfileCardProps) {
   const { t } = useTranslation();
   const photoKey = candidate.photoKeys[0];
 
+  // Pressable only when it leads somewhere. The cards stacked behind the top one
+  // are passed no handler, so they never become a tap target a screen reader
+  // would offer.
+  const Container = onPress ? Pressable : View;
+
   return (
-    <View
+    <Container
+      accessibilityRole={onPress ? 'button' : undefined}
+      accessibilityLabel={
+        onPress ? t('deck.open_profile', { name: candidate.display_name }) : undefined
+      }
+      onPress={onPress}
       className={cn(
         'flex-1 overflow-hidden rounded-card border border-border bg-surface-raised',
         className,
@@ -69,6 +80,6 @@ export function ProfileCard({ candidate, className }: ProfileCardProps) {
           </Text>
         ) : null}
       </View>
-    </View>
+    </Container>
   );
 }

@@ -6,6 +6,7 @@ import { Button, Screen, Text } from '@/components/ui';
 import { MatchCelebration } from '@/components/match-celebration';
 import { SwipeDeck, type SwipeDeckHandle } from '@/components/swipe-deck';
 import {
+  RATE_LIMITED,
   REFILL_THRESHOLD,
   useDiscovery,
   useSwipe,
@@ -21,6 +22,7 @@ export default function DeckScreen() {
 
   const deckRef = useRef<SwipeDeckHandle>(null);
   const [matchedName, setMatchedName] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
 
   const deck = data ?? [];
 
@@ -29,9 +31,19 @@ export default function DeckScreen() {
       { targetId: candidate.id, direction },
       {
         onSuccess: (result) => {
+          setNotice(null);
+
           if (result.matchedName !== null) {
             setMatchedName(result.matchedName);
           }
+        },
+
+        onError: (error) => {
+          setNotice(
+            error instanceof Error && error.message === RATE_LIMITED
+              ? t('deck.rate_limited')
+              : t('common.error_generic'),
+          );
         },
 
         // Refilled here rather than from an effect watching the deck length.
@@ -72,10 +84,7 @@ export default function DeckScreen() {
           <Text tone="muted">{t('deck.empty_body')}</Text>
         </View>
 
-        <Button
-          label={t('deck.widen_search')}
-          onPress={() => router.push('/edit-profile')}
-        />
+        <Button label={t('deck.widen_search')} onPress={() => router.push('/filters')} />
         <Button variant="ghost" label={t('common.retry')} onPress={() => void refetch()} />
       </Screen>
     );
@@ -89,7 +98,29 @@ export default function DeckScreen() {
           which is iOS only. Without it a screen reader on web reads straight
           past the celebration into the next profile. */}
       <View className="flex-1 gap-4" aria-hidden={celebrating}>
-        <SwipeDeck ref={deckRef} candidates={deck} onSwipe={handleSwipe} />
+        <View className="flex-row items-center justify-end">
+          <Button
+            variant="ghost"
+            size="sm"
+            label={t('deck.filters')}
+            onPress={() => router.push('/filters')}
+          />
+        </View>
+
+        <SwipeDeck
+          ref={deckRef}
+          candidates={deck}
+          onSwipe={handleSwipe}
+          onOpen={(candidate) =>
+            router.push({ pathname: '/candidate/[id]', params: { id: candidate.id } })
+          }
+        />
+
+        {notice ? (
+          <Text variant="caption" tone="danger" className="text-center">
+            {notice}
+          </Text>
+        ) : null}
 
         {/* The only route through this screen that works with a screen reader,
             so they carry real labels rather than being decoration under the

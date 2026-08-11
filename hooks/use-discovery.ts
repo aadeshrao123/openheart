@@ -9,6 +9,12 @@ export type Candidate = Database['public']['Functions']['discover_profiles']['Re
   photoKeys: string[];
 };
 
+// Raised by the swipes_rate_limit trigger. configuration_limit_exceeded, chosen
+// so it cannot be confused with 42501.
+const RATE_LIMIT_SQLSTATE = '53400';
+
+export const RATE_LIMITED = 'rate_limited';
+
 export const discoveryKey = ['discovery'] as const;
 export const matchesKey = ['matches'] as const;
 
@@ -104,6 +110,12 @@ export function useSwipe() {
       });
 
       if (error) {
+        // 53400 is the swipe rate limit trigger, not a permission failure. The
+        // screen says something true about it instead of a generic error.
+        if (error.code === RATE_LIMIT_SQLSTATE) {
+          throw new Error(RATE_LIMITED);
+        }
+
         throw error;
       }
 

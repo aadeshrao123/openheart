@@ -32,10 +32,11 @@ export type SwipeDeckHandle = {
 export type SwipeDeckProps = {
   candidates: Candidate[];
   onSwipe: (candidate: Candidate, direction: SwipeDirection) => void;
+  onOpen: (candidate: Candidate) => void;
 };
 
 export const SwipeDeck = forwardRef<SwipeDeckHandle, SwipeDeckProps>(function SwipeDeck(
-  { candidates, onSwipe },
+  { candidates, onSwipe, onOpen },
   ref,
 ) {
   const { t } = useTranslation();
@@ -131,10 +132,17 @@ export const SwipeDeck = forwardRef<SwipeDeckHandle, SwipeDeckProps>(function Sw
           index === 0 ? (
             <GestureDetector key={candidate.id} gesture={pan}>
               <Animated.View style={[{ position: 'absolute', inset: 0 }, cardStyle]}>
-                <ProfileCard candidate={candidate} />
+                <ProfileCard candidate={candidate} onPress={() => onOpen(candidate)} />
 
-                {/* Hidden from assistive technology: these are a preview of what
-                    releasing would do, and the buttons already say it.
+                {/* left and right rather than start and end, and deliberately
+                    so. These label a physical drag direction, and transforms
+                    are not mirrored by I18nManager, so the card still leaves to
+                    the right under RTL. Flipping these would put "Like" on the
+                    side that means pass. Everything that is reading order
+                    rather than drag direction uses the logical properties.
+
+                    Hidden from assistive technology: they preview what
+                    releasing would do and the buttons already say it.
                     aria-hidden as well as the native props, because
                     react-native-web reads only the aria-* form and would
                     otherwise announce "Pass Like" over every card. */}
