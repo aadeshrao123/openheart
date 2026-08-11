@@ -198,20 +198,31 @@ functions needs Docker and the local stack but not a Deno install. The
 
 ## What has actually been run
 
-Both functions have been served locally and driven with a real user JWT. R2
-credentials in `supabase/functions/.env` were deliberately fake for this:
-presigning is pure local SigV4, so everything except the transfer itself
-executes.
+All three functions have been served locally, driven with a real user JWT, and
+run against a real private R2 bucket (`openheart-photos-dev`, see
+`infra/README.md`).
 
-Verified: `unauthorized`, `method_not_allowed`, `invalid_position` for both an
-out-of-range value and a non-integer, a 201 carrying a correctly signed URL,
-`position_taken` on a duplicate slot, `photo_limit_reached` on the seventh photo,
-`invalid_photo_id`, `photo_not_found`, and `moderation_unavailable` with the row
-left pending. Nothing reached `approved`, which is the point.
+Verified end to end:
 
-Not verified, and not verifiable without real credentials and a provider: the
-PUT to R2, `object_not_uploaded`, the format sniff against a real object, and
-every path through a moderation verdict.
+- `unauthorized`, `method_not_allowed`, `invalid_position` for both an
+  out-of-range value and a non-integer, `invalid_photo_id`, `photo_not_found`
+- a 201 whose presigned URL accepts a real `PUT`, and the object reads back out
+  of the bucket byte-identical
+- `position_taken` on a duplicate slot, `photo_limit_reached` on the seventh
+- `object_not_uploaded` for a reserved slot whose object never arrived
+- the format sniff, both ways: a real JPEG passes it and reaches the scanner, a
+  non-image is `rejected` and its key queued in `deleted_media`
+- `moderation_unavailable` with the row left pending, because no provider exists
+- `purge-deleted-media` rejects a wrong token and a missing one, deletes the
+  rejected object out of R2, stamps `purged_at`, leaves a legitimately pending
+  object alone, and is idempotent on a second run
+- the 0011 delete trigger: dropping photo rows queued their objects, including
+  one whose object was never uploaded, and the purge counted that 404 as done
+
+Nothing ever reached `approved`, which is the point.
+
+Still unverified: every path through an actual moderation verdict, since there
+is no provider to produce one.
 
 Three defects surfaced on that first run:
 
