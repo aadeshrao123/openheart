@@ -38,7 +38,7 @@ and in `docs/`, which are tracked.
 | Geo | PostGIS | `geography(point,4326)`, GiST index |
 | Photos | Cloudflare R2 + Cloudflare Images | R2 has zero egress fees. This is the cost decision. |
 | Push | Expo Notifications | Wraps APNs + FCM |
-| Chat | Supabase Realtime | Postgres table + subscription |
+| Chat | Supabase Realtime | Postgres Changes, so RLS is the authorization |
 | Auth | Email magic link, Sign in with Apple, Google | No SMS - see Cost rules |
 | Web host | Cloudflare Pages | Expo web static export |
 | Localization | expo-localization + i18next + react-i18next | device locale, string resolution |
@@ -96,7 +96,8 @@ profiles   id(->auth.users) display_name birthdate bio gender seeking
 photos     id profile_id r2_key position is_nsfw_checked
 swipes     swiper_id target_id direction created_at   PK(swiper_id,target_id)
 matches    id user_a user_b created_at unmatched_by
-messages   id match_id sender_id body created_at read_at
+messages   id match_id sender_id body created_at delivered_at read_at deleted_at
+message_reactions message_id user_id reaction     PK(message_id,user_id)
 reports    id reporter_id target_id reason status created_at
 blocks     blocker_id blocked_id                      PK(blocker_id,blocked_id)
 ```
@@ -266,6 +267,21 @@ later" means a full backfill and key rotation to fix, which is why it cannot be
 deferred.
 
 Full rules in `.claude/rules/client-compatibility.md`.
+
+## Chat is never deleted, only blanked
+
+Supabase documents that RLS is **not** applied to `DELETE` events in Postgres
+Changes, because Postgres cannot check access to a row that no longer exists, so
+a delete reaches every subscriber of the table. Everything in chat is therefore
+an insert or an update: unsending blanks the body and keeps the row, and
+clearing a reaction sets it to null rather than removing it.
+
+Receipts and unsend are RPCs and `messages` carries no update grant. A column
+grant cannot express "only while unread" or "never backwards".
+
+A channel must be given a JWT before it subscribes. supabase-js pushes one on
+auth state change, but a subscription that beats it is authorized as anonymous,
+matches no rows, and then silently receives nothing rather than failing.
 
 ## Component rules
 

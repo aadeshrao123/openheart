@@ -23,24 +23,36 @@ Then press `w` for the browser, `a` for an Android emulator, or scan the QR code
 with Expo Go on a phone. iOS needs a Mac for the simulator; Expo Go on an iPhone
 works from Windows.
 
-The fixture prints what it made. It creates `dev@test.dev`, gives it a profile
-in central London, seeds 25 candidates around the same point, and makes two of
-them like you already, so a match can be seen without a second device.
+The fixture prints what it made. It creates four real accounts:
+
+| Account | For |
+|---|---|
+| `dev@test.dev` | the deck. 25 candidates nearby, two of whom already like it |
+| `ava@test.dev` | chat |
+| `ben@test.dev` | chat. Has already messaged Ava |
+| `cleo@test.dev` | chat. Matched with both, has said nothing |
+
+All three chat accounts are matched with each other, so there is a conversation
+to open the moment you sign in.
 
 ## Sign in
 
 The app never uses a password. It emails a six digit code, and locally that mail
 is caught rather than sent.
 
-1. Enter `dev@test.dev` and press continue.
+1. Enter one of the addresses above and press continue.
 2. Get the code:
 
 ```bash
-node scripts/dev-fixture.mjs --code
+node scripts/dev-fixture.mjs --code --email ava@test.dev
 ```
 
 You can also read it by eye at http://127.0.0.1:54324, which is the local mail
 catcher.
+
+To be both sides of a conversation at once, sign in as Ava in a normal window
+and as Ben in a private one. A session belongs to the browser profile, so two
+tabs in the same window share one account and signing in again just replaces it.
 
 ## What to try
 
@@ -58,6 +70,24 @@ catcher.
 - Filters, top right. Narrow the distance to 5 and apply: the deck is discarded
   and rebuilt, and most candidates disappear. Widen it again to get them back.
 - Keep swiping to the end to see the empty state.
+
+**Chat.** Home, then Messages. Best with two windows, as above.
+
+- Ben's message is already waiting for Ava, with an unread count on the row.
+  Opening the thread marks it read, and Ben's window shows that happen live.
+- Send one back. The tick beside it goes from one to two the moment the other
+  window has it, and both ticks brighten once it has been read. Hovering is not
+  needed: each state is also announced to a screen reader.
+- Tap or hold any message to react. Six reactions, one per person per message,
+  and tapping the same one again clears it.
+- Tap one of your own messages and remove it, **before the other side reads
+  it**. After that the option refuses, because a message someone has already
+  read is part of their conversation and not yours to erase.
+- Tap the name at the top to open their profile, and from there unmatch or
+  remove the conversation. Removing is per person: check the other window and
+  the thread is still there.
+- Nothing else can read any of it. Sign in as Cleo, who is matched with both,
+  and the conversation is not visible anywhere.
 
 **Profile and photos.** Home, then Edit profile or Photos.
 
@@ -85,8 +115,8 @@ photo, which is the correct direction to fail.
 **Photos on other people's cards.** Same reason, plus no delivery origin is
 configured yet. Cards show an initial instead.
 
-**Chat.** Phase 5. The match screen has no message button, because a button that
-goes nowhere is worse than one that is absent.
+**Push notifications.** A new message only appears while the app is open. Push
+needs an Expo project and APNs and FCM credentials that do not exist yet.
 
 **Report and block.** Phase 6. Both exist in the database and neither is in the
 UI yet.
@@ -102,17 +132,16 @@ Run the fixture again. It clears what it made and starts over.
 node scripts/dev-fixture.mjs
 ```
 
-Before running the tests, clear the seed. `discovery.test.sql` asserts an exact
-candidate count and the seeded profiles break it, which looks like a failing
-policy and is not.
+The tests need an empty database. They assert exact row counts and use fixed
+email addresses, so a loaded fixture makes several of them fail in ways that
+look like a broken policy and are not.
 
 ```bash
-psql postgresql://postgres:postgres@127.0.0.1:54322/postgres -c \
-  "delete from profiles where id::text like 'deadbeef-%';
-   delete from auth.users where id::text like 'deadbeef-%';"
-
-supabase test db --local
+supabase db reset --local && supabase test db --local
 ```
+
+Then `supabase stop && supabase start` before seeding again, for the reason in
+the next section.
 
 ## If sign-in email arrives as a link instead of a code
 

@@ -43,10 +43,18 @@
     --like: 62 122 88;
     --pass: 156 147 138;
 
+    /* Read receipts sit on a brand bubble, so this is picked for contrast
+       against --brand rather than against --bg, and it inverts between the
+       themes for that reason: mint on deep claret here, forest on light pink
+       below. --success is the wrong green in both. */
+    --receipt-seen: 168 226 190;
+
     --shadow-ambient: 28 25 23;
 
     --radius-card: 22px;
     --radius-control: 13px;
+    --radius-bubble: 20px;
+    --radius-tail: 7px;
   }
 
   .dark:root {
@@ -74,6 +82,8 @@
 
     --like: 116 176 138;
     --pass: 120 112 105;
+
+    --receipt-seen: 12 66 40;
 
     --shadow-ambient: 0 0 0;
   }

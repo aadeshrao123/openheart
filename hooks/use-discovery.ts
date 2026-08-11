@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useSession } from '@/hooks/use-session';
+import { RATE_LIMITED, RATE_LIMIT_SQLSTATE } from '@/lib/db-errors';
 import type { Database } from '@/lib/database.types';
 
 export type SwipeDirection = Database['public']['Enums']['swipe_direction'];
@@ -9,11 +10,7 @@ export type Candidate = Database['public']['Functions']['discover_profiles']['Re
   photoKeys: string[];
 };
 
-// Raised by the swipes_rate_limit trigger. configuration_limit_exceeded, chosen
-// so it cannot be confused with 42501.
-const RATE_LIMIT_SQLSTATE = '53400';
-
-export const RATE_LIMITED = 'rate_limited';
+export { RATE_LIMITED };
 
 export const discoveryKey = ['discovery'] as const;
 export const matchesKey = ['matches'] as const;

@@ -1,4 +1,5 @@
 import { getLocales } from 'expo-localization';
+import { calendarDayOffset } from './calendar';
 
 // Intl is built into Hermes and every browser, so formatting needs no library.
 // Never hand-roll a date or number format: separators, ordering and unit names
@@ -61,4 +62,24 @@ export function formatRelativeTime(date: Date, locale = currentLocale()): string
 
 export function formatDate(date: Date, locale = currentLocale()): string {
   return new Intl.DateTimeFormat(locale, { dateStyle: 'medium' }).format(date);
+}
+
+export function formatTime(date: Date, locale = currentLocale()): string {
+  return new Intl.DateTimeFormat(locale, { timeStyle: 'short' }).format(date);
+}
+
+// numeric: 'auto' is what produces "yesterday" rather than "1 day ago", in
+// every language that has a word for it.
+export function formatDayLabel(date: Date, now = new Date(), locale = currentLocale()): string {
+  const offset = calendarDayOffset(date, now);
+
+  if (offset > -2) {
+    return new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(offset, 'day');
+  }
+
+  if (offset > -7) {
+    return new Intl.DateTimeFormat(locale, { weekday: 'long' }).format(date);
+  }
+
+  return formatDate(date, locale);
 }

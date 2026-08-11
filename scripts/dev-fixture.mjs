@@ -5,9 +5,10 @@
 // which no client role can do and the service role is tested as unable to do.
 //
 //   node scripts/dev-fixture.mjs
-//   node scripts/dev-fixture.mjs --email me@test.dev --count 25
+//   node scripts/dev-fixture.mjs --count 25
+//   node scripts/dev-fixture.mjs --code --email ava@test.dev
 //
-// It is idempotent: run it again and you get a clean deck and a fresh code.
+// It is idempotent: run it again and you get a clean deck and fresh accounts.
 
 import { execFileSync } from 'node:child_process';
 import { argv, exit } from 'node:process';
@@ -17,9 +18,39 @@ const API = 'http://127.0.0.1:54321';
 const MAILPIT = 'http://127.0.0.1:54324';
 
 // Central London. The seed scatters candidates around whatever this is, and the
-// fixture account is placed at exactly the same point so they are all in range.
+// fixture accounts are placed at exactly the same point so they are all in range.
 const LAT = 51.5074;
 const LON = -0.1278;
+
+const SOLO_EMAIL = 'dev@test.dev';
+
+// Three, not two, so a conversation can be checked against a third account that
+// is matched but silent.
+const PEOPLE = [
+  {
+    email: 'ava@test.dev',
+    display_name: 'Ava',
+    birthdate: '1996-03-14',
+    gender: 'woman',
+    bio: 'Test account. Ava is matched with Ben and with Cleo.',
+  },
+  {
+    email: 'ben@test.dev',
+    display_name: 'Ben',
+    birthdate: '1993-11-02',
+    gender: 'man',
+    bio: 'Test account. Ben has already sent Ava a message.',
+  },
+  {
+    email: 'cleo@test.dev',
+    display_name: 'Cleo',
+    birthdate: '1998-07-21',
+    gender: 'nonbinary',
+    bio: 'Test account. Cleo is matched with both of the others.',
+  },
+];
+
+const OPENING_MESSAGE = 'Hey, your bio made me laugh. What are you up to this weekend?';
 
 function arg(name, fallback) {
   const index = argv.indexOf(`--${name}`);
@@ -27,7 +58,7 @@ function arg(name, fallback) {
   return index === -1 ? fallback : argv[index + 1];
 }
 
-const email = arg('email', 'dev@test.dev');
+const email = arg('email', SOLO_EMAIL);
 const count = Number(arg('count', '25'));
 
 function psql(sql) {
@@ -68,15 +99,60 @@ function readAnonKey() {
   return JSON.parse(status.slice(status.indexOf('{'))).ANON_KEY;
 }
 
+async function signUp(address) {
+  await fetch(`${MAILPIT}/api/v1/messages`, { method: 'DELETE' });
+
+  await api('/auth/v1/otp', {
+    method: 'POST',
+    body: JSON.stringify({ email: address, create_user: true }),
+  });
+
+  const code = await readLatestCode();
+
+  return api('/auth/v1/verify', {
+    method: 'POST',
+    body: JSON.stringify({ email: address, token: code, type: 'email' }),
+  });
+}
+
+async function createProfile(session, fields) {
+  await api('/rest/v1/profiles', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${session.access_token}` },
+    body: JSON.stringify({
+      id: session.user.id,
+      seeking: ['woman', 'man', 'nonbinary'],
+      location: `SRID=4326;POINT(${LON} ${LAT})`,
+      max_distance_km: 50,
+      age_min: 18,
+      age_max: 99,
+      ...fields,
+    }),
+  });
+}
+
+// Through the swipe trigger rather than a direct insert, so the fixture
+// exercises the same path a real match takes.
+function matchThem(first, second) {
+  psql(`insert into swipes (swiper_id, target_id, direction)
+        values ('${first}', '${second}', 'like'), ('${second}', '${first}', 'like')
+        on conflict do nothing;`);
+}
+
 async function main() {
   refuseIfNotLocal();
   anonKey = readAnonKey();
 
+  const addresses = [SOLO_EMAIL, ...PEOPLE.map((person) => person.email)];
+
   console.log('Clearing the previous fixture...');
   psql(`delete from profiles where id::text like 'deadbeef-%';
         delete from auth.users where id::text like 'deadbeef-%';
-        delete from profiles where id in (select id from auth.users where email = '${email}');
-        delete from auth.users where email = '${email}';`);
+        delete from profiles where id in (
+          select id from auth.users where email in (${addresses.map((a) => `'${a}'`).join(', ')})
+        );
+        delete from auth.users
+         where email in (${addresses.map((a) => `'${a}'`).join(', ')});`);
 
   console.log(`Seeding ${count} candidates around ${LAT}, ${LON}...`);
   execFileSync(
@@ -86,35 +162,14 @@ async function main() {
     { encoding: 'utf8' },
   );
 
-  console.log(`Creating ${email} with a profile at the same spot...`);
-  await api('/auth/v1/otp', {
-    method: 'POST',
-    body: JSON.stringify({ email, create_user: true }),
-  });
+  console.log(`Creating ${SOLO_EMAIL} for the deck...`);
+  const solo = await signUp(SOLO_EMAIL);
 
-  const code = await readLatestCode();
-  const session = await api('/auth/v1/verify', {
-    method: 'POST',
-    body: JSON.stringify({ email, token: code, type: 'email' }),
-  });
-
-  const userId = session.user.id;
-
-  await api('/rest/v1/profiles', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${session.access_token}` },
-    body: JSON.stringify({
-      id: userId,
-      display_name: 'Dev Tester',
-      birthdate: '1994-05-05',
-      bio: 'The fixture account. Swipe right on the first two to see a match.',
-      gender: 'woman',
-      seeking: ['woman', 'man', 'nonbinary'],
-      location: `SRID=4326;POINT(${LON} ${LAT})`,
-      max_distance_km: 50,
-      age_min: 18,
-      age_max: 99,
-    }),
+  await createProfile(solo, {
+    display_name: 'Dev Tester',
+    birthdate: '1994-05-05',
+    gender: 'woman',
+    bio: 'The fixture account. Swipe right on the first two to see a match.',
   });
 
   // Two candidates already like the fixture account, so a right swipe on either
@@ -122,8 +177,37 @@ async function main() {
   const likers = ['deadbeef-0000-4000-8000-000000000001', 'deadbeef-0000-4000-8000-000000000002'];
 
   psql(`insert into swipes (swiper_id, target_id, direction)
-        values ${likers.map((id) => `('${id}', '${userId}', 'like')`).join(', ')}
+        values ${likers.map((id) => `('${id}', '${solo.user.id}', 'like')`).join(', ')}
         on conflict do nothing;`);
+
+  console.log('Creating the three chat accounts...');
+  const people = [];
+
+  for (const person of PEOPLE) {
+    const session = await signUp(person.email);
+    const { email: address, ...fields } = person;
+
+    await createProfile(session, fields);
+    people.push({ ...person, id: session.user.id });
+  }
+
+  const ids = people.map((person) => `'${person.id}'`).join(', ');
+
+  psql(`update profiles set photo_verified = true where id in (${ids});`);
+
+  const [ava, ben, cleo] = people;
+
+  matchThem(ava.id, ben.id);
+  matchThem(ava.id, cleo.id);
+  matchThem(ben.id, cleo.id);
+
+  // One unread inbound message, so the receipt ticks and the reaction sheet
+  // both have something to act on the moment Ava signs in.
+  psql(`insert into messages (match_id, sender_id, body)
+        select m.id, '${ben.id}', '${OPENING_MESSAGE}'
+          from matches m
+         where m.user_a = least('${ava.id}'::uuid, '${ben.id}'::uuid)
+           and m.user_b = greatest('${ava.id}'::uuid, '${ben.id}'::uuid);`);
 
   const candidates = psql(
     `select count(*) from profiles where id::text like 'deadbeef-%' and photo_verified;`,
@@ -132,13 +216,17 @@ async function main() {
   console.log('');
   console.log('Ready.');
   console.log(`  candidates in the deck : ${candidates}`);
-  console.log(`  already like you       : Test Profile 1, Test Profile 2`);
+  console.log('  deck account           : dev@test.dev (Test Profile 1 and 2 already like it)');
+  console.log('  chat accounts          : ava@test.dev, ben@test.dev, cleo@test.dev');
+  console.log('  all three are matched with each other; Ben has messaged Ava');
   console.log('');
   console.log('  1. npx expo start, then press w');
-  console.log(`  2. Sign in as ${email}`);
-  console.log('  3. Get the code with: node scripts/dev-fixture.mjs --code');
+  console.log('  2. Open a second browser window in private mode for the other account');
+  console.log('  3. Sign in as ava@test.dev in one and ben@test.dev in the other');
+  console.log('  4. Get a code with: node scripts/dev-fixture.mjs --code --email ava@test.dev');
   console.log('');
-  console.log('Clear it again with the same command, or see supabase/dev-seed/README.md.');
+  console.log('Two windows, because a session is per browser profile. Signing in as the');
+  console.log('second account in the same window signs the first one out.');
 }
 
 async function readLatestCode() {

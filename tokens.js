@@ -28,6 +28,8 @@ const fontSize = {
 const borderRadius = {
   card: 'var(--radius-card)',
   control: 'var(--radius-control)',
+  bubble: 'var(--radius-bubble)',
+  tail: 'var(--radius-tail)',
 };
 
 module.exports = { fontFamily, fontSize, borderRadius };

@@ -50,6 +50,7 @@ module.exports = {
         warning: token('--warning'),
         like: token('--like'),
         pass: token('--pass'),
+        'receipt-seen': token('--receipt-seen'),
         shadow: token('--shadow-ambient'),
       },
 
@@ -71,6 +72,9 @@ module.exports = {
       maxWidth: {
         content: '560px',
         deck: '460px',
+        // A bubble never reaches the far edge, so the two sides of a
+        // conversation stay visually distinct without needing a tail.
+        bubble: '78%',
       },
     },
   },

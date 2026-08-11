@@ -2,6 +2,7 @@ export { Avatar, type AvatarProps } from './avatar';
 export { Button, type ButtonProps } from './button';
 export { Card, type CardProps } from './card';
 export { Chip, type ChipProps } from './chip';
+export { Icon, type IconProps } from './icon';
 export { Input, type InputProps } from './input';
 export { ListRow, type ListRowProps } from './list-row';
 export { Screen, type ScreenProps } from './screen';

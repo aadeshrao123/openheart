@@ -24,8 +24,22 @@ describe('cn', () => {
   // Regression: the custom radii belonged to no group, so they never conflicted
   // and which one applied depended on stylesheet order rather than call order.
   it('lets a later radius replace an earlier one', () => {
-    expect(cn('rounded-card', 'rounded-control')).toBe('rounded-control');
-    expect(cn('rounded-control', 'rounded-card')).toBe('rounded-card');
+    const radii = Object.keys(tokens.borderRadius);
+
+    for (const earlier of radii) {
+      for (const later of radii) {
+        if (earlier !== later) {
+          expect(cn(`rounded-${earlier}`, `rounded-${later}`)).toBe(`rounded-${later}`);
+        }
+      }
+    }
+  });
+
+  // A message bubble rounds every corner and then tightens the one nearest its
+  // sender. The two belong to different groups and must both survive.
+  it('keeps a corner radius alongside an all-corner one', () => {
+    expect(cn('rounded-bubble', 'rounded-ee-tail')).toContain('rounded-bubble');
+    expect(cn('rounded-bubble', 'rounded-ee-tail')).toContain('rounded-ee-tail');
   });
 
   it('still lets a later class of the same kind win', () => {
