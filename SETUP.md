@@ -1,81 +1,80 @@
 # Setup
 
-Versions are deliberately not pinned in this repo's docs. `expo install`
-resolves the versions compatible with the current SDK - always let it decide
-rather than copying numbers from a file that has gone stale.
+Versions are deliberately not pinned in this document. `package.json` is the
+one place that records them, and `expo install` resolves anything new against
+the current SDK - always let it decide rather than copying numbers out of a
+file that has gone stale.
 
-## 1. Create the app shell
+## Requirements
 
-Run this in the repo root. It generates `package.json`, `app.json`,
-`tsconfig.json`, `babel.config.js`, `metro.config.js` and the `app/` directory
-with correct, current versions.
+- Node, in the range `engines.node` in `package.json` declares
+- Docker, for the local Supabase stack
+- The Supabase CLI
+
+## 1. Install dependencies
+
+The app shell already exists, so there is no `create-expo-app` step. Installing
+from the lockfile is the whole of it:
 
 ```bash
-npx create-expo-app@latest . --template default
+npm ci
 ```
 
-## 2. Install dependencies
+Use `npx expo install <package>` rather than `npm install` when adding anything
+new. It resolves the version that matches the Expo SDK, which hand-picking
+does not, and the mismatch usually surfaces at runtime on one platform only.
 
-```bash
-npx expo install nativewind tailwindcss \
-  react-native-reanimated \
-  react-native-safe-area-context \
-  react-native-screens \
-  expo-image
-
-npx expo install @supabase/supabase-js \
-  @react-native-async-storage/async-storage \
-  react-native-url-polyfill
-
-npx expo install @tanstack/react-query zustand
-
-npx expo install expo-localization i18next react-i18next
-
-npx expo install expo-application
-
-npm install clsx tailwind-merge
-npm install -D prettier eslint
-```
-
-Add the `expo-localization` config plugin to `app.json` so the native projects
-pick up locale handling:
-
-```json
-{ "expo": { "plugins": ["expo-localization"] } }
-```
-
-Then wire NativeWind following the current official setup guide (it touches
-`babel.config.js`, `metro.config.js` and `global.css`) - the steps change
-between majors, so read the guide rather than trusting a snippet.
-
-## 3. Configure
+## 2. Configure
 
 ```bash
 cp .env.example .env
 ```
 
-Fill in the Supabase URL/anon key and the Cloudflare image base URL.
+Fill in the Supabase URL and anon key from step 3, plus the Cloudflare image
+base URL. The app throws on startup if the first two are missing, which is
+deliberate: a half-configured client that silently fails at the first query is
+worse than one that refuses to boot.
 
-## 4. Database
+## 3. Database
 
 ```bash
 supabase start
-supabase db push
+supabase db reset
 supabase gen types typescript --local > lib/database.types.ts
-supabase test db
+supabase test db --local
 ```
 
-`supabase test db` must pass before you push anything. It is the only thing
-proving the RLS policies actually deny what they claim to deny.
+`supabase status` prints the URL and anon key for `.env`.
 
-## 5. Run
+`lib/database.types.ts` is generated and gitignored, so this step is not
+optional: `npx tsc --noEmit` cannot resolve a single query without it.
+
+`supabase test db` must pass before you push. It is the only thing proving the
+RLS policies actually deny what they claim to deny.
+
+If the discovery tests fail with a wildly wrong row count, the benchmark seed
+is probably still loaded from a previous session. `supabase db reset` clears
+it; see `supabase/benchmark/README.md`.
+
+## 4. Run
 
 ```bash
 npx expo start
 ```
 
-Press `i`, `a`, or `w`. All three must work - a change that only works on one
-platform is not done.
+Press `i`, `a`, or `w`. All three must work - a change that works on one
+platform is not finished.
+
+## Before pushing
+
+```bash
+npm run lint
+npm run typecheck
+npm test
+supabase test db --local
+```
+
+CI runs all four, plus the ASCII and 100-column style invariants.
 
 ## Verify the toolchain
 
