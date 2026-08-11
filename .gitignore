@@ -1,3 +1,8 @@
+# Private planning notes. Roadmap, decision log, open questions. Not for the
+# public repo: they contain unmade decisions and half-formed plans that would
+# read as commitments to anyone browsing.
+MY_DOCS/
+
 # Local agent configuration.
 # Deliberately not tracked: every contributor should be free to run whatever
 # tooling and rules they prefer. Project standards that everyone must follow
