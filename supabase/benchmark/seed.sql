@@ -1,12 +1,21 @@
 -- OpenHeart :: discovery benchmark seed
 --
 -- LOCAL BENCHMARKING ONLY. This truncates every user table and refills it with
--- 100k synthetic profiles and roughly 5M synthetic swipes. Never point it at a
--- database that holds real accounts.
+-- synthetic profiles and swipes: 100k and roughly 5M by default, or whatever
+-- -v scale=N asks for. Never point it at a database that holds real accounts.
 --
 -- It exists so the question "when does discover_profiles need work" is answered
 -- with a measured number instead of an opinion. See README.md in this directory
 -- for how to load it and how to record a result.
+
+-- Scale. Defaults to the 100k the first baseline was taken at, so a plain
+-- psql -f run is unchanged. Pass -v scale=1000000 to answer whether the timings
+-- stay linear, which is a different question from whether they are acceptable.
+-- The swipe distribution is per profile, so the swipe count scales with it.
+\if :{?scale}
+\else
+  \set scale 100000
+\endif
 
 begin;
 
@@ -85,7 +94,7 @@ scatter as (
     random()                                      as active_roll,
     30 + random() * 335                           as signup_days_ago
   from params
-  cross join generate_series(0, 99999) as series(n)
+  cross join generate_series(0, :scale - 1) as series(n)
 )
 insert into profiles (
   id,
@@ -109,7 +118,10 @@ select
   (
     current_date
     - interval '18 years'
-    - (((scatter.n * 7919) % 15340) + 1) * interval '1 day'
+    -- n::bigint because generate_series yields integer and n * 7919 passes
+    -- int4 at a scale of 1000000. The value is identical at 100000, so the
+    -- earlier baseline is still comparable.
+    - (((scatter.n::bigint * 7919) % 15340) + 1) * interval '1 day'
   )::date,
   -- Bio length drives row width, which drives heap pages read per candidate.
   repeat('Benchmark filler text. ', 4 + (scatter.n % 6)),
@@ -148,24 +160,25 @@ from scatter;
 -- the expensive case. A flat 50 per user would benchmark a user who does not
 -- exist.
 --
--- Target index is (7n + 811j) mod 100000. gcd(811, 100000) = 1, so j maps to
--- distinct targets for every j below 100000 and no swiper can draw the same
--- target twice. Change 811 and that guarantee goes with it.
+-- Target index is (7n + 811j) mod scale. 811 is prime and divides neither
+-- 100000 nor 1000000, so gcd is 1 and j maps to distinct targets for every j
+-- below scale: no swiper can draw the same target twice. Change 811, or pick a
+-- scale that is a multiple of it, and that guarantee goes with it.
 
 insert into swipes (swiper_id, target_id, direction, created_at)
 select
   ('beefcafe-0000-4000-8000-' || lpad(to_hex(swiper.n), 12, '0'))::uuid,
   ('beefcafe-0000-4000-8000-'
-    || lpad(to_hex((swiper.n * 7 + step.j * 811) % 100000), 12, '0'))::uuid,
+    || lpad(to_hex((swiper.n * 7 + step.j * 811) % :scale), 12, '0'))::uuid,
   (case when (swiper.n + step.j) % 10 < 3 then 'like' else 'pass' end)
     ::swipe_direction,
   now() - (step.j % 90) * interval '1 day'
-from generate_series(0, 99999) as swiper(n)
+from generate_series(0, :scale - 1) as swiper(n)
 cross join lateral generate_series(
   1,
   case when swiper.n % 100 = 0 then 1500 else 15 + (swiper.n % 41) end
 ) as step(j)
-where (swiper.n * 7 + step.j * 811) % 100000 <> swiper.n;
+where (swiper.n * 7 + step.j * 811) % :scale <> swiper.n;
 
 alter table swipes enable trigger swipes_create_match;
 

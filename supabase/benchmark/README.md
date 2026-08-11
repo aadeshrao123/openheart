@@ -63,6 +63,13 @@ supabase start
 supabase db reset
 ```
 
+The scale is a psql variable and defaults to the 100000 the baseline was taken
+at, so a plain run is unchanged. `-v scale=1000000` answers whether the timings
+stay linear, which is a different question from whether they are acceptable.
+The swipe distribution is per profile, so the swipe count scales with it and
+1000000 profiles means roughly 50M swipes and about 10GB on disk. Check you
+have the room first.
+
 Then load it with `psql`:
 
 ```bash
@@ -135,16 +142,67 @@ exceeds it is a broken deck for every user on that path.
 
 ## Results
 
-No baseline has been recorded yet. Nobody has run the seed, so the first person
-to do so fills the first row.
+First baseline below, taken 2026-08-11. Read the note under it before comparing
+anything to it: the machine was busy, so these are an upper bound rather than a
+clean figure.
 
 Record the third run, not the first. `Head` is the output of `git rev-parse
 --short HEAD`, so a regression can be bisected.
 
 | Date | Head | Profiles | Swipes | Sample user | Seed load | Exec ms | Buffers | Notes |
 |---|---|---|---|---|---|---|---|---|
-| | | | | heavy | | | | |
-| | | | | light | | | | |
+| 2026-08-11 | d8c47bc | 100000 | 4964937 | heavy | 173 s | 101 | 64102 | See note 1 |
+| 2026-08-11 | d8c47bc | 100000 | 4964937 | light | 173 s | 92 | 64102 | See note 1 |
+| 2026-08-11 | d8c47bc | 1000000 | 49649782 | heavy | 3350 s | 1154 | 553044/148023 | See note 2 |
+| 2026-08-11 | d8c47bc | 1000000 | 49649782 | light | 3350 s | 961 | as above | See note 2 |
+
+Note 1: 4 vCPU container, Postgres 17.6, `shared hit` only and no read, so the
+whole working set was already in cache. The machine was not idle: language and
+screen work was running in other processes, load average 1.3. Treat these as an
+upper bound on this hardware rather than a clean figure, and re-baseline on a
+quiet machine before comparing anything to them.
+
+The inner plan confirms the GiST index is still the access path at 100k:
+
+```
+Index Scan using profiles_location_idx on profiles p
+  Index Cond: (location && _st_expand(profiles.location, (max_distance_km * 1000)))
+  Rows Removed by Filter: 17695
+```
+
+Note 2: 1M profiles and 49.6M swipes, 9.2GB on disk. Roughly 11x the 100k time
+for 10x the profiles, so linear in the candidate set, and the GiST index is
+still the access path:
+
+```
+Index Scan using profiles_location_idx on profiles p
+  actual time=9.484..826.853 rows=58192
+  Rows Removed by Filter: 175960
+  Buffers: shared hit=87469 read=147964
+```
+
+Three things in that worth carrying forward.
+
+The scan is 827ms of the 1154ms, and it stopped being a cache hit: 148k buffer
+reads against zero at 100k. That is the actual change between the two rows, not
+the row count.
+
+The candidate set is 58192, exactly 10x the 5797 at 100k, because **this seed
+scales density and not geography**. It scatters every profile over the same 25km
+disc whatever the scale, so 1M means one metro with a million users in it rather
+than a million users spread across cities. Real growth is the second shape, and
+ST_DWithin bounds the candidate set by area, so it would look far more like the
+100k row. Read the 1M row as "one very successful city", which is the
+interesting question, but not as "the app has a million users".
+
+A partial GiST index over the discoverability predicate was measured and does
+NOT help. The planner used it, and `Rows Removed by Filter` stayed at exactly
+175960, because this seed marks every profile `is_active` and `photo_verified`,
+so that predicate excludes nothing. The rows being discarded are discarded by
+the age range. Anyone optimising this should start there, and should first make
+the seed's `photo_verified` distribution realistic, because in production that
+column gates most profiles out and the benchmark currently understates its
+selectivity.
 
 Add a row per measurement rather than editing an old one. The history is the
 whole value of the file; a table with one row in it answers nothing.
