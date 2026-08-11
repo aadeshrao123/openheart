@@ -34,14 +34,17 @@ export function formatRelativeTime(date: Date, locale = currentLocale()): string
   const formatter = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
   const elapsedMs = date.getTime() - Date.now();
 
-  const divisions = [
+  // Annotated rather than `as const`: the const assertion narrows each entry to
+  // its own literal type, so `chosen` is typed as the seconds entry alone and
+  // reassigning it to any other unit does not compile.
+  const divisions: { unit: Intl.RelativeTimeFormatUnit; ms: number }[] = [
     { unit: 'second', ms: 1000 },
     { unit: 'minute', ms: 1000 * 60 },
     { unit: 'hour', ms: 1000 * 60 * 60 },
     { unit: 'day', ms: 1000 * 60 * 60 * 24 },
     { unit: 'month', ms: 1000 * 60 * 60 * 24 * 30 },
     { unit: 'year', ms: 1000 * 60 * 60 * 24 * 365 },
-  ] as const;
+  ];
 
   let chosen = divisions[0];
 
