@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Button, Input, Screen, Text } from '@/components/ui';
+import { Button, Input, Rail, Screen, Text } from '@/components/ui';
 import { useRequestEmailCode, useSignInWithProvider } from '@/hooks/use-auth';
 import { authErrorKey } from '@/lib/auth-errors';
 import { OAUTH_PROVIDERS } from '@/lib/auth-providers';
@@ -90,14 +90,14 @@ export default function SignInScreen() {
         </View>
       ) : null}
 
-      <View className="gap-5 border-s-2 border-accent ps-5">
+      <Rail tone="accent" className="gap-5">
         <Text variant="overline" tone="accent">
           {t('welcome.promise_title')}
         </Text>
         <Text variant="quote" tone="default">
           {t('welcome.promise_body')}
         </Text>
-      </View>
+      </Rail>
 
       <Text variant="caption" tone="subtle">
         {t('auth.age_gate', { appName: APP_NAME })}

@@ -5,6 +5,8 @@ export { Chip, type ChipProps } from './chip';
 export { Icon, type IconProps } from './icon';
 export { Input, type InputProps } from './input';
 export { ListRow, type ListRowProps } from './list-row';
+export { Rail, type RailProps } from './rail';
 export { Screen, type ScreenProps } from './screen';
+export { Skeleton, type SkeletonProps } from './skeleton';
 export { Stepper, type StepperProps } from './stepper';
 export { Text, type TextComponentProps } from './text';

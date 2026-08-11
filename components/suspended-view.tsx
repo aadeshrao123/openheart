@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
-import { Button, Screen, Text } from '@/components/ui';
+import { Button, Rail, Screen, Text } from '@/components/ui';
 import { useSignOut } from '@/hooks/use-auth';
 
 export type SuspendedViewProps = {
@@ -26,9 +26,9 @@ export function SuspendedView({ reason }: SuspendedViewProps) {
         <Text tone="muted">{t('suspended.body')}</Text>
 
         {reason ? (
-          <View className="border-s-2 border-danger ps-5">
+          <Rail tone="danger">
             <Text tone="default">{reason}</Text>
-          </View>
+          </Rail>
         ) : null}
 
         <Text variant="caption" tone="subtle">
