@@ -119,6 +119,12 @@ jobs:
 
           exit "$status"
 
+      # No npm ci: this reads global.css and does arithmetic, and depends on
+      # nothing. Keeping it out of the install job means a contrast regression
+      # is reported in seconds rather than after a full dependency install.
+      - name: Colour contrast
+        run: node scripts/check-contrast.mjs
+
   app:
     name: Types and unit tests
     runs-on: ubuntu-latest

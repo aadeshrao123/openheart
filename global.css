@@ -25,14 +25,14 @@
 
     --fg: 28 25 23;
     --fg-muted: 106 99 92;
-    --fg-subtle: 156 147 138;
+    --fg-subtle: 117 110 104;
     --fg-inverted: 252 250 247;
 
     --brand: 166 58 76;
     --brand-pressed: 138 44 60;
     --brand-subtle: 246 232 231;
 
-    --accent: 178 118 62;
+    --accent: 144 96 50;
     --accent-subtle: 245 235 222;
 
     --success: 62 122 88;
@@ -65,7 +65,7 @@
 
     --fg: 244 240 235;
     --fg-muted: 168 158 150;
-    --fg-subtle: 120 112 105;
+    --fg-subtle: 146 139 134;
     --fg-inverted: 22 20 19;
 
     --brand: 224 132 142;

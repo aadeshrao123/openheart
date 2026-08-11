@@ -66,7 +66,7 @@ export function MessageBubble({ message, mine, onOpenActions }: MessageBubblePro
           <Text
             variant="caption"
             tone={deleted || !mine ? 'subtle' : 'inverted'}
-            className={mine && !deleted ? 'opacity-70' : undefined}
+            className={mine && !deleted ? 'opacity-90' : undefined}
           >
             {sentAt}
           </Text>
