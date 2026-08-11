@@ -8,23 +8,19 @@
     "back": "Back",
     "error_generic": "Something went wrong. Please try again."
   },
-
   "welcome": {
     "tagline": "Dating that is actually free.",
     "promise_title": "No paywalls, ever",
     "promise_body": "Every feature is available to every person. Funded by donations, never by charging lonely people to be seen."
   },
-
   "update": {
     "title": "Update required",
     "body": "This version of {{appName}} is no longer supported. Update from your app store to carry on."
   },
-
   "error": {
     "title": "Something broke",
     "body": "This screen ran into an unexpected problem. Try again, and if it keeps happening it is our fault, not yours."
   },
-
   "auth": {
     "sign_in": "Sign in",
     "email_label": "Email",
@@ -46,7 +42,6 @@
     "continue_with_google": "Continue with Google",
     "continue_with_microsoft": "Continue with Microsoft"
   },
-
   "onboarding": {
     "step": "Step {{step}} of {{total}}",
     "day": "Day",
@@ -66,7 +61,6 @@
     "preferences_changeable": "You can change any of this in settings later.",
     "finish": "Create my profile"
   },
-
   "profile": {
     "display_name": "Name",
     "bio": "About you",
@@ -92,7 +86,6 @@
     "photo_rejected": "This photo was not approved.",
     "verify_prompt": "Verify your photo to appear in other people's decks."
   },
-
   "home": {
     "not_visible_title": "You are not in anyone's deck yet",
     "location_title": "Add your location",
@@ -101,9 +94,9 @@
     "location_enable": "Use my location",
     "edit_profile": "Edit profile",
     "next_title": "What is coming",
-    "next_body": "Photos, then the deck, then chat. This is an early build and there is nobody to swipe on yet."
+    "next_body": "Chat is next. Photos cannot go live until moderation is switched on, so profiles show initials for now.",
+    "browse": "Browse people"
   },
-
   "photos": {
     "subtitle": "Up to six. The first one is the one people see first, and you can reorder them any time.",
     "add_at": "Add a photo in slot {{position}}",
@@ -117,7 +110,6 @@
     "review_title": "Why nothing is live yet",
     "review_body": "Every photo is checked before anyone can see it. Checking is not switched on in this build, so uploads stay unreviewed for now."
   },
-
   "deck": {
     "empty_title": "No one new nearby",
     "empty_body": "Try widening your distance or age range.",
@@ -125,18 +117,21 @@
     "like": "Like",
     "pass": "Pass",
     "photo_count_one": "{{count}} photo",
-    "photo_count_other": "{{count}} photos"
+    "photo_count_other": "{{count}} photos",
+    "name_age": "{{name}}, {{age}}",
+    "widen_search": "Adjust your distance and age range",
+    "distance_very_close": "Very close by"
   },
-
   "matches": {
     "title": "Matches",
     "empty": "No matches yet. Keep swiping.",
     "new_match": "You matched with {{name}}",
     "unmatch": "Unmatch",
     "count_one": "{{count}} match",
-    "count_other": "{{count}} matches"
+    "count_other": "{{count}} matches",
+    "celebrate_title": "It is a match",
+    "keep_swiping": "Keep swiping"
   },
-
   "chat": {
     "placeholder": "Write a message",
     "send": "Send",
@@ -144,7 +139,6 @@
     "unread_one": "{{count}} unread message",
     "unread_other": "{{count}} unread messages"
   },
-
   "safety": {
     "report": "Report",
     "block": "Block",
@@ -156,7 +150,6 @@
     "reason_underage": "Appears to be under 18",
     "reason_other": "Something else"
   },
-
   "settings": {
     "title": "Settings",
     "account": "Account",

@@ -69,6 +69,7 @@ export default function HomeScreen() {
       ) : null}
 
       <View className="gap-1">
+        <ListRow label={t('home.browse')} onPress={() => router.push('/deck')} />
         <ListRow
           label={t('home.edit_profile')}
           onPress={() => router.push('/edit-profile')}

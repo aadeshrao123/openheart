@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AppErrorView } from '@/components/app-error-view';
 import { VersionGate } from '@/components/version-gate';
@@ -34,11 +35,16 @@ export default function RootLayout() {
   useSystemTheme();
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <SafeAreaProvider>
-        <RootNavigator />
-      </SafeAreaProvider>
-    </QueryClientProvider>
+    // Outermost, and required: without it a pan gesture is silently never
+    // recognised on native, which looks exactly like a broken deck rather than
+    // a missing provider.
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <QueryClientProvider client={queryClient}>
+        <SafeAreaProvider>
+          <RootNavigator />
+        </SafeAreaProvider>
+      </QueryClientProvider>
+    </GestureHandlerRootView>
   );
 }
 
