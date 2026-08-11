@@ -7,6 +7,22 @@
     "error_generic": "Something went wrong. Please try again."
   },
 
+  "welcome": {
+    "tagline": "Dating that is actually free.",
+    "promise_title": "No paywalls, ever",
+    "promise_body": "Every feature is available to every person. Funded by donations, never by charging lonely people to be seen."
+  },
+
+  "update": {
+    "title": "Update required",
+    "body": "This version of {{appName}} is no longer supported. Update from your app store to carry on."
+  },
+
+  "error": {
+    "title": "Something broke",
+    "body": "This screen ran into an unexpected problem. Try again, and if it keeps happening it is our fault, not yours."
+  },
+
   "auth": {
     "sign_in": "Sign in",
     "continue_with_apple": "Continue with Apple",

@@ -1,0 +1,22 @@
+{
+  "expo": {
+    "name": "OpenHeart",
+    "slug": "openheart",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "openheart",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": true
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static"
+    },
+    "plugins": ["expo-router", "expo-localization"],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    }
+  }
+}

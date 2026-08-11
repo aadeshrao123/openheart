@@ -12,6 +12,13 @@
 
   Names describe purpose, not appearance. Renaming --pink to --blue on rebrand
   day would only relocate the problem.
+
+  ".dark:root" is not a stylistic choice. It is the exact selector shape
+  NativeWind recognises as the dark variable block when darkMode is "class":
+  a class named after the darkMode value followed by :root, with no combinator.
+  Anything else compiles on web and is silently ignored on native.
+  Source: react-native-css-interop/dist/css-to-rn/normalize-selectors.js,
+  isRootDarkVariableSelector.
 */
 
 @layer base {
@@ -42,8 +49,7 @@
     --radius-control: 12px;
   }
 
-  .dark:root,
-  :root[data-theme='dark'] {
+  .dark:root {
     --bg: 12 12 16;
     --surface: 22 22 28;
     --surface-raised: 32 32 40;
