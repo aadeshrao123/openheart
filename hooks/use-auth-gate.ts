@@ -1,7 +1,7 @@
 import { useMyProfile } from '@/hooks/use-my-profile';
 import { useSession } from '@/hooks/use-session';
 
-export type AuthGate = 'loading' | 'signed-out' | 'onboarding' | 'suspended' | 'ready';
+export type AuthGate = 'loading' | 'signed-out' | 'onboarding' | 'error' | 'suspended' | 'ready';
 
 // One place decides where a user belongs, so the entry point and the group
 // layouts cannot disagree and bounce between each other.
@@ -24,9 +24,18 @@ export function useAuthGate(): AuthGate {
     return 'loading';
   }
 
+  // Before the onboarding check, and the reason this state exists. maybeSingle
+  // returns null for no row and the query throws for a failed read, so both
+  // arrive as a falsy `data`. Treating them alike sent an existing user whose
+  // profile request failed into signup, where the insert can only fail on the
+  // primary key, leaving them unable to reach an account they already have.
+  if (profile.isError) {
+    return 'error';
+  }
+
   // No row yet is the normal state between verifying a code and finishing
   // signup, including for someone who quit halfway and came back.
-  if (!profile.data) {
+  if (profile.data === null || profile.data === undefined) {
     return 'onboarding';
   }
 

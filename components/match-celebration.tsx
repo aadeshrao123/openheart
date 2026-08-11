@@ -22,6 +22,7 @@ export function MatchCelebration({ name, onDismiss }: MatchCelebrationProps) {
       style={{ position: 'absolute', inset: 0 }}
       className="items-center justify-center gap-8 bg-bg px-4"
       accessibilityViewIsModal
+      aria-modal
       accessibilityRole="alert"
     >
       <View className="items-center gap-3">

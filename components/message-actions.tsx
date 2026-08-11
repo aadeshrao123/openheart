@@ -44,7 +44,14 @@ export function MessageActions({
           className="absolute inset-0 bg-shadow/50"
         />
 
-        <View className="w-full max-w-content gap-4 rounded-card bg-surface-raised p-4">
+        {/* aria-modal as well as the role: react-native-web reads only the
+            aria form, so without it a screen reader walks straight out of
+            the sheet into the conversation behind it. */}
+        <View
+          accessibilityViewIsModal
+          aria-modal
+          className="w-full max-w-content gap-4 rounded-card bg-surface-raised p-4"
+        >
           <View className="flex-row justify-between">
             {REACTION_CODES.map((code) => (
               <Pressable

@@ -39,7 +39,12 @@ export function ThreadRow({ thread, isMine, onPress }: ThreadRowProps) {
       accessibilityLabel={t('chat.open_thread', { name })}
       className="flex-row items-center gap-4 rounded-card px-2 py-3 active:bg-surface"
     >
-      <Avatar name={name} photoKey={thread.other_photo_key} size="md" />
+      <Avatar
+        name={name}
+        identity={thread.other_id}
+        photoKey={thread.other_photo_key}
+        size="md"
+      />
 
       <View className="flex-1 gap-0.5">
         <View className="flex-row items-baseline justify-between gap-2">
