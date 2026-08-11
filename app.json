@@ -6,12 +6,26 @@
     "orientation": "portrait",
     "scheme": "openheart",
     "userInterfaceStyle": "automatic",
+    "icon": "./assets/icon.png",
     "ios": {
       "supportsTablet": true
     },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FCFAF7"
+      }
+    },
     "web": {
       "bundler": "metro",
-      "output": "static"
+      "output": "static",
+      "name": "OpenHeart",
+      "shortName": "OpenHeart",
+      "description": "Dating that is actually free. No paywalls, no boosts, no charge to be seen.",
+      "themeColor": "#FCFAF7",
+      "backgroundColor": "#FCFAF7",
+      "lang": "en",
+      "favicon": "./assets/favicon.png"
     },
     "plugins": [
       "expo-router",
@@ -28,7 +42,20 @@
           "locationWhenInUsePermission": "Shows you people nearby. Stored rounded to about 1km."
         }
       ],
-      "expo-font"
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 180,
+          "resizeMode": "contain",
+          "backgroundColor": "#FCFAF7",
+          "dark": {
+            "image": "./assets/splash-icon-dark.png",
+            "backgroundColor": "#161413"
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

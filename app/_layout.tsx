@@ -4,6 +4,7 @@ import '@/lib/i18n';
 import { useEffect } from 'react';
 import { DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import Head from 'expo-router/head';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useFonts } from 'expo-font';
@@ -13,6 +14,7 @@ import { VersionGate } from '@/components/version-gate';
 import { restoreLanguagePreference } from '@/hooks/use-language';
 import { useAuthSync } from '@/hooks/use-session';
 import { useSystemTheme } from '@/hooks/use-system-theme';
+import { APP_NAME } from '@/lib/app';
 import { appFonts } from '@/lib/fonts';
 
 // expo-router finds a route's error UI through a named ErrorBoundary export.
@@ -71,6 +73,15 @@ function RootNavigator() {
 
   return (
     <ThemeProvider value={transparentNavigationTheme}>
+      {/* The only thing that can set the browser tab title. The static export
+          prepends react-helmet's tags directly after <head>, ahead of anything
+          app/+html.tsx renders, and helmet emits an empty <title> whether or
+          not one was set. An empty first title is the one the browser uses, so
+          without this the tab is blank however many titles follow it. */}
+      <Head>
+        <title>{APP_NAME}</title>
+      </Head>
+
       <VersionGate>
         <Stack screenOptions={{ headerShown: false }} />
       </VersionGate>
