@@ -29,6 +29,38 @@ left alone rather than set to the maintainer's name, because authoring as
 someone else is the maintainer's call to make, not mine. `git commit --amend
 --author` or a rebase will change it if that is wanted.
 
+**The branch could not be pushed, and there is no pull request.** This is the
+one part of the brief that was not completed, and it is not for want of trying.
+Both write paths this session has are refused:
+
+```
+git push -u origin claude/openheart-overnight-maintenance-a4dr9q
+  fatal: unable to access 'https://github.com/aadeshrao123/openheart/':
+  The requested URL returned error: 403
+
+mcp github create_branch
+  403 Resource not accessible by integration
+```
+
+Reads are fine: `git ls-remote` succeeds and the API lists branches as
+`aadeshrao123`, so the repository is reachable and in scope. It is writes that
+are denied. The session's git credential is read-scoped, and the GitHub App
+integration does not hold write permission on this repository. The proxy
+recorded no relay failure, so the 403 is GitHub's own answer rather than an
+egress block. An admin can grant write access in the Claude GitHub settings.
+
+Everything is committed locally on the right branch, and a git bundle of the
+eight commits is attached alongside this report so nothing depends on this
+container surviving. To land it:
+
+```
+git fetch /path/to/openheart-overnight.bundle \
+  claude/openheart-overnight-maintenance-a4dr9q
+git checkout -b claude/openheart-overnight-maintenance-a4dr9q FETCH_HEAD
+```
+
+The bundle carries the binary icon assets, which a patch series would not.
+
 **Environment.** The container had no `node_modules`, no Supabase CLI, no Docker
 daemon running, and no `.env`.
 
