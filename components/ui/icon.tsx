@@ -1,6 +1,7 @@
-import { I18nManager } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import Svg, { Path } from 'react-native-svg';
 import { cssInterop } from 'nativewind';
+import { isRtlLanguage } from '@/lib/i18n';
 
 // Via `color` and currentColor rather than a stroke utility: `stroke` is not a
 // React Native style property, so NativeWind parses `stroke-fg` to nothing and
@@ -43,8 +44,15 @@ export type IconProps = {
 };
 
 export function Icon({ name, size = 'md', className = 'text-fg', strokeWidth = 2 }: IconProps) {
+  const { i18n } = useTranslation();
   const pixels = sizes[size];
-  const mirrored = DIRECTIONAL.has(name) && I18nManager.isRTL;
+
+  // From the active language, not from I18nManager. react-native-web's
+  // I18nManager is a stub whose isRTL property does not exist at all, so it read
+  // as undefined and a chevron never mirrored on web however the app was set.
+  // The language is the same answer on all three platforms, and it re-renders
+  // when the language changes rather than only at launch.
+  const mirrored = DIRECTIONAL.has(name) && isRtlLanguage(i18n.language);
 
   return (
     <StyledSvg

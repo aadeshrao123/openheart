@@ -3,6 +3,8 @@
     "cancel": "Cancel",
     "save": "Save",
     "retry": "Try again",
+    "load_failed_title": "That did not load",
+    "load_failed_body": "Something went wrong on the way here. Your connection may have dropped, and trying again usually fixes it.",
     "loading": "Loading",
     "continue": "Continue",
     "back": "Back",
@@ -112,6 +114,9 @@
     "move_later": "Move this photo later",
     "awaiting_review": "Uploaded. It will appear once it has been reviewed.",
     "upload_failed": "That photo could not be uploaded. Please try again.",
+    "position_taken": "That slot has just been filled. Pick an empty one.",
+    "delete_failed": "That photo could not be removed. Please try again.",
+    "reorder_failed": "That new order could not be saved. Your photos are still in the old order.",
     "limit_reached": "You already have {{count}} photos. Remove one first.",
     "review_title": "Why nothing is live yet",
     "review_body": "Every photo is checked before anyone can see it. Checking is not switched on in this build, so uploads stay unreviewed for now."
@@ -168,6 +173,7 @@
     "status_read": "Seen",
     "unsend": "Remove for everyone",
     "unsend_too_late": "This message has already been seen, so it stays.",
+    "unsend_failed": "That message could not be removed. Try again.",
     "rate_limited": "You have sent a lot of messages in a short time. Try again shortly.",
     "manage_title": "This conversation",
     "unmatch_confirm": "Yes, unmatch",
@@ -179,7 +185,8 @@
     "reaction_wow": "Wow",
     "reaction_sad": "Sad",
     "reaction_fire": "Fire",
-    "reaction_thumbs_up": "Thumbs up"
+    "reaction_thumbs_up": "Thumbs up",
+    "reaction_failed": "That reaction did not save. Try again."
   },
   "safety": {
     "report": "Report",
@@ -208,6 +215,7 @@
     "blocked_empty": "You have not blocked anyone.",
     "blocked_unknown": "Deleted account",
     "unblock": "Unblock",
+    "unblock_action": "Unblock {{name}}",
     "unblock_explainer": "Unblocking lets them appear in your deck again. It does not bring back a conversation that ended."
   },
   "settings": {
@@ -215,6 +223,7 @@
     "account": "Account",
     "email": "Email",
     "language": "Language",
+    "language_restart": "Close and reopen OpenHeart to finish switching. The text has changed already, but the layout has to be rebuilt to read right to left.",
     "sign_out": "Sign out",
     "danger_zone": "Delete account",
     "delete_account": "Delete my account",
