@@ -1,0 +1,53 @@
+# Local agent configuration.
+# Deliberately not tracked: every contributor should be free to run whatever
+# tooling and rules they prefer. Project standards that everyone must follow
+# belong in CLAUDE.md and docs/, which ARE tracked.
+.claude/
+
+# Secrets
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# Native builds
+ios/
+android/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+
+# Generated
+lib/database.types.ts
+
+# Local code-graph tooling, same reasoning as .claude/
+.code-review-graph/
+
+# Supabase local
+supabase/.branches/
+supabase/.temp/
+
+# Editors
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.*
+yarn-debug.*
+yarn-error.*

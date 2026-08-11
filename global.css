@@ -1,0 +1,69 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  Every colour in the application resolves to a variable declared here. This is
+  the only file that contains a colour value, which is what makes a full
+  restyle a one-file diff.
+
+  Values are space-separated RGB channels rather than hex so Tailwind can
+  compose opacity: bg-brand/50 becomes rgb(var(--brand) / 0.5).
+
+  Names describe purpose, not appearance. Renaming --pink to --blue on rebrand
+  day would only relocate the problem.
+*/
+
+@layer base {
+  :root {
+    --bg: 255 255 255;
+    --surface: 250 250 252;
+    --surface-raised: 255 255 255;
+    --border: 228 228 235;
+
+    --fg: 17 17 24;
+    --fg-muted: 98 98 115;
+    --fg-subtle: 148 148 165;
+    --fg-inverted: 255 255 255;
+
+    --brand: 233 74 110;
+    --brand-pressed: 205 55 90;
+    --brand-subtle: 253 234 239;
+
+    --success: 34 160 100;
+    --warning: 217 145 20;
+    --danger: 220 60 60;
+    --danger-subtle: 254 232 232;
+
+    --like: 34 160 100;
+    --pass: 148 148 165;
+
+    --radius-card: 20px;
+    --radius-control: 12px;
+  }
+
+  .dark:root,
+  :root[data-theme='dark'] {
+    --bg: 12 12 16;
+    --surface: 22 22 28;
+    --surface-raised: 32 32 40;
+    --border: 48 48 58;
+
+    --fg: 245 245 250;
+    --fg-muted: 160 160 178;
+    --fg-subtle: 110 110 128;
+    --fg-inverted: 17 17 24;
+
+    --brand: 244 100 133;
+    --brand-pressed: 220 78 110;
+    --brand-subtle: 56 26 36;
+
+    --success: 52 190 125;
+    --warning: 234 168 45;
+    --danger: 240 90 90;
+    --danger-subtle: 60 26 26;
+
+    --like: 52 190 125;
+    --pass: 110 110 128;
+  }
+}

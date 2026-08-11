@@ -1,0 +1,13 @@
+# Normalize line endings so Windows, macOS and Linux contributors do not
+# generate whole-file diffs against each other.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+
+# Generated. Collapsed in diffs and excluded from language statistics.
+lib/database.types.ts linguist-generated=true
+supabase/config.toml linguist-generated=true

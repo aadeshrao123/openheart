@@ -1,0 +1,78 @@
+{
+  "common": {
+    "cancel": "Cancel",
+    "save": "Save",
+    "retry": "Try again",
+    "loading": "Loading",
+    "error_generic": "Something went wrong. Please try again."
+  },
+
+  "auth": {
+    "sign_in": "Sign in",
+    "continue_with_apple": "Continue with Apple",
+    "continue_with_google": "Continue with Google",
+    "email_placeholder": "you@example.com",
+    "magic_link_sent": "Check your email for a sign-in link.",
+    "age_gate": "You must be 18 or older to use {{appName}}."
+  },
+
+  "deck": {
+    "empty_title": "No one new nearby",
+    "empty_body": "Try widening your distance or age range.",
+    "distance_away": "{{distance}} away",
+    "like": "Like",
+    "pass": "Pass",
+    "photo_count_one": "{{count}} photo",
+    "photo_count_other": "{{count}} photos"
+  },
+
+  "matches": {
+    "title": "Matches",
+    "empty": "No matches yet. Keep swiping.",
+    "new_match": "You matched with {{name}}",
+    "unmatch": "Unmatch",
+    "count_one": "{{count}} match",
+    "count_other": "{{count}} matches"
+  },
+
+  "chat": {
+    "placeholder": "Write a message",
+    "send": "Send",
+    "unmatched": "This conversation has ended.",
+    "unread_one": "{{count}} unread message",
+    "unread_other": "{{count}} unread messages"
+  },
+
+  "profile": {
+    "display_name": "Name",
+    "bio": "About you",
+    "birthdate": "Date of birth",
+    "distance_preference": "Maximum distance",
+    "age_preference": "Age range",
+    "photos": "Photos",
+    "photo_alt": "Profile photo of {{name}}",
+    "photo_pending_review": "This photo is being reviewed.",
+    "photo_rejected": "This photo was not approved.",
+    "verify_prompt": "Verify your photo to appear in other people's decks."
+  },
+
+  "safety": {
+    "report": "Report",
+    "block": "Block",
+    "block_confirm": "Block {{name}}? They will not be able to see you or message you.",
+    "report_submitted": "Thanks. Our team will review this.",
+    "reason_spam": "Spam or scam",
+    "reason_harassment": "Harassment",
+    "reason_fake": "Fake profile",
+    "reason_underage": "Appears to be under 18",
+    "reason_other": "Something else"
+  },
+
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "delete_account": "Delete account",
+    "delete_confirm": "This permanently deletes your profile, photos and messages. It cannot be undone.",
+    "donate": "Support OpenHeart"
+  }
+}
