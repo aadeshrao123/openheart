@@ -6,12 +6,14 @@ import { DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { useFonts } from 'expo-font';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AppErrorView } from '@/components/app-error-view';
 import { VersionGate } from '@/components/version-gate';
 import { restoreLanguagePreference } from '@/hooks/use-language';
 import { useAuthSync } from '@/hooks/use-session';
 import { useSystemTheme } from '@/hooks/use-system-theme';
+import { appFonts } from '@/lib/fonts';
 
 // expo-router finds a route's error UI through a named ErrorBoundary export.
 // On the root layout that puts a single boundary over every screen in the app.
@@ -33,6 +35,14 @@ const transparentNavigationTheme = {
 export default function RootLayout() {
   // Touches no context. Anything needing the query client goes in RootNavigator.
   useSystemTheme();
+
+  const [fontsReady, fontError] = useFonts(appFonts);
+
+  // Holding the first paint avoids the flash from system font to Fraunces.
+  // A font that failed to load is not worth blocking on.
+  if (!fontsReady && !fontError) {
+    return null;
+  }
 
   return (
     // Outermost, and required: without it a pan gesture is silently never

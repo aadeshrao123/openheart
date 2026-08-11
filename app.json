@@ -27,7 +27,8 @@
         {
           "locationWhenInUsePermission": "Shows you people nearby. Stored rounded to about 1km."
         }
-      ]
+      ],
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true,

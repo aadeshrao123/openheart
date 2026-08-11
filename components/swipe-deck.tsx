@@ -10,6 +10,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useTranslation } from 'react-i18next';
 import { Text } from '@/components/ui';
+import { cn } from '@/lib/cn';
 import { ProfileCard } from '@/components/profile-card';
 import type { Candidate, SwipeDirection } from '@/hooks/use-discovery';
 
@@ -191,13 +192,12 @@ type BadgeProps = {
 function Badge({ label, tone }: BadgeProps) {
   return (
     <View
-      className={
-        tone === 'success'
-          ? 'rounded-control border border-success px-3 py-1'
-          : 'rounded-control border border-danger px-3 py-1'
-      }
+      className={cn(
+        'rounded-control border-2 px-4 py-1.5',
+        tone === 'success' ? 'border-success bg-bg/80' : 'border-danger bg-bg/80',
+      )}
     >
-      <Text variant="heading" tone={tone === 'success' ? 'brand' : 'danger'}>
+      <Text variant="overline" tone={tone === 'success' ? 'default' : 'danger'}>
         {label}
       </Text>
     </View>

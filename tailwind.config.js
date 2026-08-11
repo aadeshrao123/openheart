@@ -6,9 +6,6 @@
 
 const token = (variable) => `rgb(var(${variable}) / <alpha-value>)`;
 
-// Shared with lib/cn.ts, which needs these names so tailwind-merge can tell a
-// font size from a text colour and can see two radii as conflicting. Editing
-// them here alone would break className overrides silently. See tokens.js.
 const tokens = require('./tokens');
 
 module.exports = {
@@ -39,6 +36,11 @@ module.exports = {
           subtle: token('--brand-subtle'),
         },
 
+        accent: {
+          DEFAULT: token('--accent'),
+          subtle: token('--accent-subtle'),
+        },
+
         danger: {
           DEFAULT: token('--danger'),
           subtle: token('--danger-subtle'),
@@ -48,17 +50,28 @@ module.exports = {
         warning: token('--warning'),
         like: token('--like'),
         pass: token('--pass'),
+        shadow: token('--shadow-ambient'),
       },
 
       borderRadius: tokens.borderRadius,
+      fontFamily: tokens.fontFamily,
+      fontSize: tokens.fontSize,
 
-      // The shape of a photo everywhere it appears. A ratio is a design decision
-      // like a radius, so it gets a name rather than an arbitrary value.
       aspectRatio: {
         card: '4 / 5',
       },
 
-      fontSize: tokens.fontSize,
+      spacing: {
+        13: '52px',
+        15: '60px',
+      },
+
+      // A readable measure on a wide monitor. Without it the app stretches to
+      // whatever the window is and the eye has to travel the whole width.
+      maxWidth: {
+        content: '560px',
+        deck: '460px',
+      },
     },
   },
   plugins: [],

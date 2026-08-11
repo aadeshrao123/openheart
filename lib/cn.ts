@@ -13,6 +13,7 @@ const twMerge = extendTailwindMerge({
   extend: {
     classGroups: {
       'font-size': [{ text: Object.keys(tokens.fontSize) }],
+      'font-family': [{ font: Object.keys(tokens.fontFamily) }],
       rounded: [{ rounded: Object.keys(tokens.borderRadius) }],
     },
   },

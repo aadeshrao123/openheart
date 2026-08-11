@@ -16,7 +16,7 @@ const variants = {
   },
   ghost: {
     container: 'bg-transparent active:bg-surface',
-    tone: 'default',
+    tone: 'muted',
   },
   danger: {
     container: 'bg-danger-subtle active:opacity-80',
@@ -25,9 +25,9 @@ const variants = {
 } as const;
 
 const sizes = {
-  sm: { container: 'h-9 px-3', text: 'label' },
-  md: { container: 'h-12 px-5', text: 'label' },
-  lg: { container: 'h-14 px-6', text: 'heading' },
+  sm: { container: 'h-10 px-4', text: 'label' },
+  md: { container: 'h-13 px-6', text: 'label' },
+  lg: { container: 'h-15 px-7', text: 'heading' },
 } as const;
 
 export type ButtonProps = Omit<PressableProps, 'children'> & {
@@ -63,7 +63,7 @@ export function Button({
         'flex-row items-center justify-center rounded-control',
         appearance.container,
         dimensions.container,
-        isDisabled && 'opacity-50',
+        isDisabled && 'opacity-40',
         className,
       )}
       {...props}
@@ -71,7 +71,7 @@ export function Button({
       {loading ? (
         <ActivityIndicator />
       ) : (
-        <Text variant={dimensions.text} tone={appearance.tone}>
+        <Text variant={dimensions.text} tone={appearance.tone} className="font-strong">
           {label}
         </Text>
       )}

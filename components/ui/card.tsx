@@ -5,7 +5,7 @@ type Elevation = keyof typeof elevations;
 
 const elevations = {
   flat: 'bg-surface',
-  raised: 'bg-surface-raised border border-border',
+  raised: 'bg-surface-raised border border-border shadow-sm shadow-shadow/5',
 } as const;
 
 export type CardProps = ViewProps & {
@@ -16,7 +16,7 @@ export type CardProps = ViewProps & {
 export function Card({ elevation = 'raised', className, ...props }: CardProps) {
   return (
     <View
-      className={cn('rounded-card p-4', elevations[elevation], className)}
+      className={cn('rounded-card p-5', elevations[elevation], className)}
       {...props}
     />
   );

@@ -5,12 +5,15 @@ type Variant = keyof typeof variants;
 type Tone = keyof typeof tones;
 
 const variants = {
-  display: 'text-display',
-  title: 'text-title',
-  heading: 'text-heading',
-  body: 'text-body',
-  label: 'text-label',
-  caption: 'text-caption',
+  display: 'text-display font-display',
+  title: 'text-title font-display',
+  heading: 'text-heading font-strong',
+  body: 'text-body font-body',
+  label: 'text-label font-emphasis',
+  caption: 'text-caption font-body',
+  overline: 'text-overline font-strong uppercase',
+  quote: 'text-heading font-quote',
+  monogram: 'text-monogram font-display',
 } as const;
 
 const tones = {
@@ -19,6 +22,7 @@ const tones = {
   subtle: 'text-fg-subtle',
   inverted: 'text-fg-inverted',
   brand: 'text-brand',
+  accent: 'text-accent',
   danger: 'text-danger',
 } as const;
 

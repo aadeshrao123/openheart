@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Button, Card, Input, Screen, Text } from '@/components/ui';
+import { Button, Input, Screen, Text } from '@/components/ui';
 import { useRequestEmailCode, useSignInWithProvider } from '@/hooks/use-auth';
 import { authErrorKey } from '@/lib/auth-errors';
 import { OAUTH_PROVIDERS } from '@/lib/auth-providers';
@@ -28,12 +28,16 @@ export default function SignInScreen() {
   };
 
   return (
-    <Screen scroll className="justify-center gap-10 py-12">
-      <View className="gap-3">
-        <Text variant="display">{APP_NAME}</Text>
-        <Text variant="heading" tone="muted">
-          {t('welcome.tagline')}
-        </Text>
+    <Screen scroll className="justify-center gap-12 py-16">
+      <View className="gap-5">
+        <View className="h-px w-12 bg-brand" />
+
+        <View className="gap-3">
+          <Text variant="display">{APP_NAME}</Text>
+          <Text variant="quote" tone="muted">
+            {t('welcome.tagline')}
+          </Text>
+        </View>
       </View>
 
       <View className="gap-4">
@@ -64,7 +68,7 @@ export default function SignInScreen() {
           onPress={submit}
         />
 
-        <Text variant="caption" tone="subtle">
+        <Text variant="caption" tone="subtle" className="text-center">
           {t('auth.no_password_explainer')}
         </Text>
       </View>
@@ -86,12 +90,14 @@ export default function SignInScreen() {
         </View>
       ) : null}
 
-      <Card className="gap-2">
-        <Text variant="label" tone="brand">
+      <View className="gap-5 border-s-2 border-accent ps-5">
+        <Text variant="overline" tone="accent">
           {t('welcome.promise_title')}
         </Text>
-        <Text tone="muted">{t('welcome.promise_body')}</Text>
-      </Card>
+        <Text variant="quote" tone="default">
+          {t('welcome.promise_body')}
+        </Text>
+      </View>
 
       <Text variant="caption" tone="subtle">
         {t('auth.age_gate', { appName: APP_NAME })}

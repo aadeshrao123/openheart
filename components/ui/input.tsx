@@ -25,14 +25,15 @@ export function Input({
 
   return (
     <View className={cn('gap-2', containerClassName)}>
-      <Text variant="label" tone="muted">
+      <Text variant="overline" tone="subtle">
         {label}
       </Text>
 
       <TextInput
         accessibilityLabel={label}
         className={cn(
-          'h-12 rounded-control border bg-surface-raised px-4 text-body text-fg',
+          'h-13 rounded-control border bg-surface-raised px-4',
+          'text-body font-body text-fg',
           'placeholder:text-fg-subtle selection:bg-brand-subtle',
           error ? 'border-danger' : 'border-border',
           className,

@@ -31,6 +31,7 @@ export function ProfileCard({ candidate, onPress, className }: ProfileCardProps)
       onPress={onPress}
       className={cn(
         'flex-1 overflow-hidden rounded-card border border-border bg-surface-raised',
+        'shadow-lg shadow-shadow/10',
         className,
       )}
     >
@@ -48,25 +49,22 @@ export function ProfileCard({ candidate, onPress, className }: ProfileCardProps)
           // CSAM provider, so there is no photo to fetch. The initial keeps the
           // deck legible instead of showing a column of empty rectangles.
           <View className="flex-1 items-center justify-center bg-brand-subtle">
-            <Text variant="display" tone="brand" aria-hidden>
+            <Text variant="monogram" tone="brand" aria-hidden>
               {candidate.display_name.trim().charAt(0).toUpperCase()}
             </Text>
           </View>
         )}
       </View>
 
-      <View className="gap-2 p-4">
+      <View className="gap-2.5 p-5">
         {/* One key, not a name concatenated with an age: word order and
             punctuation between the two differ by language. */}
         <Text variant="title" numberOfLines={1}>
           {t('deck.name_age', { name: candidate.display_name, age: candidate.age })}
         </Text>
 
-        {/* Distances are bucketed to 5km in the database so they cannot be
-            trilaterated. Bucket zero therefore means "nearer than the smallest
-            bucket", and rendering it as "0 away" would both read as a bug and
-            imply a precision this deliberately does not have. */}
-        <Text variant="label" tone="brand">
+        {/* Bucket zero means nearer than the smallest 5km bucket, not zero. */}
+        <Text variant="overline" tone="accent">
           {candidate.distance_bucket_km === 0
             ? t('deck.distance_very_close')
             : t('deck.distance_away', {
@@ -75,7 +73,7 @@ export function ProfileCard({ candidate, onPress, className }: ProfileCardProps)
         </Text>
 
         {candidate.bio ? (
-          <Text tone="muted" numberOfLines={3}>
+          <Text variant="caption" tone="muted" numberOfLines={2}>
             {candidate.bio}
           </Text>
         ) : null}
