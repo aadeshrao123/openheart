@@ -23,8 +23,16 @@ jobs:
             pattern=$2
             grep_status=0
 
+            # Exemptions are all generated files, rewritten wholesale by their
+            # tool on the next run, so editing them to satisfy a column limit
+            # accomplishes nothing. locales/*.json is exempt for a different
+            # reason: a translation string cannot be wrapped without changing
+            # its value.
             matches=$(LC_ALL=C git grep -nI "$pattern" \
-              -- ':!supabase/config.toml' ':!locales/*.json') || grep_status=$?
+              -- ':!supabase/config.toml' \
+                 ':!locales/*.json' \
+                 ':!package-lock.json' \
+                 ':!nativewind-env.d.ts') || grep_status=$?
 
             # git grep exits 1 for "nothing matched" and 2 or more for a real
             # failure, which must not be reported as a clean run.
@@ -56,6 +64,41 @@ jobs:
           fi
 
           exit "$status"
+
+  app:
+    name: Types and unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # lts/*, not a pinned number: package.json records the range the toolchain
+      # actually requires, and a second copy of it here would be one more thing
+      # to forget on an Expo upgrade.
+      - uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+          cache: npm
+
+      # ci, not install: it installs exactly the lockfile and fails if
+      # package.json and package-lock.json have drifted apart.
+      - run: npm ci
+
+      # lib/database.types.ts is generated and gitignored, so the checkout does
+      # not have it and every import of it would fail to resolve. Generating it
+      # here also means a migration that changes a column breaks the typecheck
+      # instead of surfacing at runtime.
+      - uses: supabase/setup-cli@v3
+
+      - name: Generate database types
+        run: |
+          supabase db start
+          supabase gen types typescript --local > lib/database.types.ts
+
+      - run: npm run lint
+
+      - run: npm run typecheck
+
+      - run: npm test
 
   database:
     name: Migrations and pgTAP
