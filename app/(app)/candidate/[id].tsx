@@ -3,11 +3,34 @@ import { View } from 'react-native';
 import { Image } from 'expo-image';
 import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Button, Card, Screen, Text } from '@/components/ui';
+import { Button, Card, Screen, Skeleton, Text } from '@/components/ui';
 import { formatDistance } from '@/lib/format';
 import { photoUrl } from '@/lib/photos';
 import { useDiscovery } from '@/hooks/use-discovery';
 import { SafetyActions } from '@/components/safety-actions';
+
+// The photo, the name and distance under it, then the bio.
+function CandidateSkeleton() {
+  const { t } = useTranslation();
+
+  return (
+    <View
+      accessibilityRole="progressbar"
+      accessibilityLabel={t('common.loading')}
+      aria-busy
+      className="gap-6"
+    >
+      <Skeleton shape="card" />
+
+      <View className="gap-2">
+        <Skeleton shape="title" className="w-1/2" />
+        <Skeleton shape="caption" className="w-1/3" />
+      </View>
+
+      <Skeleton shape="block" />
+    </View>
+  );
+}
 
 // Reads the candidate out of the deck's cache rather than fetching it. There is
 // no "get one profile by id" route that would be safe to add: profiles_select_
@@ -18,13 +41,25 @@ export default function CandidateScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { data: deck } = useDiscovery();
+  const { data: deck, isPending } = useDiscovery();
   const [safetyOpen, setSafetyOpen] = useState(false);
 
   const candidate = deck?.find((entry) => entry.id === id);
 
-  // Swiped, filtered out, or opened from a cold start with no deck. Going back
-  // to the deck is the honest answer rather than an error about a person.
+  // An empty cache and a deck that has not loaded look the same from here, so
+  // the redirect below has to wait for the query. A deep link opened cold used
+  // to bounce straight back to the deck before the first fetch returned.
+  if (isPending) {
+    return (
+      <Screen scroll className="gap-6 py-6">
+        <CandidateSkeleton />
+      </Screen>
+    );
+  }
+
+  // Swiped, filtered out, or a link to somebody this user cannot be shown.
+  // Going back to the deck is the honest answer rather than an error about a
+  // person, and a deck that failed to load says so there.
   if (!candidate) {
     return <Redirect href="/deck" />;
   }

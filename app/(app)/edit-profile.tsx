@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Button, Card, Input, Screen, Text } from '@/components/ui';
+import { Button, Card, Input, Screen, Skeleton, Text } from '@/components/ui';
 import { GenderSelect, SeekingSelect } from '@/components/gender-select';
 import { AgePreference, DistancePreference } from '@/components/preference-fields';
 import { useMyProfile, useUpdateProfile } from '@/hooks/use-my-profile';
@@ -31,8 +31,25 @@ export default function EditProfileScreen() {
   // anyway.
   const [form, setForm] = useState<Form | null>(null);
 
+  // The layout gate resolves the profile before this renders, so no path gets
+  // here without one. It loads rather than returning null anyway: if that ever
+  // stops holding, a blank screen is the one failure a user cannot act on.
   if (!profile) {
-    return null;
+    return (
+      <Screen scroll className="gap-8 py-8">
+        <View
+          accessibilityRole="progressbar"
+          accessibilityLabel={t('common.loading')}
+          aria-busy
+          className="gap-8"
+        >
+          <Skeleton shape="title" className="w-1/2" />
+          <Skeleton shape="block" />
+          <Skeleton shape="block" />
+          <Skeleton shape="block" />
+        </View>
+      </Screen>
+    );
   }
 
   const current: Form =
@@ -127,7 +144,7 @@ export default function EditProfileScreen() {
 
       <View className="gap-3 pt-2">
         {updateProfile.isError ? (
-          <Text variant="caption" tone="danger">
+          <Text variant="caption" tone="danger" role="alert">
             {t('common.error_generic')}
           </Text>
         ) : null}

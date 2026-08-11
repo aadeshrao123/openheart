@@ -2,8 +2,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { FlatList, KeyboardAvoidingView, Platform, View } from 'react-native';
 import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Screen, Text } from '@/components/ui';
+import { Screen, Skeleton, Text } from '@/components/ui';
 import { ChatHeader } from '@/components/chat-header';
+import { LoadFailed } from '@/components/load-failed';
 import { MessageActions } from '@/components/message-actions';
 import { MessageBubble } from '@/components/message-bubble';
 import { MessageComposer } from '@/components/message-composer';
@@ -27,6 +28,16 @@ type Item =
   | { kind: 'day'; key: string; label: string }
   | { kind: 'message'; key: string; message: ChatMessage };
 
+// Uneven widths and both sides, because a column of identical blocks reads as a
+// broken screen rather than as a conversation that has not arrived yet.
+const PLACEHOLDER_BUBBLES = [
+  { mine: false, width: 'w-2/3' },
+  { mine: true, width: 'w-1/2' },
+  { mine: false, width: 'w-3/4' },
+  { mine: true, width: 'w-2/5' },
+  { mine: false, width: 'w-3/5' },
+] as const;
+
 // Newest first, because the list renders inverted so the keyboard pushes the
 // conversation up rather than covering it.
 function buildItems(messages: ChatMessage[]): Item[] {
@@ -48,6 +59,36 @@ function buildItems(messages: ChatMessage[]): Item[] {
   return items.reverse();
 }
 
+function ChatSkeleton() {
+  const { t } = useTranslation();
+
+  return (
+    <View
+      accessibilityRole="progressbar"
+      accessibilityLabel={t('common.loading')}
+      aria-busy
+      className="flex-1 gap-4"
+    >
+      <View className="flex-row items-center gap-3 border-b border-border pb-3">
+        <Skeleton shape="avatar" />
+
+        <View className="flex-1 gap-2">
+          <Skeleton shape="line" className="w-1/3" />
+          <Skeleton shape="caption" className="w-1/2" />
+        </View>
+      </View>
+
+      <View className="gap-3">
+        {PLACEHOLDER_BUBBLES.map((bubble, index) => (
+          <View key={index} className={bubble.mine ? 'items-end' : 'items-start'}>
+            <Skeleton shape="bubble" className={bubble.width} />
+          </View>
+        ))}
+      </View>
+    </View>
+  );
+}
+
 export default function ChatScreen() {
   const { t } = useTranslation();
   const router = useRouter();
@@ -57,9 +98,9 @@ export default function ChatScreen() {
   const { data: session } = useSession();
   const userId = session?.user.id;
 
-  const { isPending: threadsPending } = useThreads();
+  const threads = useThreads();
   const thread = useThread(matchId);
-  const { data: messages } = useMessages(matchId);
+  const { data: messages, isPending, isError, isFetching, refetch } = useMessages(matchId);
 
   useChatRealtime(matchId);
 
@@ -85,13 +126,26 @@ export default function ChatScreen() {
     }
   }, [unreadCount, markThread]);
 
-  if (threadsPending) {
+  if (threads.isPending || isPending) {
     return (
-      <Screen className="justify-center">
-        <Text tone="muted" className="text-center">
-          {t('common.loading')}
-        </Text>
+      <Screen className="flex-1 pt-2">
+        <ChatSkeleton />
       </Screen>
+    );
+  }
+
+  // Before anything that reads the data. A failed thread read leaves no thread
+  // to find, which used to redirect as though the match had been unmatched, and
+  // a failed message read left the conversation looking empty.
+  if (threads.isError || isError) {
+    return (
+      <LoadFailed
+        retrying={threads.isFetching || isFetching}
+        onRetry={() => {
+          void threads.refetch();
+          void refetch();
+        }}
+      />
     );
   }
 
@@ -118,6 +172,20 @@ export default function ChatScreen() {
       ? t('chat.rate_limited')
       : t('common.error_generic');
   };
+
+  // Both roll their optimistic change back when they fail, so with nothing said
+  // the reaction or the removal simply undoes itself while the user watches.
+  const actionError = () => {
+    if (unsend.isError) {
+      return unsend.error.message === ALREADY_READ
+        ? t('chat.unsend_too_late')
+        : t('common.error_generic');
+    }
+
+    return react.isError ? t('common.error_generic') : undefined;
+  };
+
+  const actionFailure = actionError();
 
   return (
     <Screen className="flex-1 pt-2">
@@ -176,6 +244,14 @@ export default function ChatScreen() {
           />
         )}
 
+        {actionFailure ? (
+          <View className="px-4 pb-2">
+            <Text variant="caption" tone="danger" role="alert" className="text-center">
+              {actionFailure}
+            </Text>
+          </View>
+        ) : null}
+
         {closed ? (
           <View className="border-t border-border px-4 py-5">
             <Text variant="caption" tone="subtle" className="text-center">
@@ -232,14 +308,6 @@ export default function ChatScreen() {
         onClose={() => setSafetyOpen(false)}
         onBlocked={() => router.replace('/matches')}
       />
-
-      {unsend.isError && unsend.error.message === ALREADY_READ ? (
-        <View className="px-4 pb-2">
-          <Text variant="caption" tone="danger" className="text-center">
-            {t('chat.unsend_too_late')}
-          </Text>
-        </View>
-      ) : null}
     </Screen>
   );
 }

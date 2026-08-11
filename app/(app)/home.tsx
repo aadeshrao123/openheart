@@ -1,10 +1,43 @@
 import { View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Avatar, Button, Card, ListRow, Screen, Text } from '@/components/ui';
+import { Avatar, Button, Card, ListRow, Screen, Skeleton, Text } from '@/components/ui';
 import { useMyProfile } from '@/hooks/use-my-profile';
 import { useUpdateLocation } from '@/hooks/use-location';
 import { ageOn, fromDateColumn } from '@/lib/age';
+
+// Matches the shape of the loaded screen: avatar beside a name, then the rows.
+function HomeSkeleton() {
+  const { t } = useTranslation();
+
+  return (
+    <Screen scroll className="gap-8 py-8">
+      <View
+        accessibilityRole="progressbar"
+        accessibilityLabel={t('common.loading')}
+        aria-busy
+        className="gap-8"
+      >
+        <View className="flex-row items-center gap-4">
+          <Skeleton shape="avatar" />
+
+          <View className="flex-1 gap-2">
+            <Skeleton shape="heading" className="w-1/2" />
+            <Skeleton shape="caption" className="w-1/3" />
+          </View>
+        </View>
+
+        <View className="gap-1">
+          {[0, 1, 2, 3, 4].map((row) => (
+            <View key={row} className="px-4 py-3">
+              <Skeleton shape="line" className="w-2/3" />
+            </View>
+          ))}
+        </View>
+      </View>
+    </Screen>
+  );
+}
 
 export default function HomeScreen() {
   const { t } = useTranslation();
@@ -12,14 +45,25 @@ export default function HomeScreen() {
   const { data: profile } = useMyProfile();
   const updateLocation = useUpdateLocation();
 
-  // The layout gate already guarantees a profile before this renders, so this
-  // only satisfies the type.
+  // The layout gate resolves the profile before this renders, so no path gets
+  // here without one. It loads rather than returning null anyway: if that ever
+  // stops holding, a blank screen is the one failure a user cannot act on.
   if (!profile) {
-    return null;
+    return <HomeSkeleton />;
   }
 
   const birthdate = fromDateColumn(profile.birthdate);
   const age = birthdate ? ageOn(birthdate, new Date()) : null;
+
+  // A refused permission is a value, not a throw, so isError alone misses it,
+  // and 'unavailable' is in LocationResult but unreturned today. Covering all
+  // three means no outcome stops the spinner and leaves the card saying nothing.
+  const locationFailure =
+    updateLocation.data === 'denied'
+      ? t('home.location_denied')
+      : updateLocation.isError || updateLocation.data === 'unavailable'
+        ? t('common.error_generic')
+        : null;
 
   return (
     <Screen scroll className="gap-8 py-8">
@@ -53,9 +97,9 @@ export default function HomeScreen() {
           <Text variant="label">{t('home.location_title')}</Text>
           <Text tone="muted">{t('home.location_body')}</Text>
 
-          {updateLocation.data === 'denied' ? (
-            <Text variant="caption" tone="danger">
-              {t('home.location_denied')}
+          {locationFailure ? (
+            <Text variant="caption" tone="danger" role="alert">
+              {locationFailure}
             </Text>
           ) : null}
 

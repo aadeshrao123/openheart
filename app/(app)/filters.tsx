@@ -3,10 +3,16 @@ import { View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { Button, Screen, Text } from '@/components/ui';
+import { Button, Screen, Skeleton, Text } from '@/components/ui';
 import { AgePreference, DistancePreference } from '@/components/preference-fields';
 import { useMyProfile, useUpdateProfile } from '@/hooks/use-my-profile';
 import { discoveryKey } from '@/hooks/use-discovery';
+
+type Filters = {
+  maxDistanceKm: number;
+  ageMin: number;
+  ageMax: number;
+};
 
 // Separate from edit-profile on purpose. These are the only fields that change
 // who is in the deck, and the moment a user wants them is when the deck just ran
@@ -18,14 +24,39 @@ export default function FiltersScreen() {
   const { data: profile } = useMyProfile();
   const updateProfile = useUpdateProfile();
 
-  const [maxDistanceKm, setMaxDistanceKm] = useState(profile?.max_distance_km ?? 50);
-  const [ageMin, setAgeMin] = useState(profile?.age_min ?? 18);
-  const [ageMax, setAgeMax] = useState(profile?.age_max ?? 99);
+  // Seeded from the loaded profile below rather than in this initializer. A
+  // default seeded before the row arrived would read as the user's own choice
+  // and save over it, which is worse than the blank screen it guards against.
+  const [form, setForm] = useState<Filters | null>(null);
 
-  // The layout gate guarantees a profile before this renders.
+  // The layout gate resolves the profile before this renders, so no path gets
+  // here without one. It loads rather than returning null anyway: if that ever
+  // stops holding, a blank screen is the one failure a user cannot act on.
   if (!profile) {
-    return null;
+    return (
+      <Screen scroll className="gap-8 py-8">
+        <View
+          accessibilityRole="progressbar"
+          accessibilityLabel={t('common.loading')}
+          aria-busy
+          className="gap-8"
+        >
+          <Skeleton shape="title" className="w-1/2" />
+          <Skeleton shape="caption" className="w-3/4" />
+          <Skeleton shape="block" />
+          <Skeleton shape="block" />
+        </View>
+      </Screen>
+    );
   }
+
+  const current: Filters = form ?? {
+    maxDistanceKm: profile.max_distance_km,
+    ageMin: profile.age_min,
+    ageMax: profile.age_max,
+  };
+
+  const patch = (next: Partial<Filters>) => setForm({ ...current, ...next });
 
   // back() is a no-op when this was opened directly rather than pushed from the
   // deck, which strands the user on a screen with no way out.
@@ -39,13 +70,17 @@ export default function FiltersScreen() {
   };
 
   const unchanged =
-    maxDistanceKm === profile.max_distance_km &&
-    ageMin === profile.age_min &&
-    ageMax === profile.age_max;
+    current.maxDistanceKm === profile.max_distance_km &&
+    current.ageMin === profile.age_min &&
+    current.ageMax === profile.age_max;
 
   const save = () => {
     updateProfile.mutate(
-      { max_distance_km: maxDistanceKm, age_min: ageMin, age_max: ageMax },
+      {
+        max_distance_km: current.maxDistanceKm,
+        age_min: current.ageMin,
+        age_max: current.ageMax,
+      },
       {
         onSuccess: () => {
           // The deck was built from the old limits, so it is wrong the moment
@@ -65,15 +100,15 @@ export default function FiltersScreen() {
         <Text tone="muted">{t('filters.body')}</Text>
       </View>
 
-      <DistancePreference value={maxDistanceKm} onChange={setMaxDistanceKm} />
+      <DistancePreference
+        value={current.maxDistanceKm}
+        onChange={(maxDistanceKm) => patch({ maxDistanceKm })}
+      />
 
       <AgePreference
-        min={ageMin}
-        max={ageMax}
-        onChange={(next) => {
-          setAgeMin(next.ageMin);
-          setAgeMax(next.ageMax);
-        }}
+        min={current.ageMin}
+        max={current.ageMax}
+        onChange={(next) => patch(next)}
       />
 
       <View className="gap-3">
@@ -88,7 +123,7 @@ export default function FiltersScreen() {
       </View>
 
       {updateProfile.isError ? (
-        <Text variant="caption" tone="danger">
+        <Text variant="caption" tone="danger" role="alert">
           {t('common.error_generic')}
         </Text>
       ) : null}
