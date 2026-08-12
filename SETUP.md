@@ -9,7 +9,10 @@ file that has gone stale.
 
 - Node, in the range `engines.node` in `package.json` declares
 - Docker, for the local Supabase stack
-- The Supabase CLI
+
+The Supabase CLI is a dev dependency, so `npm ci` installs it and every command
+below is `npx supabase`. That way everyone runs the version the lockfile pins
+rather than whatever their machine happens to have.
 
 ## 1. Install dependencies
 
@@ -38,22 +41,22 @@ worse than one that refuses to boot.
 ## 3. Database
 
 ```bash
-supabase start
-supabase db reset
-supabase gen types typescript --local > lib/database.types.ts
-supabase test db --local
+npx supabase start
+npx supabase db reset
+npx supabase gen types typescript --local > lib/database.types.ts
+npx supabase test db --local
 ```
 
-`supabase status` prints the URL and anon key for `.env`.
+`npx supabase status` prints the URL and anon key for `.env`.
 
 `lib/database.types.ts` is generated and gitignored, so this step is not
 optional: `npx tsc --noEmit` cannot resolve a single query without it.
 
-`supabase test db` must pass before you push. It is the only thing proving the
+`npx supabase test db` must pass before you push. It is the only thing proving the
 RLS policies actually deny what they claim to deny.
 
 If the discovery tests fail with a wildly wrong row count, the benchmark seed
-is probably still loaded from a previous session. `supabase db reset` clears
+is probably still loaded from a previous session. `npx supabase db reset` clears
 it; see `supabase/benchmark/README.md`.
 
 `supabase db reset` restarts the containers but does not re-read
