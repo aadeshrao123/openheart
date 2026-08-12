@@ -27,6 +27,7 @@
     "expo-application": "~57.0.2",
     "expo-constants": "~57.0.10",
     "expo-font": "~57.0.1",
+    "expo-haptics": "~57.0.1",
     "expo-image": "~57.0.2",
     "expo-image-manipulator": "~57.0.9",
     "expo-image-picker": "~57.0.9",

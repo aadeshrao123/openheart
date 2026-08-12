@@ -8,6 +8,7 @@ import { LoadFailed } from '@/components/load-failed';
 import { useMatchProfile } from '@/hooks/use-match-profile';
 import { useHideThread, useThread, useThreads, useUnmatch } from '@/hooks/use-threads';
 import { ageOn, fromDateColumn } from '@/lib/age';
+import { haptics } from '@/lib/haptics';
 import { photoUrl } from '@/lib/photos';
 import { isGender } from '@/lib/profile-options';
 import { SafetyActions } from '@/components/safety-actions';
@@ -170,7 +171,16 @@ export default function MatchProfileScreen() {
                   return;
                 }
 
-                unmatch.mutate(matchId, { onSuccess: () => router.replace('/matches') });
+                // On success, for the same reason the block in SafetyActions
+                // waits: the screen going away is the only confirmation an
+                // unmatch gives, and a buzz on the press would deliver that
+                // confirmation before the write had landed.
+                unmatch.mutate(matchId, {
+                  onSuccess: () => {
+                    haptics.destructiveConfirmed();
+                    router.replace('/matches');
+                  },
+                });
               }}
             />
 

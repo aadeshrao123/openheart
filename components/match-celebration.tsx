@@ -1,6 +1,8 @@
+import { useEffect } from 'react';
 import { View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Button, Text } from '@/components/ui';
+import { haptics } from '@/lib/haptics';
 
 export type MatchCelebrationProps = {
   name: string;
@@ -14,6 +16,15 @@ export type MatchCelebrationProps = {
 // goes nowhere is worse than one that is absent.
 export function MatchCelebration({ name, onDismiss }: MatchCelebrationProps) {
   const { t } = useTranslation();
+
+  // Once per match, because the deck keys this overlay by the person swiped on
+  // and two matches in a row mount it twice. Tied to the overlay appearing
+  // rather than to the swipe that caused it: the match is not known until the
+  // insert comes back, and a buzz on a swipe that turned out not to match would
+  // be telling the user something that is not true.
+  useEffect(() => {
+    haptics.matchMade();
+  }, []);
 
   return (
     <View

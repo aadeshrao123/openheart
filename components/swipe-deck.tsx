@@ -11,6 +11,7 @@ import Animated, {
 import { useTranslation } from 'react-i18next';
 import { Text } from '@/components/ui';
 import { cn } from '@/lib/cn';
+import { haptics } from '@/lib/haptics';
 import { ProfileCard } from '@/components/profile-card';
 import type { Candidate, SwipeDirection } from '@/hooks/use-discovery';
 
@@ -66,6 +67,13 @@ export const SwipeDeck = forwardRef<SwipeDeckHandle, SwipeDeckProps>(function Sw
 
     translateX.set(0);
     translateY.set(0);
+
+    // Here rather than in the gesture, so it marks the decision and not the
+    // drag: this runs once per card, on the same line for a released gesture
+    // and for the buttons, and never on the frames in between. The gesture
+    // reaches it through the existing runOnJS below, which is the only way a
+    // worklet can call any of this.
+    haptics.swipeCommitted();
 
     onSwipe(top, direction);
   };
