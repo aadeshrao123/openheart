@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import { TextInput, View } from 'react-native';
+import { View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { Button, Card, Rail, Text } from '@/components/ui';
-import { cn } from '@/lib/cn';
+import { Button, Card, Rail, Text, TextArea } from '@/components/ui';
 import { formatDate, formatTime } from '@/lib/format';
 import { useLiftSuspension, useResolveReport, type Report } from '@/hooks/use-moderation';
 
@@ -98,18 +97,15 @@ export function ReportCard({ report }: ReportCardProps) {
 
       {open ? (
         <>
-          <TextInput
-            multiline
+          <TextArea
             value={note}
             onChangeText={setNote}
             maxLength={1000}
             placeholder={t('moderation.note_placeholder')}
             accessibilityLabel={t('moderation.note_placeholder')}
-            className={cn(
-              'h-20 rounded-control border border-border bg-surface px-4 py-3',
-              'text-body font-body text-fg',
-              'placeholder:text-fg-subtle selection:bg-brand-subtle',
-            )}
+            // Recessed rather than raised: this field sits inside a Card, which
+            // is already the raised surface.
+            className="h-20 bg-surface"
           />
 
           <View className="gap-2">

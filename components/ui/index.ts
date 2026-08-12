@@ -10,3 +10,4 @@ export { Screen, type ScreenProps } from './screen';
 export { Skeleton, type SkeletonProps } from './skeleton';
 export { Stepper, type StepperProps } from './stepper';
 export { Text, type TextComponentProps } from './text';
+export { TextArea, type TextAreaProps } from './text-area';

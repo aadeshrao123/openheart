@@ -9,7 +9,11 @@ const token = (variable) => `rgb(var(${variable}) / <alpha-value>)`;
 const tokens = require('./tokens');
 
 module.exports = {
-  content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}'],
+  // lib/ is scanned because lib/typeface.ts is where the font-* classes are
+  // now written. Tailwind generates only the utilities it finds as literal
+  // strings in these files, so a class named nowhere else compiles to nothing
+  // and the text silently falls back to the platform font.
+  content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}', './lib/**/*.{ts,tsx}'],
   presets: [require('nativewind/preset')],
   darkMode: 'class',
   theme: {

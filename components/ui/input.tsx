@@ -1,6 +1,7 @@
 import { TextInput, View, type TextInputProps } from 'react-native';
 import { Text } from './text';
 import { cn } from '@/lib/cn';
+import { useTypeface } from '@/lib/typeface';
 
 export type InputProps = TextInputProps & {
   label: string;
@@ -23,6 +24,10 @@ export function Input({
 }: InputProps) {
   const message = error ?? hint;
 
+  // A TextInput is not a Text and inherits nothing from one, so the family it
+  // draws typed characters and its placeholder in has to be asked for here.
+  const typeface = useTypeface();
+
   return (
     <View className={cn('gap-2', containerClassName)}>
       <Text variant="overline" tone="subtle">
@@ -33,7 +38,8 @@ export function Input({
         accessibilityLabel={label}
         className={cn(
           'h-13 rounded-control border bg-surface-raised px-4',
-          'text-body font-body text-fg',
+          'text-body text-fg',
+          typeface.body,
           'placeholder:text-fg-subtle selection:bg-brand-subtle',
           error ? 'border-danger' : 'border-border',
           className,

@@ -60,6 +60,33 @@ describe('cn', () => {
     expect(cn('border-border', 'border-danger')).toBe('border-danger');
   });
 
+  // lib/typeface.ts answers a role with a family class on a Latin script and
+  // with a weight class on every other one, because a brand family carries its
+  // weight in its name and the platform font does not. The custom family names
+  // are in a hand-written group and the weights are in Tailwind's own, so
+  // whether those two collide is exactly the kind of thing this file exists to
+  // pin: a collision would silently flatten either the family or the hierarchy.
+  it('keeps a font family and a font weight in separate groups', () => {
+    for (const family of Object.keys(tokens.fontFamily)) {
+      const result = cn(`font-${family}`, 'font-semibold');
+
+      expect(result).toContain(`font-${family}`);
+      expect(result).toContain('font-semibold');
+    }
+
+    // Which is also why a weight class is never paired with a brand family:
+    // nothing here would strip it, so it would reach the platform as a second
+    // weight request on a face that already has one.
+    expect(cn('font-medium', 'font-semibold')).toBe('font-semibold');
+    expect(cn('font-display', 'font-body')).toBe('font-body');
+    expect(cn('text-display', 'font-semibold', 'text-fg')).toBe(
+      'text-display font-semibold text-fg',
+    );
+    expect(cn('text-heading', 'font-medium italic', 'text-fg')).toBe(
+      'text-heading font-medium italic text-fg',
+    );
+  });
+
   it('leaves unrelated utilities alone', () => {
     expect(cn('rounded-card', 'p-4')).toBe('rounded-card p-4');
     expect(cn('text-title', 'bg-brand')).toBe('text-title bg-brand');

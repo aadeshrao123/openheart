@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Pressable, TextInput, View, type TextInputProps } from 'react-native';
+import { Pressable, View, type TextInputProps } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { Icon, Text } from '@/components/ui';
+import { Icon, Text, TextArea } from '@/components/ui';
 import { cn } from '@/lib/cn';
 
 export type MessageComposerProps = {
@@ -51,8 +51,7 @@ export function ComposerShell({
             padding is off it. Past that the field scrolls rather than clips:
             a multiline TextInput scrolls by default, and on web it is a real
             textarea, which the browser gives overflow auto. */}
-        <TextInput
-          multiline
+        <TextArea
           value={draft}
           onChangeText={setDraft}
           editable={!disabled}
@@ -60,11 +59,7 @@ export function ComposerShell({
           accessibilityLabel={t('chat.placeholder')}
           aria-disabled={disabled}
           maxLength={2000}
-          className={cn(
-            'max-h-24 flex-1 rounded-control border border-border bg-surface-raised',
-            'px-4 py-3 text-body font-body text-fg',
-            'placeholder:text-fg-subtle selection:bg-brand-subtle',
-          )}
+          className="max-h-24 flex-1"
           {...fieldProps?.({ draft, send })}
         />
 
