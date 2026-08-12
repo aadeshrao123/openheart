@@ -73,7 +73,7 @@ export function Button({
       {loading ? (
         <ActivityIndicator />
       ) : (
-        <Text variant={dimensions.text} tone={appearance.tone} className="font-strong">
+        <Text variant={dimensions.text} tone={appearance.tone} font="strong">
           {label}
         </Text>
       )}

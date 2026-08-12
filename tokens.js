@@ -6,6 +6,13 @@
 // React Native does not synthesize weights, so each one is its own family.
 // Named by role rather than by weight: "medium" would collide with Tailwind's
 // own font-medium weight utility.
+//
+// These five are the brand faces and they cover Latin only: their cmap tables
+// carry 624 codepoints (Fraunces) and 343 (Instrument Sans), with no Arabic,
+// Devanagari, Bengali or Han glyph in either. A component never names one of
+// these directly - lib/typeface.ts decides whether the reader's script is one
+// they can draw, and hands back the platform font when it is not. Adding a face
+// for another script means a family here and one entry there.
 const fontFamily = {
   display: ['Fraunces_600SemiBold'],
   quote: ['Fraunces_500Medium_Italic'],

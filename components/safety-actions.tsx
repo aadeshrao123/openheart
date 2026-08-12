@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import { Modal, Pressable, TextInput, View } from 'react-native';
+import { Modal, Pressable, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { Button, Chip, Text } from '@/components/ui';
-import { cn } from '@/lib/cn';
+import { Button, Chip, Text, TextArea } from '@/components/ui';
 import { RATE_LIMITED } from '@/lib/db-errors';
 import { haptics } from '@/lib/haptics';
 import { REPORT_REASONS, type ReportReason } from '@/lib/report-reasons';
@@ -124,18 +123,14 @@ export function SafetyActions({
                   {t('safety.detail_label')}
                 </Text>
 
-                <TextInput
-                  multiline
+                <TextArea
                   value={detail}
                   onChangeText={setDetail}
                   maxLength={1000}
                   placeholder={t('safety.detail_placeholder')}
                   accessibilityLabel={t('safety.detail_label')}
-                  className={cn(
-                    'h-24 rounded-control border border-border bg-surface px-4 py-3',
-                    'text-body font-body text-fg',
-                    'placeholder:text-fg-subtle selection:bg-brand-subtle',
-                  )}
+                  // Recessed, because this one sits inside a raised surface.
+                  className="h-24 bg-surface"
                 />
               </View>
 

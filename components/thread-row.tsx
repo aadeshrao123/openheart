@@ -48,7 +48,7 @@ export function ThreadRow({ thread, isMine, onPress }: ThreadRowProps) {
 
       <View className="flex-1 gap-0.5">
         <View className="flex-row items-baseline justify-between gap-2">
-          <Text variant="label" className="shrink font-strong" numberOfLines={1}>
+          <Text variant="label" font="strong" className="shrink" numberOfLines={1}>
             {name}
           </Text>
 
