@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import { freshChannel } from '@/lib/realtime';
 import { useSession } from '@/hooks/use-session';
 import { threadsKey } from '@/hooks/use-threads';
 import {
@@ -9,6 +10,7 @@ import {
   RATE_LIMITED,
   RATE_LIMIT_SQLSTATE,
 } from '@/lib/db-errors';
+import type { RealtimeChannel } from '@supabase/supabase-js';
 import type { Database } from '@/lib/database.types';
 import type { ReactionCode } from '@/lib/reactions';
 
@@ -54,37 +56,40 @@ export function useChatRealtime(matchId: string) {
       void queryClient.invalidateQueries({ queryKey: threadsKey });
     };
 
-    const channel = supabase
-      .channel(`chat:${matchId}`)
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'messages', filter: `match_id=eq.${matchId}` },
-        refresh,
-      )
-      // Reactions carry no match_id, so there is nothing to filter on and RLS
-      // is the filter instead: only reactions inside the caller's own
-      // conversations are ever forwarded.
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'message_reactions' },
-        refresh,
-      );
-
     let cancelled = false;
+    let channel: RealtimeChannel | undefined;
 
-    // Realtime authorizes every change against the subscriber's own JWT. A
-    // socket that has not been given one yet matches no rows, and the
-    // subscription then receives nothing at all rather than failing, so this
-    // has to happen before subscribe rather than alongside it.
-    void supabase.realtime.setAuth().then(() => {
-      if (!cancelled) {
-        channel.subscribe();
+    void freshChannel(`chat:${matchId}`).then((opened) => {
+      if (cancelled) {
+        void supabase.removeChannel(opened);
+        return;
       }
+
+      channel = opened;
+
+      opened
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'messages', filter: `match_id=eq.${matchId}` },
+          refresh,
+        )
+        // Reactions carry no match_id, so there is nothing to filter on and
+        // RLS is the filter instead: only reactions inside the caller's own
+        // conversations are ever forwarded.
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'message_reactions' },
+          refresh,
+        )
+        .subscribe();
     });
 
     return () => {
       cancelled = true;
-      void supabase.removeChannel(channel);
+
+      if (channel) {
+        void supabase.removeChannel(channel);
+      }
     };
   }, [matchId, queryClient]);
 }

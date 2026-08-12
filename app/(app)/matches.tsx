@@ -8,6 +8,8 @@ import { ThreadRow } from '@/components/thread-row';
 import { useThreads } from '@/hooks/use-threads';
 import { useSession } from '@/hooks/use-session';
 import { supabase } from '@/lib/supabase';
+import { freshChannel } from '@/lib/realtime';
+import type { RealtimeChannel } from '@supabase/supabase-js';
 
 // Matches the shape of ThreadRow: avatar, then a name line and a preview line.
 function ThreadListSkeleton() {
@@ -52,23 +54,30 @@ export default function MatchesScreen() {
   }, [threads]);
 
   useEffect(() => {
-    const channel = supabase
-      .channel('threads')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'messages' }, () => {
-        void refetch();
-      });
-
     let cancelled = false;
+    let channel: RealtimeChannel | undefined;
 
-    void supabase.realtime.setAuth().then(() => {
-      if (!cancelled) {
-        channel.subscribe();
+    void freshChannel('threads').then((opened) => {
+      if (cancelled) {
+        void supabase.removeChannel(opened);
+        return;
       }
+
+      channel = opened;
+
+      opened
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'messages' }, () => {
+          void refetch();
+        })
+        .subscribe();
     });
 
     return () => {
       cancelled = true;
-      void supabase.removeChannel(channel);
+
+      if (channel) {
+        void supabase.removeChannel(channel);
+      }
     };
   }, [refetch]);
 
