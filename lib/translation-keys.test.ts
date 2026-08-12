@@ -19,6 +19,11 @@ import { Constants } from '@/lib/database.types';
 import { GENDERS } from '@/lib/profile-options';
 import { REACTION_CODES } from '@/lib/reactions';
 import { REPORT_REASONS } from '@/lib/report-reasons';
+import {
+  VERIFICATION_CHALLENGES,
+  VERIFICATION_REASONS,
+  VERIFICATION_RESULTS,
+} from '@/lib/verification';
 
 // A mistyped key is invisible: i18next renders the key itself, so the screen
 // says "matches.emty" instead of a sentence and nothing fails. This walks the
@@ -48,6 +53,10 @@ const DYNAMIC_KEYS: Record<string, readonly string[]> = {
   'chat.reaction_': REACTION_CODES,
   'profile.gender_': GENDERS,
   'moderation.status_': RESOLVED_STATUSES,
+  'verify.pose_': VERIFICATION_CHALLENGES,
+  'verify.result_': VERIFICATION_RESULTS,
+  'verify.result_body_': VERIFICATION_RESULTS,
+  'verify.reason_': VERIFICATION_REASONS,
 };
 
 type Bundle = { [key: string]: string | Bundle };

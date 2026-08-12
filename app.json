@@ -55,6 +55,12 @@
             "backgroundColor": "#161413"
           }
         }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Used for the selfie that verifies your profile is really you."
+        }
       ]
     ],
     "experiments": {

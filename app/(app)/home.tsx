@@ -113,6 +113,10 @@ export default function HomeScreen() {
       ) : null}
 
       <View className="gap-1">
+        {!profile.photo_verified ? (
+          <ListRow label={t('home.verify')} onPress={() => router.push('/verify')} />
+        ) : null}
+
         <ListRow label={t('home.browse')} onPress={() => router.push('/deck')} />
         <ListRow label={t('home.messages')} onPress={() => router.push('/matches')} />
         <ListRow
