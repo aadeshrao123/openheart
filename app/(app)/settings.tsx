@@ -8,6 +8,8 @@ import { useLanguage } from '@/hooks/use-language';
 import { useDeleteAccount, useMyProfile } from '@/hooks/use-my-profile';
 import { useSession } from '@/hooks/use-session';
 import { useIsModerator } from '@/hooks/use-moderation';
+import { SUPPORT_EMAIL } from '@/lib/app';
+import * as Linking from 'expo-linking';
 
 export default function SettingsScreen() {
   const { t } = useTranslation();
@@ -39,6 +41,31 @@ export default function SettingsScreen() {
           <ListRow label={t('home.edit_profile')} onPress={() => router.push('/edit-profile')} />
           <ListRow label={t('safety.blocked_title')} onPress={() => router.push('/blocked')} />
         </Card>
+      </View>
+
+      {/* Apple guideline 1.2 asks for published contact information alongside
+          filtering, reporting and blocking. The address is shown as well as
+          linked, because openURL does nothing on a device with no mail client
+          configured and a row that silently fails is worse than a plain
+          address somebody can copy. */}
+      <View className="gap-3">
+        <Text variant="label" tone="muted" className="px-4">
+          {t('settings.help')}
+        </Text>
+
+        <Card elevation="flat" className="gap-0 px-0">
+          <ListRow
+            label={t('settings.contact')}
+            value={SUPPORT_EMAIL}
+            onPress={() => {
+              void Linking.openURL(`mailto:${SUPPORT_EMAIL}`);
+            }}
+          />
+        </Card>
+
+        <Text variant="caption" tone="subtle" className="px-4">
+          {t('settings.contact_body')}
+        </Text>
       </View>
 
       {isModerator ? (

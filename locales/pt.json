@@ -221,7 +221,8 @@
     "blocked_unknown": "Conta excluída",
     "unblock": "Desbloquear",
     "unblock_action": "Desbloquear {{name}}",
-    "unblock_explainer": "Desbloquear faz a pessoa voltar a aparecer nas suas sugestões. Isso não traz de volta uma conversa que terminou."
+    "unblock_explainer": "Desbloquear faz a pessoa voltar a aparecer nas suas sugestões. Isso não traz de volta uma conversa que terminou.",
+    "report_done_contact": "Se for urgente, escreva para {{email}}. Se alguem estiver em perigo imediato, contate primeiro os servicos de emergencia locais."
   },
   "settings": {
     "title": "Configurações",
@@ -235,7 +236,10 @@
     "delete_confirm": "Isso apaga para sempre seu nome, suas fotos e seu perfil. Não dá para desfazer.",
     "delete_retains_messages": "As mensagens que você já enviou continuam na conversa da outra pessoa, porque também são dados dela. Seu nome é removido delas.",
     "delete_confirm_action": "Sim, excluir minha conta",
-    "donate": "Apoiar o OpenHeart"
+    "donate": "Apoiar o OpenHeart",
+    "help": "Ajuda",
+    "contact": "Fale conosco",
+    "contact_body": "Escreva para nos sobre qualquer coisa, inclusive uma preocupacao de seguranca. Uma pessoa le cada mensagem."
   },
   "filters": {
     "title": "Quem você vê",

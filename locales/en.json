@@ -217,7 +217,8 @@
     "blocked_unknown": "Deleted account",
     "unblock": "Unblock",
     "unblock_action": "Unblock {{name}}",
-    "unblock_explainer": "Unblocking lets them appear in your deck again. It does not bring back a conversation that ended."
+    "unblock_explainer": "Unblocking lets them appear in your deck again. It does not bring back a conversation that ended.",
+    "report_done_contact": "If it is urgent, write to {{email}}. If someone is in immediate danger, contact your local emergency services first."
   },
   "settings": {
     "title": "Settings",
@@ -231,7 +232,10 @@
     "delete_confirm": "This permanently erases your name, photos and profile. It cannot be undone.",
     "delete_retains_messages": "Messages you already sent stay in the other person's conversation, because they are their data too. Your name is removed from them.",
     "delete_confirm_action": "Yes, delete my account",
-    "donate": "Support OpenHeart"
+    "donate": "Support OpenHeart",
+    "help": "Help",
+    "contact": "Contact us",
+    "contact_body": "Write to us about anything, including a safety concern. A person reads every message."
   },
   "filters": {
     "title": "Who you see",

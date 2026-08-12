@@ -213,7 +213,8 @@
     "blocked_unknown": "Akun terhapus",
     "unblock": "Buka blokir",
     "unblock_action": "Buka blokir {{name}}",
-    "unblock_explainer": "Membuka blokir membuat dia bisa muncul lagi di dekmu. Ini tidak mengembalikan percakapan yang sudah berakhir."
+    "unblock_explainer": "Membuka blokir membuat dia bisa muncul lagi di dekmu. Ini tidak mengembalikan percakapan yang sudah berakhir.",
+    "report_done_contact": "Jika mendesak, tulis ke {{email}}. Jika ada yang dalam bahaya langsung, hubungi layanan darurat setempat lebih dulu."
   },
   "settings": {
     "title": "Pengaturan",
@@ -227,7 +228,10 @@
     "delete_confirm": "Ini menghapus nama, foto, dan profilmu secara permanen. Tindakan ini tidak bisa dibatalkan.",
     "delete_retains_messages": "Pesan yang sudah kamu kirim tetap ada di percakapan orang lain, karena itu juga data mereka. Namamu dihapus dari pesan itu.",
     "delete_confirm_action": "Ya, hapus akunku",
-    "donate": "Dukung OpenHeart"
+    "donate": "Dukung OpenHeart",
+    "help": "Bantuan",
+    "contact": "Hubungi kami",
+    "contact_body": "Tulis kepada kami tentang apa saja, termasuk masalah keamanan. Setiap pesan dibaca oleh manusia."
   },
   "filters": {
     "title": "Siapa yang kamu lihat",

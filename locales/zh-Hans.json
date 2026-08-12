@@ -213,7 +213,8 @@
     "blocked_unknown": "已注销的账号",
     "unblock": "解除拉黑",
     "unblock_action": "解除拉黑 {{name}}",
-    "unblock_explainer": "解除拉黑后，对方会重新出现在你的推荐里。已经结束的对话不会因此恢复。"
+    "unblock_explainer": "解除拉黑后，对方会重新出现在你的推荐里。已经结束的对话不会因此恢复。",
+    "report_done_contact": "如果情况紧急，请写信到 {{email}}。如果有人正处于危险之中，请先联系当地紧急服务。"
   },
   "settings": {
     "title": "设置",
@@ -227,7 +228,10 @@
     "delete_confirm": "这会永久清除你的名字、照片和资料，并且无法撤销。",
     "delete_retains_messages": "你已经发出的消息会留在对方的对话里，因为那也是对方的数据。你的名字会从这些消息上移除。",
     "delete_confirm_action": "是的，注销我的账号",
-    "donate": "支持 OpenHeart"
+    "donate": "支持 OpenHeart",
+    "help": "帮助",
+    "contact": "联系我们",
+    "contact_body": "任何事情都可以写信告诉我们，包括安全方面的顾虑。每一封都有人会看。"
   },
   "filters": {
     "title": "你会看到谁",

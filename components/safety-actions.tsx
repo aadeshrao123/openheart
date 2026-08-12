@@ -3,6 +3,7 @@ import { Modal, Pressable, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Button, Chip, Text, TextArea } from '@/components/ui';
 import { RATE_LIMITED } from '@/lib/db-errors';
+import { SUPPORT_EMAIL } from '@/lib/app';
 import { haptics } from '@/lib/haptics';
 import { REPORT_REASONS, type ReportReason } from '@/lib/report-reasons';
 import { useBlock, useReport } from '@/hooks/use-safety';
@@ -205,6 +206,12 @@ export function SafetyActions({
               </Text>
 
               <Text tone="muted">{t('safety.report_done_body')}</Text>
+
+              {/* The one screen where somebody with a serious problem is
+                  already standing. */}
+              <Text variant="caption" tone="subtle">
+                {t('safety.report_done_contact', { email: SUPPORT_EMAIL })}
+              </Text>
 
               <Button label={t('common.continue')} onPress={close} />
             </>

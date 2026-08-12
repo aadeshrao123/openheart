@@ -221,7 +221,8 @@
     "blocked_unknown": "Compte supprimé",
     "unblock": "Débloquer",
     "unblock_action": "Débloquer {{name}}",
-    "unblock_explainer": "Débloquer permet à cette personne de réapparaître dans tes suggestions. Cela ne rétablit pas une conversation terminée."
+    "unblock_explainer": "Débloquer permet à cette personne de réapparaître dans tes suggestions. Cela ne rétablit pas une conversation terminée.",
+    "report_done_contact": "Si c'est urgent, ecrivez a {{email}}. Si quelqu'un est en danger immediat, contactez d'abord les services d'urgence locaux."
   },
   "settings": {
     "title": "Réglages",
@@ -235,7 +236,10 @@
     "delete_confirm": "Cela efface définitivement ton nom, tes photos et ton profil. C'est irréversible.",
     "delete_retains_messages": "Les messages que tu as déjà envoyés restent dans la conversation de l'autre personne, car ce sont aussi ses données. Ton nom en est retiré.",
     "delete_confirm_action": "Oui, supprimer mon compte",
-    "donate": "Soutenir OpenHeart"
+    "donate": "Soutenir OpenHeart",
+    "help": "Aide",
+    "contact": "Nous contacter",
+    "contact_body": "Ecrivez-nous a propos de tout, y compris une inquietude sur la securite. Une personne lit chaque message."
   },
   "filters": {
     "title": "Qui tu vois",
