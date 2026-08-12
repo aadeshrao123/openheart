@@ -1,4 +1,5 @@
 import { getLocales } from 'expo-localization';
+import i18next from 'i18next';
 import { calendarDayOffset } from './calendar';
 
 // Intl is built into Hermes and every browser, so formatting needs no library.
@@ -49,18 +50,61 @@ export function usableLocale(tag: string | undefined): string {
   return FALLBACK_LOCALE;
 }
 
-// Remembers the last answer only. The device locale changes about as often as a
-// person moves country, and this runs once per formatted value, which on a
-// conversation is once per message row.
-let lastTag: string | undefined;
+// Which locale a date, a time or a distance is formatted in.
+//
+// Reading the device tag alone was wrong, and invisibly so: picking Arabic in
+// Settings translated every string and left "3 minutes ago" in English next to
+// them, because the formatters never heard about the choice.
+//
+// The reader's language wins, and the device's region is carried across when it
+// has one. Those two answer different questions. Language is what you read;
+// region is where you are, and it decides miles against kilometres, which
+// weekday a week starts on, and how a date is ordered. Someone reading Arabic in
+// Chicago wants Arabic words and miles, so the tag they get is ar-US.
+export function resolveFormattingLocale(
+  deviceTag: string | undefined,
+  chosenLanguage: string | undefined,
+): string {
+  const device = usableLocale(deviceTag);
+
+  if (chosenLanguage === undefined || chosenLanguage === '') {
+    return device;
+  }
+
+  // Same language: the device tag is strictly more specific, so keep it whole
+  // rather than throwing away a region or a script it already carries.
+  if (chosenLanguage.split('-')[0] === device.split('-')[0]) {
+    return device;
+  }
+
+  let region: string | undefined;
+
+  try {
+    region = new Intl.Locale(device).region;
+  } catch {
+    region = undefined;
+  }
+
+  return usableLocale(region ? `${chosenLanguage}-${region}` : chosenLanguage);
+}
+
+// Remembers the last answer only. Both inputs change about as often as a person
+// moves country or changes their mind about a language, and this runs once per
+// formatted value, which on a conversation is once per message row.
+let lastKey: string | undefined;
 let lastLocale = FALLBACK_LOCALE;
 
 function currentLocale(): string {
-  const tag = getLocales()[0]?.languageTag;
+  const deviceTag = getLocales()[0]?.languageTag;
 
-  if (tag !== lastTag) {
-    lastTag = tag;
-    lastLocale = usableLocale(tag);
+  // i18next, not lib/i18n: the singleton is the same object either way, and
+  // importing our own module here would be a cycle.
+  const chosenLanguage = i18next.language;
+  const key = `${deviceTag ?? ''}|${chosenLanguage ?? ''}`;
+
+  if (key !== lastKey) {
+    lastKey = key;
+    lastLocale = resolveFormattingLocale(deviceTag, chosenLanguage);
   }
 
   return lastLocale;

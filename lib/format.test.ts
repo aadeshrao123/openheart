@@ -14,6 +14,7 @@ import {
   formatDistance,
   formatRelativeTime,
   formatTime,
+  resolveFormattingLocale,
   usableLocale,
   usesImperialUnits,
 } from './format';
@@ -116,4 +117,53 @@ describe('every formatter survives a locale it did not expect', () => {
       expect(() => formatDayLabel(date, now, tag)).not.toThrow();
     });
   }
+});
+
+// Reading the device tag alone shipped an Arabic interface with "3 minutes ago"
+// in English beside it, because the formatters never heard which language the
+// reader had picked. Language and region answer different questions and both
+// have to survive.
+describe('resolveFormattingLocale', () => {
+  it('follows the device when no language has been chosen', () => {
+    expect(resolveFormattingLocale('fr-CA', undefined)).toBe('fr-CA');
+    expect(resolveFormattingLocale('fr-CA', '')).toBe('fr-CA');
+  });
+
+  it('keeps the device tag whole when it is the same language', () => {
+    expect(resolveFormattingLocale('pt-BR', 'pt')).toBe('pt-BR');
+    expect(resolveFormattingLocale('en-GB', 'en')).toBe('en-GB');
+  });
+
+  it('takes the chosen language and keeps where the reader is', () => {
+    expect(resolveFormattingLocale('en-US', 'ar')).toBe('ar-US');
+    expect(resolveFormattingLocale('en-GB', 'hi')).toBe('hi-GB');
+  });
+
+  // The whole reason region is carried across: units follow where you are, not
+  // what you read. Someone reading Arabic in Chicago still wants miles.
+  it('leaves a reader in the United States on imperial units', () => {
+    expect(usesImperialUnits(resolveFormattingLocale('en-US', 'ar'))).toBe(true);
+    expect(usesImperialUnits(resolveFormattingLocale('en-GB', 'ar'))).toBe(false);
+  });
+
+  it('survives a device tag with no region', () => {
+    expect(resolveFormattingLocale('en', 'ar')).toBe('ar');
+  });
+
+  it('survives a malformed device tag', () => {
+    expect(resolveFormattingLocale('en-US@posix', 'ar')).toBe('ar-US');
+    expect(resolveFormattingLocale('C', 'ar')).toBe('ar-US');
+  });
+
+  it('carries a script subtag through', () => {
+    expect(resolveFormattingLocale('en-US', 'zh-Hans')).toBe('zh-Hans-US');
+  });
+
+  it('formats in the chosen language, which is the bug this exists for', () => {
+    const threeMinutesAgo = new Date(Date.now() - 3 * 60 * 1000);
+    const arabic = formatRelativeTime(threeMinutesAgo, resolveFormattingLocale('en-US', 'ar'));
+
+    expect(arabic).not.toMatch(/minute/);
+    expect(arabic).toMatch(/[\u0600-\u06FF]/);
+  });
 });
