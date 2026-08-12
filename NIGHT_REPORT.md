@@ -25,9 +25,11 @@ commit green against the full gate.
 **Commit authorship.** The harness's git identity is `Claude
 <noreply@anthropic.com>`, and previous commits are authored by the maintainer.
 Commit *messages* carry no AI attribution, per the rule. The author field was
-left alone rather than set to the maintainer's name, because authoring as
-someone else is the maintainer's call to make, not mine. `git commit --amend
---author` or a rebase will change it if that is wanted.
+raised with the maintainer while the branch was still unpushed, since changing
+it costs nothing before a push and needs a force push after one. The answer was
+to add no identity at all and leave the commits describing only their own
+change, so the field is untouched. `git commit --amend --author` or a rebase
+will still change it later if that is ever wanted.
 
 **The branch could not be pushed, and there is no pull request.** This is the
 one part of the brief that was not completed, and it is not for want of trying.
@@ -49,8 +51,8 @@ integration does not hold write permission on this repository. The proxy
 recorded no relay failure, so the 403 is GitHub's own answer rather than an
 egress block. An admin can grant write access in the Claude GitHub settings.
 
-Everything is committed locally on the right branch, and a git bundle of the
-eight commits is attached alongside this report so nothing depends on this
+Everything is committed locally on the right branch, and a git bundle of all
+sixteen commits is attached alongside this report so nothing depends on this
 container surviving. To land it:
 
 ```
@@ -99,8 +101,8 @@ Two environment notes worth keeping:
 | --- | --- | --- |
 | `npx tsc --noEmit` | clean | clean |
 | `npx expo lint` | clean | clean |
-| `npx vitest run` | 34 tests | **97 tests** |
-| `supabase test db --local` | 99 tests | **105 tests** |
+| `npx vitest run` | 34 tests | **145 tests** |
+| `supabase test db --local` | 99 tests | **133 tests** |
 | non-ASCII grep | empty | empty |
 | over-100-column grep | empty | empty |
 | physical-direction grep | empty | empty |
@@ -118,6 +120,10 @@ Every commit was constructed to be self-consistent, and the full gate above was
 executed against the final tree. The intermediate commits were not each
 independently executed against all six checks; that is the one place the brief's
 process was not followed to the letter, and it is said here rather than implied.
+
+**Section 7 is a later pass** and it closes four of the five things this report
+originally left open, so read section 5 with section 7 beside it. The counts in
+the table above are the final ones and include it.
 
 ---
 
@@ -220,7 +226,8 @@ loading, where a centred word reads as an empty screen.
 JavaScript props, so setting them would put a value outside `global.css`, which
 is the same reason this project has no slider.
 
-**D6 haptics is not done.** It is the one item in tranche D left undone and it
+**D6 haptics is not done.** *Superseded: it was done in the later pass, see
+section 7.* It is the one item in tranche D left undone and it
 was a judgement call rather than an oversight. `expo-haptics` resolves to
 `~57.0.1` from `bundledNativeModules.json`, so installing it is safe, but the
 requirement is that it is a no-op on web rather than a crash, and that cannot be
@@ -231,7 +238,8 @@ kind of unverified assumption the rules exist to prevent. The correct sequencing
 is to install it and check `AccessibilityInfo.isReduceMotionEnabled` behaviour
 on a real device in the same sitting.
 
-**D8 screen transitions is not done either.** Same reason: the animation names
+**D8 screen transitions is not done either.** *Superseded: done in the later
+pass, see section 7.* Same reason: the animation names
 available in the installed native-stack types are verifiable, but whether the
 result is calm is a design judgement that needs eyes on a device, and the
 binding rule here is that nothing a user must be able to do may wait on an
@@ -590,7 +598,7 @@ tonight's work and it is the first thing worth doing with a working stack.
 
 | Screen | Result |
 | --- | --- |
-| `/sign-in` | Correct. Text right aligned, brand rule at the top right, accent rail and its padding both moved to the right edge together. |
+| `/sign-in` | Correct. Text right aligned, rule at the top right, rail and padding both moved. |
 | `/verify` | One real bug found and fixed, below. Otherwise correct. |
 | `/+not-found` | Correct. |
 | Everything behind auth | Not reachable without a session. Unverified. |
@@ -884,7 +892,9 @@ reproducible rather than a one-off edit.
 
 ## 5. Skipped, and why
 
-**Fonts for the nine new scripts.** Measured, not assumed: the `cmap` tables of
+**Fonts for the nine new scripts.** *Superseded: fixed in the later pass, see
+section 7. The cost decision below is still open, but the silent mixing is
+not.* Measured, not assumed: the `cmap` tables of
 the five TTFs in `node_modules` carry 624 codepoints for Fraunces and 343 for
 Instrument Sans, and both are Latin only. Probing them directly, neither has a
 glyph for Arabic, Devanagari, Bengali, Han or Cyrillic. So five of the ten
@@ -902,7 +912,8 @@ that swaps family by script.
 Urdu is the sharpest case: it is conventionally set in Nastaliq, not the Naskh
 an Arabic fallback provides, and Urdu readers notice immediately.
 
-**Column level read grants on `profiles`.** Found while verifying the delete
+**Column level read grants on `profiles`.** *Superseded: fixed in `0016`, see
+section 7.* Found while verifying the delete
 bug, not fixed. `authenticated` holds a whole-table SELECT, so any row a policy
 lets you read exposes every column, including `location` and `birthdate`.
 Verified: a matched user can select the other person's coordinates and exact
@@ -935,3 +946,228 @@ table.** Untouched.
   bring up auth in this sandbox (see section 0).
 - **The translations themselves.** They are machine drafted. See the
   localization section.
+
+---
+
+## 7. The later pass
+
+Everything above was the first sitting. This section is a second one, run
+against the same tree, and it exists to close what section 5 had listed as
+skipped. Four of those five are now done. The fifth, the ban-evasion signal in
+section 4a, is untouched and still needs a privacy decision rather than code.
+
+Five commits, each verified on its own before it landed. The method changed from
+the first sitting in one way worth recording: each change was applied to a
+clean `git worktree` checked out at the previous commit, and the gates were run
+there, so a commit was proved green against its own tree rather than against a
+tree that also held three other unfinished changes. That is what the note in
+section 0a said had not been done the first time.
+
+| Commit | What |
+| --- | --- |
+| `622f1dd` | A transition per stack, and none under reduced motion |
+| `c3afd7a` | Haptics at three moments |
+| `45138a4` | `profiles` column read grant narrowed |
+| `2820711` | Typeface chosen by the reader's script |
+| `ed1841e` | A malformed platform locale no longer crashes a screen |
+
+### 7a. A match could read a date of birth and a home location
+
+The most important thing in this section, and the same shape of bug as the
+delete hole in section 3: a table-level `GRANT` quietly undoing what the
+policies were carefully written to do.
+
+`0006` did `grant select on profiles to authenticated`. RLS decides which rows a
+caller may read, the grant decides which columns, so every row a policy allowed
+handed over all seventeen. Reproduced before anything was changed, in a rolled
+back transaction: two users swipe `like` on each other, the `0003` trigger
+creates the match, and as one of them the other's `birthdate` came back as
+`1988-11-23` and their `location` as a readable point. The onboarding copy says
+"We never show your date of birth to anyone". It was not true.
+
+This is not the trilateration attack the design rules out, because the
+coordinates are already rounded to about 1km before storage. It is still a home
+neighbourhood and an exact date of birth, handed to anyone who reached a match.
+
+Verified again after the fix, independently of the agent that wrote it:
+
+```
+--- the match row IS still readable ---
+ display_name | gender
+--------------+--------
+ Ben          |
+--- birthdate ---            ERROR:  permission denied for table profiles
+--- location ---             ERROR:  permission denied for table profiles
+--- select *, which is what PostgREST sends ---
+                             ERROR:  permission denied for table profiles
+--- select * on my OWN row, because a column grant does not know whose ---
+                             ERROR:  permission denied for table profiles
+--- the age still comes back ---            age = 37
+--- my own row still reads in full ---      Ana | 1990-01-01
+--- a stranger ---                          age = NULL, my_profile() = 0 rows
+```
+
+`suspended_at` and `suspended_reason` came out of the grant at the same time.
+They are moderation state, and a match could previously read whether you had
+been suspended.
+
+Two functions replaced the two columns the client actually needed. `match_age`
+reuses the expression `discover_profiles` already had, so there is one
+definition of what an age is rather than two, and it is deliberately not block
+aware for the same reason `profiles_select_match_member` is not: an age that
+disappeared would tell a blocked person they had been blocked. It returns null
+rather than raising for a stranger, so it cannot be used to ask whether an id
+exists. `my_profile` returns your own row and its predicate is its whole body,
+so it cannot become a second way to read anyone else's.
+
+Rejected on the way, and worth recording because each looks reasonable: a
+`match_profile` RPC returning the whole row, which is exactly the second read
+path this must not become; a `security_invoker` view, which checks the
+underlying table's privileges as the caller and so would still have needed
+`select (birthdate)`; and a plain view, which runs as its owner and would have
+left a duplicated copy of the policy as its only protection.
+
+`profile_columns.test.sql` is 27 assertions and it is not vacuous: with the old
+whole-table grant restored inside a rolled back transaction, exactly six of them
+fail and nothing else. The ages are anchored to `current_date`, including the
+day before and the day after a birthday, so they cannot rot into passing.
+
+**The project rule says a column a shipped client reads is never narrowed.**
+Nothing has shipped. That is precisely why this was the moment: after launch the
+same change is a three release deprecation sequence.
+
+### 7b. Half the languages were rendering in two typefaces at once
+
+Ten languages ship and the two brand families cover one script between them.
+Measured by parsing the `cmap` of all twenty six installed faces: 624 codepoints
+in Fraunces, 343 in Instrument Sans, and no glyph for Arabic, Devanagari,
+Bengali or Han in any of them. So in Chinese, Hindi, Arabic, Bengali or Urdu,
+the Latin characters in a line came out of the brand face and the script around
+them came out of a platform fallback.
+
+`lib/typeface.ts` is now the only place a script is bound to a family. Where the
+brand cannot draw the script, no family is requested at all, because there is no
+single family string meaning "the system font" across iOS, Android and web.
+
+**The first attempt at this was wrong and the measurement is what caught it.**
+The brand families encode weight and slant inside their own names, which
+`tokens.js` already said, so asking for no family also asked for no hierarchy.
+Measured in Chromium on the real export:
+
+```
+        en                              ar (first attempt)   ar (fixed)
+40px    Fraunces_600SemiBold            w=400 normal         w=600 normal
+19px    Fraunces_500Medium_Italic       w=400 normal         w=500 italic
+14px    InstrumentSans_600SemiBold      w=400 normal         w=600 normal
+12.5px  InstrumentSans_400Regular       w=400 normal         w=400 normal
+```
+
+In the middle column a button label weighs the same as body copy and the pull
+quote is no longer italic. Five of ten languages had lost the entire type
+hierarchy, which is worse than the bug being fixed. The platform set now carries
+`font-weight` and `font-style` to match what each family encodes, and the brand
+set carries no weight class at all, because a weight request on a face that
+already contains one is what produces a synthetic bold on Android.
+
+Three raw `TextInput`s in feature components were the sites this would have
+survived at, since a `TextInput` inherits nothing from a `Text`. They are now
+one `TextArea` primitive, which the component rules already required twice over.
+
+### 7c and 7d. The two tranche D items, and why the reasons no longer held
+
+**D6 haptics** was skipped because the requirement is a no-op on web rather than
+a crash and the only available evidence had been a documentation page. It was
+read out of the installed module instead: `ExpoHaptics.web.ts` is a real
+implementation that calls `navigator.vibrate`, and all three entry points return
+an already resolved promise. Then confirmed in Chromium by recording
+`navigator.vibrate`: a swipe produced `[40]`, the match after it `[40,100,40]`,
+a block `[50,100,50]`, which are exactly the Light, Success and Warning rows of
+that file's own table. Repeated with `navigator.vibrate` deleted, on a fine and
+a coarse pointer: no throw, no unhandled rejection, nothing left in the DOM.
+
+The rejection the wrapper catches is the native one and it is not defensive
+padding: `requireOptionalNativeModule` returns null in any build made before the
+dependency existed, and every entry point then throws from inside an `async`
+function, which arrives as a rejected promise and would take a screen down.
+
+**D8 transitions** was skipped because whether a transition is calm wanted eyes
+on a device. Two things turned out to be measurable rather than felt. The
+Android default is a zoom, `0.85 -> 1` on the incoming screen and `1 -> 1.15` on
+the outgoing one, so leaving it in place was the most kinetic option in the
+library rather than the neutral one. And `react-native-screens` ships its
+Android animations in `res/base/anim` with **no `anim-ldrtl` variant**, so every
+horizontal value in the union pushes from the wrong side in Arabic and Urdu.
+Both ship. That rules out four of the eleven values on correctness grounds
+before taste is involved.
+
+The reduced-motion half is what makes this worth having. `react-native-web`'s
+`AccessibilityInfo` is real here, unlike its `I18nManager` and `RefreshControl`
+stubs, and maps to `prefers-reduced-motion` and that query's change event. One
+module-level subscription for the app's lifetime, because that file indexes its
+handler map by the handler function coerced to a string, so two components
+subscribing with same-bodied closures share an entry and the first to
+unsubscribe removes the other's listener.
+
+### 7e. A crash found while driving the export
+
+Not on any list. The deck did not render in the browser at all: it went to the
+root error boundary with `RangeError: Incorrect locale information provided`.
+
+`currentLocale()` returned whatever the platform reported and handed it straight
+to `Intl`. Chromium in this container reports `en-US@posix`, a POSIX locale
+string and not a BCP 47 tag. Every constructor in `lib/format.ts` rejects it, so
+any screen showing a distance, a date, a time or a relative time would have gone
+the same way. The tag is now sanitised where it enters, walking back one subtag
+at a time until `Intl.getCanonicalLocales` accepts what is left, so `fr-FR@euro`
+answers in French rather than falling all the way back to English.
+
+### 7f. Still open after this pass
+
+- **Android below API 28 still flattens the platform weights.** Verified in
+  `ReactFontManager.kt`: `BOLD = 700`, `nearestStyle` buckets anything below it
+  as `NORMAL`, and `apply()` uses `nearestStyle` when `SDK_INT < P`. So on
+  Android 7 and 8 the five non-Latin languages get one upright weight again.
+  `expo-modules-core` defaults `minSdkVersion` to 24 and this project pins
+  nothing, so those devices are in range. Raising display and strong to 700
+  would survive it, at the cost of being heavier than the brand's own 600
+  everywhere else. That is a brand decision, so it is written down not taken.
+- **Urdu and Nastaliq**, unchanged from section 5. Measured through CDP, the
+  platform fallback here resolves to FreeSerif, which is Naskh. Only bundling
+  Noto Nastaliq Urdu fixes it, and that is the cost decision. The mechanism is
+  now ready: one family in `tokens.js`, one entry in `lib/typeface.ts`.
+- **`delete_my_account()` still does not clear `birthdate`.** It blanks the
+  name, bio, gender and seeking and nulls the location, but an exact date of
+  birth stays on the tombstone forever, and the function's own comment says
+  "Erase the personal data" without saying why this one is exempt. Since `0016`
+  only the service role can read it, so this is a retention question rather
+  than a leak. Either it should be cleared or the reason for keeping it should
+  be written down and pinned by a test. It is a product and privacy call, which
+  is why it is here and not in a commit. `suspended_at` surviving deletion is
+  now pinned by a test, because that one is unambiguously right.
+- **The next narrowing.** `seeking`, `age_min`, `age_max`, `max_distance_km`,
+  `photo_verified` and `created_at` are still readable by anyone who can read
+  the row, and no screen renders any of them for anyone but their owner. They
+  could move behind `my_profile()` the same way. Left alone because each removal
+  is another chance to break a policy that quietly reads one.
+- **`components/code-input.tsx` still imports `TextInput` from react-native.**
+  It is `opacity-0` behind the digit boxes and draws no glyphs, so it is not a
+  font call site, but it is still the rule being bent.
+- **F1, ban evasion**, section 4a, untouched and still a privacy decision.
+
+### 7g. Not verified in this pass
+
+- **Still nothing on a real iOS or Android device or simulator.** None exists in
+  this container. So: the feel of every haptic, the look of every transition,
+  and the native font weight path are all reasoned from installed platform
+  source and never seen. Do not read any of it as "looks right".
+- **No signed-in session**, so `0016` is proved through `psql` as
+  `role authenticated` with `request.jwt.claims` set, never through PostgREST.
+  The chat composer and the moderator note, both behind the auth gate, were
+  checked by typecheck and by resolving their class lists through the real
+  `cn()`, not by a screenshot.
+- **`npx expo-doctor` reports 19/20 here, not 20/20.** The one failure is
+  "Validate packages against React Native Directory package metadata", which is
+  a network call: posting to that endpoint through this container's proxy
+  returns 200 with an empty body. It is an environment artifact rather than a
+  project finding, and it is recorded rather than hidden because the earlier
+  run in this same session reported 20/20.
