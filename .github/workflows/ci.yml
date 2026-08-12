@@ -160,6 +160,28 @@ jobs:
 
       - run: npm test
 
+  functions:
+    name: Edge Functions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # The functions run on Deno rather than Node, so nothing in the job above
+      # ever looked at them. media.test.ts existed for four phases and had never
+      # been executed once, and a type error in moderation.ts survived because
+      # of it. `deno test` type checks as well as runs.
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      # node-modules-dir=none keeps this to Deno's own npm cache. On auto it
+      # reads the root package.json instead and tries to install the whole
+      # React Native tree, none of which the functions import.
+      - name: Type check and test
+        run: >-
+          deno test --no-lock --node-modules-dir=none
+          --allow-read --allow-env supabase/functions/
+
   database:
     name: Migrations and pgTAP
     runs-on: ubuntu-latest

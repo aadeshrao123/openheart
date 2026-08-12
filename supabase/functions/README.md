@@ -111,6 +111,37 @@ Set by hand, once per project:
 | `AWS_REGION` | Where Rekognition is called. See `infra/README.md`. |
 | `AWS_ACCESS_KEY_ID` | The `openheart-moderation` IAM user, not root. |
 | `AWS_SECRET_ACCESS_KEY` | Same user. |
+| `ARACHNID_SHIELD_USERNAME` | Arachnid Shield API credentials, free. See below. |
+| `ARACHNID_SHIELD_PASSWORD` | Same credentials. |
+
+## The two scanners, and what they do not cover
+
+`createModerationProvider` composes both and requires both. Rekognition answers
+"is this explicit". Arachnid Shield, run by the Canadian Centre for Child
+Protection, answers "is this a known image" by matching against their hash list.
+Constructing either one reads its credentials, so a missing secret throws before
+any photo is scanned and `moderate-photo` answers 503 with the row still
+pending. That is deliberate: a photo checked for one thing and not the other
+must not reach `approved`.
+
+Neither answers "is this abuse material nobody has catalogued yet". Hash
+matching only ever finds what is already on the list, and Rekognition is the
+wrong tool entirely. Closing that gap needs a classifier, and the two that exist
+(Thorn Safer, Google Content Safety API) both require qualifying as a partner.
+Worth knowing before anyone describes this as complete coverage.
+
+Credentials are free and a signup rather than an application:
+https://projectarachnid.ca/en/contact/
+
+Their `test` classification exists so the wiring can be proved end to end
+without anyone handling real material, and it is treated as a rejection, which
+is the only way that proof means anything.
+
+**Not answered by any of this:** a hit obliges preserving the object and filing
+a report, which the REPORT Act extended to a year, and that contradicts the
+`deleted_media` purge path. This code has no reporting route, so a match today
+rejects the photo and tells nobody. That is a legal question, and it is the last
+thing standing between here and photos actually going live.
 
 `purge-deleted-media` takes no user JWT: nothing about it is per user and it must
 not be callable by whoever happens to be signed in. It compares an

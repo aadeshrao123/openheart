@@ -37,6 +37,12 @@ android/
 # Generated
 lib/database.types.ts
 
+# Written by `deno test` over supabase/functions. --node-modules-dir=auto makes
+# Deno read the root package.json, so it locks the whole React Native tree, none
+# of which the functions use. Their one npm import is version-pinned in the
+# specifier itself, so there is nothing here worth keeping.
+deno.lock
+
 # Local code-graph tooling, same reasoning as .claude/
 .code-review-graph/
 

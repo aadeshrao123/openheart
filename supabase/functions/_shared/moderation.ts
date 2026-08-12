@@ -4,8 +4,13 @@ import { requireEnv } from './env.ts';
 
 export type ModerationVerdict = 'approved' | 'rejected';
 
+// Uint8Array<ArrayBuffer> and not a bare Uint8Array. Bare, the buffer type is
+// ArrayBufferLike, which includes SharedArrayBuffer, and nothing that takes a
+// request body accepts one of those. The bytes here are always read out of an
+// R2 response with `new Uint8Array(await object.arrayBuffer())`, so the narrower
+// type is what is actually being passed rather than a cast to quiet a checker.
 export type ImageModerationProvider = {
-  scanImage(bytes: Uint8Array, contentType: string): Promise<ModerationVerdict>;
+  scanImage(bytes: Uint8Array<ArrayBuffer>, contentType: string): Promise<ModerationVerdict>;
 };
 
 // 50 is Rekognition's own default. Below it the docs warn of a high
@@ -61,7 +66,7 @@ type RekognitionResponse = {
 
 // btoa needs a binary string, and spreading a multi-megabyte array into
 // fromCharCode overflows the call stack, hence the chunking.
-function toBase64(bytes: Uint8Array): string {
+function toBase64(bytes: Uint8Array<ArrayBuffer>): string {
   const CHUNK = 0x8000;
   let binary = '';
 
@@ -85,7 +90,7 @@ export function createRekognitionProvider(): ImageModerationProvider {
   });
 
   return {
-    async scanImage(bytes: Uint8Array): Promise<ModerationVerdict> {
+    async scanImage(bytes: Uint8Array<ArrayBuffer>): Promise<ModerationVerdict> {
       // Endpoint, target header and content type taken from the AWS CLI's own
       // debug output for DetectModerationLabels rather than from memory.
       const response = await signer.fetch(`https://rekognition.${region}.amazonaws.com/`, {
@@ -128,19 +133,82 @@ export function createRekognitionProvider(): ImageModerationProvider {
   };
 }
 
-// No CSAM provider exists yet. This is not an oversight to be removed: it is
-// what stops the app approving photos that have only been checked for nudity.
+// Arachnid Shield, from the Canadian Centre for Child Protection. Free, and a
+// signup rather than PhotoDNA's qualification process.
 //
-// A maintainer wiring one in replaces this and must settle first that a hit
+// STILL UNSETTLED, AND IT IS A LEGAL QUESTION RATHER THAN A CODE ONE: a hit
 // obliges preserving the object and filing a report, which the REPORT Act
-// extended to a year, and that this contradicts the deleted_media purge path.
-// That is a legal question and it gates the code, not the other way round.
-export function createCsamProvider(): ImageModerationProvider {
+// extended to a year, and that contradicts the deleted_media purge path. Wiring
+// the scanner in does not answer it. Reporting is a route this code does not
+// have, so a match today rejects the photo and tells nobody.
+// https://shield.projectarachnid.com/docs/
+const SHIELD_MEDIA_URL = 'https://shield.projectarachnid.com/v1/media';
+
+type ShieldResponse = {
+  classification?: unknown;
+};
+
+// An allow list of exactly one value, for the same reason ALLOWED_LABELS is one
+// above: a classification this file has never heard of, including any value
+// added to the enum later, rejects rather than passing.
+//
+// `test` is in the reject set deliberately. It is the value their test fixture
+// returns, so the integration can be proved end to end without anyone touching
+// real material, and it only proves anything if a match actually rejects.
+export function verdictForClassification(classification: unknown): ModerationVerdict {
+  return classification === 'no-known-match' ? 'approved' : 'rejected';
+}
+
+// Bytes rather than the /v1/pdq hash endpoint, and it is a close call. Sending
+// only a perceptual hash would keep the photo on our own infrastructure, which
+// is the better privacy story and the one this project would normally pick.
+// The catch is the failure mode: PDQ has no implementation in this toolchain,
+// and a hand-written one that is subtly wrong returns hashes that match
+// nothing. That reads as "no-known-match" and publishes the photo. A wrong
+// hash fails open silently, which is the one direction this must never fail.
+// Revisit with a PDQ library that has test vectors to check against.
+export function createArachnidShieldProvider(): ImageModerationProvider {
+  const username = requireEnv('ARACHNID_SHIELD_USERNAME');
+  const password = requireEnv('ARACHNID_SHIELD_PASSWORD');
+
+  // Basic, taken from the server's own WWW-Authenticate challenge. The OpenAPI
+  // document declares no security scheme at all, so it is not the source here.
+  const credentials = btoa(`${username}:${password}`);
+
   return {
-    scanImage(): Promise<ModerationVerdict> {
-      return Promise.reject(
-        new Error('No CSAM provider is configured. See _shared/moderation.ts'),
-      );
+    async scanImage(
+      bytes: Uint8Array<ArrayBuffer>,
+      contentType: string,
+    ): Promise<ModerationVerdict> {
+      // Raw body, no multipart. Their spec: "The file must be submitted as the
+      // body of the request, with no HTTP form or other encoding."
+      const response = await fetch(SHIELD_MEDIA_URL, {
+        method: 'POST',
+        headers: {
+          Authorization: `Basic ${credentials}`,
+          'Content-Type': contentType,
+        },
+        // Wrapped, because a Uint8Array is not a BodyInit to the type checker
+        // once it carries its ArrayBufferLike parameter. A Blob is, it sends
+        // the same raw bytes, and it does not copy them the way passing a
+        // sliced buffer would.
+        body: new Blob([bytes]),
+      });
+
+      // Thrown rather than rejected, same as Rekognition: a scanner that cannot
+      // answer leaves the photo pending and retryable. An outage is not a
+      // verdict in either direction.
+      if (!response.ok) {
+        throw new Error(`Arachnid Shield returned ${response.status}`);
+      }
+
+      const payload: ShieldResponse = await response.json();
+
+      if (typeof payload.classification !== 'string') {
+        throw new Error('Arachnid Shield response carried no classification');
+      }
+
+      return verdictForClassification(payload.classification);
     },
   };
 }
@@ -153,11 +221,21 @@ export function createCsamProvider(): ImageModerationProvider {
 // Constructing the providers is itself part of the gate: each one reads its
 // credentials on creation, so a missing secret throws here and moderate-photo
 // answers 503 with the row left pending.
+//
+// What the pair does and does not cover, so nobody has to infer it. Rekognition
+// answers "is this explicit", Shield answers "is this a known image". Neither
+// answers "is this abuse material nobody has catalogued yet": both are the
+// wrong tool for novel content, Shield because hash matching only ever finds
+// what is already in the list. Closing that needs a classifier, and the two
+// that exist both require qualifying as a partner.
 export function createModerationProvider(): ImageModerationProvider {
-  const providers = [createRekognitionProvider(), createCsamProvider()];
+  const providers = [createRekognitionProvider(), createArachnidShieldProvider()];
 
   return {
-    async scanImage(bytes: Uint8Array, contentType: string): Promise<ModerationVerdict> {
+    async scanImage(
+      bytes: Uint8Array<ArrayBuffer>,
+      contentType: string,
+    ): Promise<ModerationVerdict> {
       for (const provider of providers) {
         const verdict = await provider.scanImage(bytes, contentType);
 
