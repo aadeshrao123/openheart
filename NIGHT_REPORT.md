@@ -31,9 +31,9 @@ to add no identity at all and leave the commits describing only their own
 change, so the field is untouched. `git commit --amend --author` or a rebase
 will still change it later if that is ever wanted.
 
-**The branch could not be pushed, and there is no pull request.** This is the
-one part of the brief that was not completed, and it is not for want of trying.
-Both write paths this session has are refused:
+**The branch was blocked from pushing for most of this work, and is pushed
+now.** Recorded because the diagnosis is reusable rather than because it is
+still a problem. Every write path was refused:
 
 ```
 git push -u origin claude/openheart-overnight-maintenance-a4dr9q
@@ -44,24 +44,28 @@ mcp github create_branch
   403 Resource not accessible by integration
 ```
 
-Reads are fine: `git ls-remote` succeeds and the API lists branches as
-`aadeshrao123`, so the repository is reachable and in scope. It is writes that
-are denied. The session's git credential is read-scoped, and the GitHub App
-integration does not hold write permission on this repository. The proxy
-recorded no relay failure, so the 403 is GitHub's own answer rather than an
-egress block. An admin can grant write access in the Claude GitHub settings.
+Reads were fine throughout: `git ls-remote` succeeded and the API answered as
+`aadeshrao123`, the repository's own owner, so the repository was reachable and
+in scope. Only writes were denied. Two details identify the cause. "Resource not
+accessible by integration" is GitHub's wording for a **GitHub App installation
+token** missing a permission, not for a user token. And the proxy recorded no
+relay failure, so the 403 was GitHub's own answer rather than an egress block by
+the sandbox. Cloud sessions never hold real git credentials, they are minted by
+a proxy with a scope, so nothing inside the container could change it.
 
-Everything is committed locally on the right branch, and a git bundle of all
-sixteen commits is attached alongside this report so nothing depends on this
-container surviving. To land it:
+The fix was on the GitHub side: the Claude App's installation on this repository
+needed the repository in its **Repository access** list and `Contents: Read and
+write` accepted, at github.com Settings, Applications, Claude, Configure. A
+permission the App gained after it was first installed sits pending until
+accepted, and until then a push 403s exactly like the above. Once granted, the
+existing credential picked it up without a new session, and all seventeen
+commits pushed on the first attempt.
 
-```
-git fetch /path/to/openheart-overnight.bundle \
-  claude/openheart-overnight-maintenance-a4dr9q
-git checkout -b claude/openheart-overnight-maintenance-a4dr9q FETCH_HEAD
-```
-
-The bundle carries the binary icon assets, which a patch series would not.
+A git bundle of the whole branch was produced while the push was blocked, and
+verified by restoring it into a scratch clone: all commits, all five binary PNG
+assets md5-matching, eleven locale bundles. It is now redundant, but it is the
+right move whenever a container holds unpushed work, since a patch series would
+not carry the binary assets.
 
 **Environment.** The container had no `node_modules`, no Supabase CLI, no Docker
 daemon running, and no `.env`.
