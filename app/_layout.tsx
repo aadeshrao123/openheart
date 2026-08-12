@@ -16,6 +16,8 @@ import { useAuthSync } from '@/hooks/use-session';
 import { useSystemTheme } from '@/hooks/use-system-theme';
 import { APP_NAME } from '@/lib/app';
 import { appFonts } from '@/lib/fonts';
+import { screenTransition } from '@/lib/screen-transitions';
+import { useReducedMotion } from '@/lib/use-reduced-motion';
 
 // expo-router finds a route's error UI through a named ErrorBoundary export.
 // On the root layout that puts a single boundary over every screen in the app.
@@ -65,6 +67,8 @@ export default function RootLayout() {
 function RootNavigator() {
   useAuthSync();
 
+  const reduceMotion = useReducedMotion();
+
   // i18next resolves the device locale synchronously at import, so a stored
   // override can only be applied afterwards.
   useEffect(() => {
@@ -83,7 +87,14 @@ function RootNavigator() {
       </Head>
 
       <VersionGate>
-        <Stack screenOptions={{ headerShown: false }} />
+        {/* The screens of this stack are the auth, onboarding and app groups,
+            and a move between them is never something the user asked for
+            directly: a gate decided, and a back gesture across that boundary
+            would be redirected straight back. A cross fade says the ground
+            changed without promising a way to reverse it. */}
+        <Stack
+          screenOptions={{ headerShown: false, ...screenTransition('switch', reduceMotion) }}
+        />
       </VersionGate>
 
       {/* auto tracks the resolved theme, so the clock and battery stay
