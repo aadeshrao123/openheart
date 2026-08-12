@@ -43,8 +43,18 @@ function readFunctionEnv(name) {
 const region = readFunctionEnv('AWS_REGION');
 const bytes = readFileSync(imagePath);
 
+// Rekognition's own limit for an image passed as bytes.
+if (bytes.length > 5 * 1024 * 1024) {
+  console.error(`That photo is ${(bytes.length / 1024 / 1024).toFixed(1)}MB. The limit is 5MB.`);
+  exit(1);
+}
+
 // Through the AWS CLI rather than a signing library, because this runs once and
 // adding a dependency for it would outlive the two minutes it saves.
+//
+// fileb:// rather than passing the base64 as an argument. A selfie encodes to a
+// few megabytes and Windows caps a command line at about 32KB, so the argument
+// form fails on the platform this is most likely to be run from.
 const response = execFileSync(
   'aws',
   [
@@ -55,7 +65,7 @@ const response = execFileSync(
     '--attributes',
     'DEFAULT',
     '--image-bytes',
-    bytes.toString('base64'),
+    `fileb://${imagePath}`,
     '--output',
     'json',
   ],
