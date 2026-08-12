@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Button, Chip, Text } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { RATE_LIMITED } from '@/lib/db-errors';
+import { haptics } from '@/lib/haptics';
 import { REPORT_REASONS, type ReportReason } from '@/lib/report-reasons';
 import { useBlock, useReport } from '@/hooks/use-safety';
 
@@ -184,7 +185,13 @@ export function SafetyActions({
                 loading={block.isPending}
                 onPress={() =>
                   block.mutate(targetId, {
+                    // On success and not on the press. The modal closing is the
+                    // only confirmation a block gives, by design, and a buzz on
+                    // the press would be that confirmation arriving before the
+                    // write has landed. A safety control is the last place to
+                    // say a thing happened before it did.
                     onSuccess: () => {
+                      haptics.destructiveConfirmed();
                       close();
                       onBlocked?.();
                     },
