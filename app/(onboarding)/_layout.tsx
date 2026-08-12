@@ -2,9 +2,14 @@ import { Redirect, Stack } from 'expo-router';
 import { GateErrorView } from '@/components/gate-error-view';
 import { SplashView } from '@/components/splash-view';
 import { useAuthGate } from '@/hooks/use-auth-gate';
+import { screenTransition } from '@/lib/screen-transitions';
+import { useReducedMotion } from '@/lib/use-reduced-motion';
 
 export default function OnboardingLayout() {
   const gate = useAuthGate();
+
+  // Above the redirects, because a hook cannot be called after one.
+  const reduceMotion = useReducedMotion();
 
   if (gate === 'loading') {
     return <SplashView />;
@@ -26,5 +31,9 @@ export default function OnboardingLayout() {
     return <Redirect href="/home" />;
   }
 
-  return <Stack screenOptions={{ headerShown: false }} />;
+  // Birthdate, about you, preferences. Three steps in a fixed order, the same
+  // shape as the auth flow and given the same transition on purpose.
+  return (
+    <Stack screenOptions={{ headerShown: false, ...screenTransition('step', reduceMotion) }} />
+  );
 }
