@@ -5,7 +5,7 @@
 -- proved none of it.
 
 begin;
-select plan(8);
+select plan(9);
 
 insert into auth.users (id, instance_id, aud, role, email) values
   ('aaaa0000-0000-0000-0000-000000000001',
@@ -59,10 +59,29 @@ select lives_ok(
 );
 
 -- ----------------------------------------------------------------- deletion
+--
+-- Suspended first, and set as postgres because suspended_at is in no client
+-- grant. Deleting the account is the obvious way to try to shed a suspension,
+-- and the record of it has to outlive the profile it belongs to or the standard
+-- ban-evasion move is: get suspended, delete, sign up again.
+
+reset role;
+
+update profiles
+   set suspended_at = now(), suspended_reason = 'harassment'
+ where id = 'aaaa0000-0000-0000-0000-000000000001';
+
+set local role authenticated;
 
 select delete_my_account();
 
 reset role;
+
+select ok(
+  (select suspended_at is not null and suspended_reason = 'harassment'
+     from profiles where id = 'aaaa0000-0000-0000-0000-000000000001'),
+  'deleting a suspended account leaves the suspension on the tombstone'
+);
 
 select is(
   (select count(*) from profiles

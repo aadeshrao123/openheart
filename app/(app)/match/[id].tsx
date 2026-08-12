@@ -7,7 +7,6 @@ import { Button, Card, Rail, Screen, Skeleton, Text } from '@/components/ui';
 import { LoadFailed } from '@/components/load-failed';
 import { useMatchProfile } from '@/hooks/use-match-profile';
 import { useHideThread, useThread, useThreads, useUnmatch } from '@/hooks/use-threads';
-import { ageOn, fromDateColumn } from '@/lib/age';
 import { haptics } from '@/lib/haptics';
 import { photoUrl } from '@/lib/photos';
 import { isGender } from '@/lib/profile-options';
@@ -83,8 +82,9 @@ export default function MatchProfileScreen() {
 
   const deleted = thread.other_deleted;
   const name = deleted ? t('chat.deleted_account') : thread.other_name;
-  const birthdate = profile?.birthdate ? fromDateColumn(profile.birthdate) : null;
-  const age = birthdate ? ageOn(birthdate, new Date()) : null;
+  // Computed in the database rather than here. birthdate left the client's read
+  // grant in 0016, so this screen is handed the number and never the date.
+  const age = profile?.age ?? null;
   const photos = (profile?.photos ?? []).slice().sort((a, b) => a.position - b.position);
 
   return (
