@@ -25,6 +25,25 @@ export type NewProfile = Pick<
 // only decides whether the mistake is caught by tsc or by Postgres.
 export type ProfileEdit = Partial<Omit<NewProfile, 'birthdate'>>;
 
+// 0016 took birthdate, location and the suspension columns out of the client's
+// read grant, and a column grant applies to your own row too: `select *` on
+// yourself is now refused exactly like anyone else's. my_profile() is the
+// supported way back to the whole row. It is security definer, and the only row
+// it can return is the caller's.
+//
+// maybeSingle, not single: a signed-in user with no profile row yet is the
+// normal state between verifying a code and finishing onboarding, and single()
+// treats zero rows as an error.
+async function fetchMyProfile(): Promise<ProfileRow | null> {
+  const { data, error } = await supabase.rpc('my_profile').maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+
+  return data;
+}
+
 export function useMyProfile() {
   const { data: session } = useSession();
   const userId = session?.user.id;
@@ -37,20 +56,7 @@ export function useMyProfile() {
         throw new Error('useMyProfile ran without a session');
       }
 
-      // maybeSingle, not single: a signed-in user with no profile row yet is
-      // the normal state between verifying a code and finishing onboarding,
-      // and single() treats zero rows as an error.
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .maybeSingle();
-
-      if (error) {
-        throw error;
-      }
-
-      return data;
+      return fetchMyProfile();
     },
   });
 }
@@ -69,17 +75,27 @@ export function useCreateProfile() {
 
       // profiles has no foreign key to auth.users (0007 dropped it so deletion
       // can leave a tombstone), so the insert policy is what ties row to owner.
-      const { data, error } = await supabase
+      //
+      // select('id'), not select(): a RETURNING clause is a read and needs the
+      // same column privileges, and id is the one column that is still granted
+      // and still enough to tell a write that landed from one that hit no row.
+      const { error } = await supabase
         .from('profiles')
         .insert({ ...profile, id: userId })
-        .select()
+        .select('id')
         .single();
 
       if (error) {
         throw error;
       }
 
-      return data;
+      const created = await fetchMyProfile();
+
+      if (!created) {
+        throw new Error('The profile was written but could not be read back');
+      }
+
+      return created;
     },
 
     onSuccess: (profile) => {
@@ -100,18 +116,26 @@ export function useUpdateProfile() {
         throw new Error('Cannot update a profile while signed out');
       }
 
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('profiles')
         .update(edit)
         .eq('id', userId)
-        .select()
+        .select('id')
         .single();
 
       if (error) {
         throw error;
       }
 
-      return data;
+      // Same as the insert above: the whole row comes back through my_profile(),
+      // because birthdate and location cannot be read off the table any more.
+      const saved = await fetchMyProfile();
+
+      if (!saved) {
+        throw new Error('The profile was saved but could not be read back');
+      }
+
+      return saved;
     },
 
     onSuccess: (profile) => {
