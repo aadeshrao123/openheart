@@ -5,8 +5,65 @@ import { calendarDayOffset } from './calendar';
 // Never hand-roll a date or number format: separators, ordering and unit names
 // all differ by locale in ways that are invisible from an English keyboard.
 
+const FALLBACK_LOCALE = 'en-US';
+
+// The platform reports whatever the operating system or the browser says, and
+// that is not guaranteed to be a well formed BCP 47 tag. Chromium on a POSIX
+// system reports en-US@posix, and every constructor in this file rejects it
+// with a RangeError. Since each of them takes the same tag, one malformed
+// string from outside took the whole screen down through the root error
+// boundary. Formatting is the last thing that should be able to do that.
+//
+// POSIX writes a locale as language_TERRITORY.codeset@modifier, and none of the
+// three separators after the tag itself is BCP 47, so the underscore is
+// rewritten and anything from the first dot or at sign is dropped. Then subtags
+// are removed from the end one at a time, because fr-FR@euro is worth salvaging
+// as fr-FR rather than answering in English.
+//
+// Intl.getCanonicalLocales is the test rather than a regular expression: it is
+// the same structural check the constructors make, so it cannot disagree with
+// them. It rejects only malformed tags, not unavailable ones, which is correct
+// here. A structurally valid tag nobody implements, xx-YY, falls back to the
+// default formatting inside Intl instead of throwing, and that is Intl's call
+// to make rather than this file's.
+export function usableLocale(tag: string | undefined): string {
+  if (tag === undefined) {
+    return FALLBACK_LOCALE;
+  }
+
+  const [cleaned] = tag.replace(/_/g, '-').split(/[@.]/);
+  const subtags = cleaned.split('-');
+
+  for (let length = subtags.length; length > 0; length -= 1) {
+    const candidate = subtags.slice(0, length).join('-');
+
+    try {
+      Intl.getCanonicalLocales(candidate);
+
+      return candidate;
+    } catch {
+      // Malformed at this length. Drop the last subtag and try again.
+    }
+  }
+
+  return FALLBACK_LOCALE;
+}
+
+// Remembers the last answer only. The device locale changes about as often as a
+// person moves country, and this runs once per formatted value, which on a
+// conversation is once per message row.
+let lastTag: string | undefined;
+let lastLocale = FALLBACK_LOCALE;
+
 function currentLocale(): string {
-  return getLocales()[0]?.languageTag ?? 'en-US';
+  const tag = getLocales()[0]?.languageTag;
+
+  if (tag !== lastTag) {
+    lastTag = tag;
+    lastLocale = usableLocale(tag);
+  }
+
+  return lastLocale;
 }
 
 // Intl.Locale.measurementSystem is not yet available everywhere, so the handful
