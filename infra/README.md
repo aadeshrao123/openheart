@@ -60,16 +60,46 @@ cover billing and account closure. They are not used by anything here.
 ```bash
 aws iam create-user --user-name openheart-moderation --tags Key=project,Value=openheart
 aws iam put-user-policy --user-name openheart-moderation \
-  --policy-name detect-moderation-labels-only \
+  --policy-name openheart-rekognition \
   --policy-document file://infra/aws-moderation-policy.json
 aws iam create-access-key --user-name openheart-moderation
 ```
 
-The policy allows `rekognition:DetectModerationLabels` and nothing else.
-Verified with the resulting key: `s3 ls`, `iam list-users` and even
-`rekognition list-collections` all fail, while `detect-moderation-labels`
-succeeds. `Resource` is `*` because Rekognition does not support resource-level
-permissions for this action, so the action name is the whole constraint.
+The policy allows three actions and nothing else. `DetectModerationLabels`
+scans every uploaded photo; `DetectFaces` and `CompareFaces` are the two halves
+of photo verification. `Resource` is `*` because Rekognition supports no
+resource-level permission for any of them, so the action names are the whole
+constraint.
+
+Verified with the user's own key rather than by reading the policy back:
+
+```
+detect-faces      -> []                          authorized, no face in frame
+compare-faces     -> InvalidParameterException    authorized, no face to compare
+list-collections  -> AccessDeniedException        still denied
+```
+
+An InvalidParameterException is the useful answer there. It means the call was
+allowed and the image simply had no face in it, where a missing permission
+fails with AccessDeniedException instead. `s3 ls` and `iam list-users` fail the
+same way.
+
+It was first created as `detect-moderation-labels-only`, which stopped being
+true when verification was added. An inline policy is renamed by writing the
+new name and deleting the old one, so an account set up before that needs:
+
+```bash
+aws iam delete-user-policy --user-name openheart-moderation \
+  --policy-name detect-moderation-labels-only
+```
+
+Read the account rather than this file when you want to know what is allowed:
+
+```bash
+aws iam list-user-policies --user-name openheart-moderation
+aws iam get-user-policy --user-name openheart-moderation \
+  --policy-name openheart-rekognition
+```
 
 Region is `ap-south-1`, which is where the account was already pointed. It is an
 env var, so moving it is one line, and it is worth revisiting when the launch
