@@ -2,9 +2,18 @@
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Sid": "DetectModerationLabelsOnly",
+      "Sid": "ScanUploadedPhotosForAdultContent",
       "Effect": "Allow",
       "Action": "rekognition:DetectModerationLabels",
+      "Resource": "*"
+    },
+    {
+      "Sid": "VerifyAProfileSelfie",
+      "Effect": "Allow",
+      "Action": [
+        "rekognition:DetectFaces",
+        "rekognition:CompareFaces"
+      ],
       "Resource": "*"
     }
   ]
