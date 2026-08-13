@@ -66,7 +66,9 @@
     "principles_eyebrow": "যা আমরা করব না",
     "steps_eyebrow": "শুরু করবেন যেভাবে",
     "step_number": "{{step}}",
-    "safety_eyebrow": "জৌলুসহীন অর্ধেকটা"
+    "safety_eyebrow": "জৌলুসহীন অর্ধেকটা",
+    "feature_undo": "সোয়াইপ ফিরিয়ে নেওয়া",
+    "feature_prompts": "প্রশ্ন ও পূর্ণ প্রোফাইল"
   },
   "update": {
     "title": "আপডেট করা দরকার",

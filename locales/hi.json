@@ -66,7 +66,9 @@
     "principles_eyebrow": "जो हम नहीं करेंगे",
     "steps_eyebrow": "शुरुआत कैसे करें",
     "step_number": "{{step}}",
-    "safety_eyebrow": "बिना चमक वाला आधा हिस्सा"
+    "safety_eyebrow": "बिना चमक वाला आधा हिस्सा",
+    "feature_undo": "स्वाइप वापस लेना",
+    "feature_prompts": "सवाल और पूरी प्रोफ़ाइल"
   },
   "update": {
     "title": "अपडेट ज़रूरी है",

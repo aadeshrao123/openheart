@@ -66,7 +66,9 @@
     "principles_eyebrow": "Yang tidak akan kami lakukan",
     "steps_eyebrow": "Cara memulai",
     "step_number": "{{step}}",
-    "safety_eyebrow": "Separuh yang tidak menarik"
+    "safety_eyebrow": "Separuh yang tidak menarik",
+    "feature_undo": "Mengurungkan geseran",
+    "feature_prompts": "Pertanyaan dan detail profil"
   },
   "update": {
     "title": "Perlu diperbarui",

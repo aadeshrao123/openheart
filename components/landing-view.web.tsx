@@ -29,6 +29,8 @@ const COMPARED = [
   'landing.feature_reach',
   'landing.feature_receipts',
   'landing.feature_filters',
+  'landing.feature_undo',
+  'landing.feature_prompts',
   'landing.feature_ads',
 ];
 

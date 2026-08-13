@@ -66,7 +66,9 @@
     "principles_eyebrow": "ما لن نفعله",
     "steps_eyebrow": "كيف تبدأ",
     "step_number": "{{step}}",
-    "safety_eyebrow": "النصف غير اللامع"
+    "safety_eyebrow": "النصف غير اللامع",
+    "feature_undo": "التراجع عن التمرير",
+    "feature_prompts": "الأسئلة وتفاصيل الملف"
   },
   "update": {
     "title": "التحديث مطلوب",

@@ -66,7 +66,9 @@
     "principles_eyebrow": "我们不会做的事",
     "steps_eyebrow": "如何开始",
     "step_number": "{{step}}",
-    "safety_eyebrow": "不好看的那一半"
+    "safety_eyebrow": "不好看的那一半",
+    "feature_undo": "撤销滑动",
+    "feature_prompts": "问答与完整资料"
   },
   "update": {
     "title": "需要更新",

@@ -66,7 +66,9 @@
     "principles_eyebrow": "Ce que nous ne ferons pas",
     "steps_eyebrow": "Pour commencer",
     "step_number": "{{step}}",
-    "safety_eyebrow": "La moitié ingrate"
+    "safety_eyebrow": "La moitié ingrate",
+    "feature_undo": "Annuler un swipe",
+    "feature_prompts": "Questions et profil détaillé"
   },
   "update": {
     "title": "Mise à jour nécessaire",
