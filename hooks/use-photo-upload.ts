@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
+import { callFunction } from '@/lib/functions';
 import { pickPhoto, preparePhoto } from '@/lib/image';
 import { myPhotosKey } from '@/hooks/use-photos';
 
@@ -9,29 +9,6 @@ export type UploadOutcome =
   | { status: 'uploaded'; moderationState: string }
   | { status: 'awaiting_review' }
   | { status: 'failed'; code: string };
-
-type FunctionError = { code: string };
-
-async function callFunction<T>(name: string, body: Record<string, unknown>): Promise<T> {
-  const { data, error } = await supabase.functions.invoke<T>(name, { body });
-
-  if (error) {
-    // The function replies with a stable machine code the client maps to a
-    // translation key. invoke() surfaces a generic FunctionsHttpError, so the
-    // body has to be read off the response to get at it.
-    const response = (error as { context?: Response }).context;
-    const parsed: unknown = response ? await response.json().catch(() => null) : null;
-    const code = (parsed as FunctionError | null)?.code;
-
-    throw new Error(code ?? 'internal_error');
-  }
-
-  if (data === null) {
-    throw new Error('internal_error');
-  }
-
-  return data;
-}
 
 type SlotResponse = {
   photo_id: string;

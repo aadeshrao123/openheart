@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import { callFunction } from '@/lib/functions';
 import { preparePhoto } from '@/lib/image';
 import { myProfileKey } from '@/hooks/use-my-profile';
 import { useSession } from '@/hooks/use-session';
@@ -18,25 +19,6 @@ export type VerificationOutcome = {
 };
 
 export const verificationKey = ['verification'] as const;
-
-type FunctionError = { code: string };
-
-async function callFunction<T>(name: string, body: Record<string, unknown>): Promise<T> {
-  const { data, error } = await supabase.functions.invoke<T>(name, { body });
-
-  if (error) {
-    const response = (error as { context?: Response }).context;
-    const parsed: unknown = response ? await response.json().catch(() => null) : null;
-
-    throw new Error((parsed as FunctionError | null)?.code ?? 'internal_error');
-  }
-
-  if (data === null) {
-    throw new Error('internal_error');
-  }
-
-  return data;
-}
 
 // The most recent attempt, which is what the screen reports on. Deliberately
 // not a list: how many times someone failed is a moderator's business.
