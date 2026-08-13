@@ -98,8 +98,12 @@ export type RangeSliderProps = {
   className?: string;
 };
 
-// Two thumbs on one track. Each is its own adjustable control for a screen
-// reader, because "age range" as a single element cannot be operated.
+// One track, two thumbs. Two stacked sliders were the first attempt and they
+// read as two unrelated controls that happen to be near each other, which is
+// not what a range is.
+//
+// Each thumb is still its own adjustable element for a screen reader. A range
+// announced as one control cannot be operated by one.
 export function RangeSlider({
   low,
   high,
@@ -111,25 +115,93 @@ export function RangeSlider({
   highLabel,
   className,
 }: RangeSliderProps) {
+  const [width, setWidth] = useState(0);
+  const [dragging, setDragging] = useState<'low' | 'high' | null>(null);
+
+  const span = Math.max(0, width - THUMB);
+  const place = (value: number) => (max === min ? 0 : ((value - min) / (max - min)) * span);
+
+  const responder = useMemo(
+    () =>
+      PanResponder.create({
+        onStartShouldSetPanResponder: () => true,
+        onMoveShouldSetPanResponder: () => true,
+
+        // Whichever thumb is nearer to the touch, decided once on grant. Picking
+        // it again on every move makes the thumbs swap under the finger when
+        // they are close together.
+        onPanResponderGrant: (event) => {
+          const x = event.nativeEvent.locationX;
+          const nearer = Math.abs(x - place(low)) <= Math.abs(x - place(high)) ? 'low' : 'high';
+
+          setDragging(nearer);
+          apply(nearer, x);
+        },
+
+        onPanResponderMove: (event) => apply(dragging, event.nativeEvent.locationX),
+        onPanResponderRelease: () => setDragging(null),
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [width, min, max, step, low, high, dragging, onChange],
+  );
+
+  function apply(thumb: 'low' | 'high' | null, x: number) {
+    if (thumb === null) {
+      return;
+    }
+
+    const ratio = Math.min(1, Math.max(0, (x - THUMB / 2) / Math.max(1, span)));
+    const value = quantise(min + ratio * (max - min), min, max, step);
+
+    if (thumb === 'low') {
+      onChange(Math.min(value, high), high);
+      return;
+    }
+
+    onChange(low, Math.max(value, low));
+  }
+
+  const nudge = (thumb: 'low' | 'high', direction: number) => {
+    if (thumb === 'low') {
+      onChange(Math.min(quantise(low + direction, min, max, step), high), high);
+      return;
+    }
+
+    onChange(low, Math.max(quantise(high + direction, min, max, step), low));
+  };
+
   return (
-    <View className={cn('gap-1', className)}>
-      <Slider
-        value={low}
-        min={min}
-        max={max}
-        step={step}
-        label={lowLabel}
-        onChange={(next) => onChange(Math.min(next, high), high)}
+    <View
+      onLayout={(event) => setWidth(event.nativeEvent.layout.width)}
+      className={cn('h-11 justify-center', className)}
+      {...responder.panHandlers}
+    >
+      <View className="h-1.5 w-full rounded-full bg-surface-raised" />
+
+      <View
+        className="absolute h-1.5 rounded-full bg-brand"
+        style={{ start: place(low) + THUMB / 2, width: Math.max(0, place(high) - place(low)) }}
       />
 
-      <Slider
-        value={high}
-        min={min}
-        max={max}
-        step={step}
-        label={highLabel}
-        onChange={(next) => onChange(low, Math.max(next, low))}
-      />
+      {(['low', 'high'] as const).map((thumb) => (
+        <View
+          key={thumb}
+          accessibilityRole="adjustable"
+          accessibilityLabel={thumb === 'low' ? lowLabel : highLabel}
+          aria-valuenow={thumb === 'low' ? low : high}
+          aria-valuemin={min}
+          aria-valuemax={max}
+          accessibilityActions={[{ name: 'increment' }, { name: 'decrement' }]}
+          onAccessibilityAction={(event) =>
+            nudge(thumb, event.nativeEvent.actionName === 'increment' ? step : -step)
+          }
+          className={cn(
+            'absolute h-7 w-7 rounded-full border-2 border-brand bg-bg',
+            'shadow-sm shadow-shadow/20',
+          )}
+          style={{ transform: [{ translateX: place(thumb === 'low' ? low : high) }] }}
+        />
+      ))}
     </View>
   );
 }

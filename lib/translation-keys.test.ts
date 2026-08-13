@@ -21,8 +21,10 @@ import {
   EDUCATION_LEVELS,
   GENDERS,
   INTERESTS,
+  INTEREST_GROUPS,
   LIFESTYLE_FREQUENCIES,
   PROMPTS,
+  PROMPT_GROUPS,
   RELATIONSHIP_INTENTS,
 } from '@/lib/profile-options';
 import { REACTION_CODES } from '@/lib/reactions';
@@ -65,7 +67,9 @@ const DYNAMIC_KEYS: Record<string, readonly string[]> = {
   'profile.children_': CHILDREN_OPTIONS,
   'profile.education_': EDUCATION_LEVELS,
   'profile.interest_': INTERESTS,
+  'profile.interest_group_': INTEREST_GROUPS.map((group) => group.key),
   'profile.prompt_': PROMPTS,
+  'profile.prompt_group_': PROMPT_GROUPS.map((group) => group.key),
   'moderation.status_': RESOLVED_STATUSES,
   'verify.pose_': VERIFICATION_CHALLENGES,
   'verify.result_': VERIFICATION_RESULTS,

@@ -88,6 +88,46 @@ export type ChildrenOption = (typeof CHILDREN_OPTIONS)[number];
 export type EducationLevel = (typeof EDUCATION_LEVELS)[number];
 export type LifestyleField = (typeof LIFESTYLE_FIELDS)[number]['field'];
 
+// Grouped for the picker screen. Forty-four in one flat wrap is a wall; the
+// same forty-four under six headings is a list somebody can scan.
+export const INTEREST_GROUPS = [
+  {
+    key: 'outdoors',
+    interests: ['camping', 'climbing', 'cycling', 'fishing', 'hiking', 'sea_swimming', 'skiing'],
+  },
+  {
+    key: 'active',
+    interests: ['dancing', 'football', 'gym', 'running', 'skating', 'swimming', 'yoga'],
+  },
+  {
+    key: 'creative',
+    interests: ['art', 'diy', 'gardening', 'music_making', 'photography', 'writing'],
+  },
+  {
+    key: 'going_out',
+    interests: ['concerts', 'gigs', 'live_comedy', 'markets', 'museums', 'theatre', 'travel'],
+  },
+  {
+    key: 'staying_in',
+    interests: ['baking', 'board_games', 'books', 'cooking', 'film', 'gaming', 'podcasts'],
+  },
+  {
+    key: 'other',
+    interests: [
+      'cats',
+      'coffee',
+      'dogs',
+      'languages',
+      'meditation',
+      'motorbikes',
+      'politics',
+      'stargazing',
+      'tea',
+      'volunteering',
+    ],
+  },
+] as const;
+
 export const INTERESTS = [
   'art',
   'baking',
@@ -139,24 +179,104 @@ export type Interest = (typeof INTERESTS)[number];
 
 export const INTERESTS_MAX = 8;
 
-// Questions somebody answers on their profile. Stable keys; the question text
-// is a translation, so rewording one never rewrites what people already wrote.
-export const PROMPTS = [
-  'two_truths',
-  'sunday',
-  'irrational_fear',
-  'best_meal',
-  'small_joy',
-  'convince_me',
-  'never_again',
-  'looking_for',
-  'bad_at',
-  'make_me_laugh',
-  'green_flag',
-  'weekend_plan',
+// Questions somebody answers on their profile, grouped the way the picker
+// shows them. Stable keys; the question text is a translation, so rewording
+// one never rewrites what people already wrote.
+//
+// Hinge ships 85 across eight categories and Bumble around 40, both letting
+// you answer three. Fifty-four sits between them, and a picker that opens on
+// its own screen can carry that many without being a wall.
+export const PROMPT_GROUPS = [
+  {
+    key: 'about_me',
+    prompts: [
+      'two_truths',
+      'bad_at',
+      'weirdly_good_at',
+      'people_misjudge',
+      'small_joy',
+      'proud_of',
+      'spend_too_much_on',
+      'nobody_believes',
+      'my_friends_say',
+    ],
+  },
+  {
+    key: 'story_time',
+    prompts: [
+      'best_meal',
+      'never_again',
+      'worst_idea',
+      'biggest_risk',
+      'furthest_travelled',
+      'changed_my_mind',
+      'best_advice',
+      'unreasonably_proud',
+      'last_time_lost',
+    ],
+  },
+  {
+    key: 'my_type',
+    prompts: [
+      'looking_for',
+      'green_flag',
+      'make_me_laugh',
+      'together_we_could',
+      'we_will_get_on_if',
+      'deal_breaker',
+      'first_impression',
+      'i_appreciate_when',
+      'love_language',
+    ],
+  },
+  {
+    key: 'self_care',
+    prompts: [
+      'happy_place',
+      'wind_down',
+      'boundary',
+      'feel_supported',
+      'friends_ask_advice',
+      'out_of_a_funk',
+      'recharge_by',
+      'kind_to_myself',
+      'song_in_the_car',
+    ],
+  },
+  {
+    key: 'date_vibes',
+    prompts: [
+      'weekend_plan',
+      'sunday',
+      'order_for_the_table',
+      'take_you_here',
+      'ideal_saturday',
+      'best_local_spot',
+      'travel_with_me',
+      'cook_you',
+      'first_round',
+    ],
+  },
+  {
+    key: 'lets_chat',
+    prompts: [
+      'convince_me',
+      'irrational_fear',
+      'unpopular_opinion',
+      'overrated',
+      'underrated',
+      'hill_i_die_on',
+      'teach_me',
+      'obsessed_with',
+      'debate_me',
+    ],
+  },
 ] as const;
 
+export const PROMPTS = PROMPT_GROUPS.flatMap((group) => group.prompts);
+
 export type Prompt = (typeof PROMPTS)[number];
+export type PromptGroup = (typeof PROMPT_GROUPS)[number]['key'];
 
 export const PROMPTS_MAX = 3;
 export const PROMPT_ANSWER_MAX = 255;

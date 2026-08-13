@@ -1,6 +1,6 @@
 import { View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { Slider, Text } from '@/components/ui';
+import { RangeSlider, Slider, Text } from '@/components/ui';
 import { formatDistance, usesImperialUnits } from '@/lib/format';
 import {
   AGE_CEILING,
@@ -70,20 +70,14 @@ export function AgePreference({ min, max, onChange }: AgePreferenceProps) {
         </Text>
       </View>
 
-      <Slider
-        label={t('profile.age_min')}
-        value={min}
+      <RangeSlider
+        low={min}
+        high={max}
         min={AGE_FLOOR}
         max={AGE_CEILING}
-        onChange={(next) => onChange({ ageMin: Math.min(next, max), ageMax: max })}
-      />
-
-      <Slider
-        label={t('profile.age_max')}
-        value={max}
-        min={AGE_FLOOR}
-        max={AGE_CEILING}
-        onChange={(next) => onChange({ ageMin: min, ageMax: Math.max(next, min) })}
+        lowLabel={t('profile.age_min')}
+        highLabel={t('profile.age_max')}
+        onChange={(ageMin, ageMax) => onChange({ ageMin, ageMax })}
       />
     </View>
   );

@@ -17,6 +17,8 @@ import {
   HEIGHT_MIN_CM,
   INTERESTS,
   INTERESTS_MAX,
+  INTEREST_GROUPS,
+  PROMPT_GROUPS,
   KM_PER_MILE_STEP,
   LIFESTYLE_FREQUENCIES,
   PROMPTS,
@@ -73,6 +75,21 @@ describe('option lists', () => {
       }
     });
   }
+
+  // The picker renders the groups and the column stores what the flat list
+  // allows. One missing from either is an option nobody can choose, or one
+  // that Postgres refuses after the user has typed an answer.
+  it('groups cover the flat lists exactly', () => {
+    const grouped = PROMPT_GROUPS.flatMap((group) => group.prompts);
+
+    expect([...grouped].sort()).toEqual([...PROMPTS].sort());
+    expect(new Set(grouped).size).toBe(grouped.length);
+
+    const interests = INTEREST_GROUPS.flatMap((group) => group.interests);
+
+    expect([...interests].sort()).toEqual([...INTERESTS].sort());
+    expect(new Set(interests).size).toBe(interests.length);
+  });
 
   it('caps match what the schema will accept', () => {
     expect(INTERESTS_MAX).toBeLessThanOrEqual(INTERESTS.length);

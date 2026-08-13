@@ -6,7 +6,7 @@ import {
   Button,
   Card,
   Input,
-  MultiSelect,
+  ListRow,
   Screen,
   Section,
   SingleSelect,
@@ -16,9 +16,8 @@ import {
 } from '@/components/ui';
 import { GenderSelect, SeekingSelect } from '@/components/gender-select';
 import { AgePreference, DistancePreference } from '@/components/preference-fields';
-import { PromptEditor } from '@/components/prompt-editor';
 import { useMyProfile, useUpdateProfile } from '@/hooks/use-my-profile';
-import { usePrompts, useSavePrompts, type PromptAnswer } from '@/hooks/use-prompts';
+import { usePrompts } from '@/hooks/use-prompts';
 import { useSession } from '@/hooks/use-session';
 import { fromDateColumn } from '@/lib/age';
 import { formatDate, formatHeight } from '@/lib/format';
@@ -29,8 +28,6 @@ import {
   EDUCATION_LEVELS,
   HEIGHT_MAX_CM,
   HEIGHT_MIN_CM,
-  INTERESTS,
-  INTERESTS_MAX,
   JOB_TITLE_MAX,
   LIFESTYLE_FIELDS,
   LIFESTYLE_FREQUENCIES,
@@ -55,25 +52,23 @@ type Form = {
   children: string | null;
   education: string | null;
   jobTitle: string;
-  interests: string[];
 };
 
 const options = (values: readonly string[], label: (value: string) => string) =>
   values.map((value) => ({ value, label: label(value) }));
 
+// Interests and prompts are rows that open their own screen. They were inline,
+// which put forty-four chips and three question pickers on the same form as a
+// name field, and nothing on it looked more important than anything else.
 export default function EditProfileScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const { data: session } = useSession();
   const { data: profile } = useMyProfile();
-  const { data: saved } = usePrompts(session?.user.id);
+  const { data: answers } = usePrompts(session?.user.id);
   const updateProfile = useUpdateProfile();
-  const savePrompts = useSavePrompts();
 
-  // Seeded once from the loaded profile. Re-seeding on every render would fight
-  // the user's typing, and the mutation writes the saved row back to the cache.
   const [form, setForm] = useState<Form | null>(null);
-  const [prompts, setPrompts] = useState<PromptAnswer[] | null>(null);
 
   if (!profile) {
     return (
@@ -110,17 +105,13 @@ export default function EditProfileScreen() {
       children: profile.children,
       education: profile.education,
       jobTitle: profile.job_title ?? '',
-      interests: profile.interests ?? [],
     };
 
-  const answers = prompts ?? saved ?? [];
   const patch = (next: Partial<Form>) => setForm({ ...current, ...next });
 
   const birthdate = fromDateColumn(profile.birthdate);
   const valid = current.displayName.trim().length > 0;
-  const busy = updateProfile.isPending || savePrompts.isPending;
-  const failed = updateProfile.isError || savePrompts.isError;
-
+  const interests = profile.interests ?? [];
   const trimmed = (value: string) => (value.trim() === '' ? null : value.trim());
 
   const save = () => {
@@ -141,11 +132,8 @@ export default function EditProfileScreen() {
         children: current.children,
         education: current.education,
         job_title: trimmed(current.jobTitle),
-        interests: current.interests.length > 0 ? current.interests : null,
       },
-      {
-        onSuccess: () => savePrompts.mutate(answers, { onSuccess: () => router.back() }),
-      },
+      { onSuccess: () => router.back() },
     );
   };
 
@@ -190,6 +178,32 @@ export default function EditProfileScreen() {
           value={current.gender}
           onChange={(gender) => patch({ gender })}
         />
+      </Section>
+
+      <Section title={t('profile.section_more')} description={t('profile.section_more_body')}>
+        <Card elevation="flat" className="gap-0 px-0">
+          <ListRow
+            label={t('profile.interests')}
+            value={
+              interests.length > 0
+                ? t('profile.interests_count', { count: interests.length })
+                : t('profile.unset')
+            }
+            onPress={() => router.push('/interests')}
+          />
+
+          <ListRow
+            label={t('profile.section_prompts')}
+            value={
+              answers && answers.length > 0
+                ? t('profile.prompts_count', { count: answers.length })
+                : t('profile.unset')
+            }
+            onPress={() => router.push('/prompts')}
+          />
+
+          <ListRow label={t('photos.title')} onPress={() => router.push('/photos')} />
+        </Card>
       </Section>
 
       <Section title={t('profile.section_about')} description={t('profile.section_about_body')}>
@@ -255,23 +269,6 @@ export default function EditProfileScreen() {
         ))}
       </Section>
 
-      <Section
-        title={t('profile.section_interests')}
-        description={t('profile.interests_hint', { max: INTERESTS_MAX })}
-      >
-        <MultiSelect
-          label={t('profile.interests')}
-          values={current.interests}
-          max={INTERESTS_MAX}
-          onChange={(interests) => patch({ interests })}
-          options={options(INTERESTS, (value) => t(`profile.interest_${value}`))}
-        />
-      </Section>
-
-      <Section title={t('profile.section_prompts')} description={t('profile.prompts_hint')}>
-        <PromptEditor value={answers} onChange={setPrompts} />
-      </Section>
-
       <Section title={t('profile.section_who')} description={t('profile.section_who_body')}>
         <SeekingSelect
           label={t('profile.seeking')}
@@ -292,13 +289,18 @@ export default function EditProfileScreen() {
       </Section>
 
       <View className="gap-3 pt-2">
-        {failed ? (
+        {updateProfile.isError ? (
           <Text variant="caption" tone="danger" role="alert">
             {t('common.error_generic')}
           </Text>
         ) : null}
 
-        <Button label={t('common.save')} disabled={!valid} loading={busy} onPress={save} />
+        <Button
+          label={t('common.save')}
+          disabled={!valid}
+          loading={updateProfile.isPending}
+          onPress={save}
+        />
 
         <Button variant="ghost" label={t('common.cancel')} onPress={() => router.back()} />
       </View>
