@@ -171,11 +171,12 @@ a green suite is not the same claim as "safe for the people using it". It still
 needs all four other jobs, so pressing the button on a broken commit deploys
 nothing, and a pull request from a fork can never reach the domain.
 
-It needs five GitHub secrets:
+It needs six GitHub secrets:
 
 | Secret | What |
 | :--- | :--- |
 | `CLOUDFLARE_API_TOKEN` | Cloudflare Pages: Edit, scoped to this account |
+| `CLOUDFLARE_WORKER_API_TOKEN` | Workers Scripts: Edit, for the image Worker |
 | `CLOUDFLARE_ACCOUNT_ID` | the account the bucket and Pages project live in |
 | `EXPO_PUBLIC_SUPABASE_URL` | the production project URL |
 | `EXPO_PUBLIC_SUPABASE_ANON_KEY` | public by design, still not committed |
@@ -223,8 +224,8 @@ an object that does not exist  404
 
 Every response carries `X-Robots-Tag: noindex, noimageindex`.
 
-Deploying from CI needs **Workers Scripts: Edit** on the API token, which
-Pages: Edit does not cover.
+Deploying from CI uses its own token, CLOUDFLARE_WORKER_API_TOKEN, carrying
+Workers Scripts: Edit. The Pages token does not cover it.
 
 ## API tokens
 
