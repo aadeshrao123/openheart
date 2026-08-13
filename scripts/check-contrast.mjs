@@ -206,8 +206,10 @@ for (const [theme, tokens] of Object.entries(themes)) {
 // The browser paints themeColor around the page before any CSS loads, so it is
 // the one colour that cannot live in global.css. Asserted rather than commented,
 // because it had already drifted a shade behind --bg.
-const themeColor = JSON.parse(readFileSync(path.join(ROOT, 'app.json'), 'utf8')).expo.web.themeColor;
-const expected = `#${themes.light.bg.map((channel) => channel.toString(16).padStart(2, '0')).join('')}`;
+const appJson = JSON.parse(readFileSync(path.join(ROOT, 'app.json'), 'utf8'));
+const themeColor = appJson.expo.web.themeColor;
+const hex = themes.light.bg.map((channel) => channel.toString(16).padStart(2, '0'));
+const expected = `#${hex.join('')}`;
 
 const drifted = themeColor.toLowerCase() !== expected;
 
