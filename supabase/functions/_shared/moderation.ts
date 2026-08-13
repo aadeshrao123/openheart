@@ -4,13 +4,21 @@ import { requireEnv } from './env.ts';
 
 export type ModerationVerdict = 'approved' | 'rejected';
 
+// The verdict alone loses the thing that matters most. A known-CSAM match and a
+// photo of a beer both rejected, and nothing downstream could tell them apart,
+// so an incident could be neither reported nor preserved.
+export type ModerationResult = {
+  verdict: ModerationVerdict;
+  detail: string;
+};
+
 // Uint8Array<ArrayBuffer> and not a bare Uint8Array. Bare, the buffer type is
 // ArrayBufferLike, which includes SharedArrayBuffer, and nothing that takes a
 // request body accepts one of those. The bytes here are always read out of an
 // R2 response with `new Uint8Array(await object.arrayBuffer())`, so the narrower
 // type is what is actually being passed rather than a cast to quiet a checker.
 export type ImageModerationProvider = {
-  scanImage(bytes: Uint8Array<ArrayBuffer>, contentType: string): Promise<ModerationVerdict>;
+  scanImage(bytes: Uint8Array<ArrayBuffer>, contentType: string): Promise<ModerationResult>;
 };
 
 // 50 is Rekognition's own default. Below it the docs warn of a high
@@ -90,7 +98,7 @@ export function createRekognitionProvider(): ImageModerationProvider {
   });
 
   return {
-    async scanImage(bytes: Uint8Array<ArrayBuffer>): Promise<ModerationVerdict> {
+    async scanImage(bytes: Uint8Array<ArrayBuffer>): Promise<ModerationResult> {
       // Endpoint, target header and content type taken from the AWS CLI's own
       // debug output for DetectModerationLabels rather than from memory.
       const response = await signer.fetch(`https://rekognition.${region}.amazonaws.com/`, {
@@ -124,11 +132,11 @@ export function createRekognitionProvider(): ImageModerationProvider {
 
         // A label with no readable name is not something to guess about.
         if (typeof name !== 'string' || !ALLOWED_LABELS.has(name)) {
-          return 'rejected';
+          return { verdict: 'rejected', detail: 'adult' };
         }
       }
 
-      return 'approved';
+      return { verdict: 'approved', detail: 'clean' };
     },
   };
 }
@@ -179,7 +187,7 @@ export function createArachnidShieldProvider(): ImageModerationProvider {
     async scanImage(
       bytes: Uint8Array<ArrayBuffer>,
       contentType: string,
-    ): Promise<ModerationVerdict> {
+    ): Promise<ModerationResult> {
       // Raw body, no multipart. Their spec: "The file must be submitted as the
       // body of the request, with no HTTP form or other encoding."
       const response = await fetch(SHIELD_MEDIA_URL, {
@@ -208,7 +216,10 @@ export function createArachnidShieldProvider(): ImageModerationProvider {
         throw new Error('Arachnid Shield response carried no classification');
       }
 
-      return verdictForClassification(payload.classification);
+      return {
+        verdict: verdictForClassification(payload.classification),
+        detail: payload.classification,
+      };
     },
   };
 }
@@ -235,16 +246,18 @@ export function createModerationProvider(): ImageModerationProvider {
     async scanImage(
       bytes: Uint8Array<ArrayBuffer>,
       contentType: string,
-    ): Promise<ModerationVerdict> {
+    ): Promise<ModerationResult> {
       for (const provider of providers) {
-        const verdict = await provider.scanImage(bytes, contentType);
+        const result = await provider.scanImage(bytes, contentType);
 
-        if (verdict === 'rejected') {
-          return 'rejected';
+        // The first refusal wins and carries its own detail, so the caller
+        // learns which scanner objected and to what.
+        if (result.verdict === 'rejected') {
+          return result;
         }
       }
 
-      return 'approved';
+      return { verdict: 'approved', detail: 'clean' };
     },
   };
 }

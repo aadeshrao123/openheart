@@ -9,7 +9,7 @@
 -- return a plausible 500.
 
 begin;
-select plan(12);
+select plan(15);
 
 -- ------------------------------------------------- what the functions need
 
@@ -75,6 +75,28 @@ select ok(
 select ok(
   not has_column_privilege('service_role', 'profiles', 'photo_verified', 'UPDATE'),
   'nothing can set photo_verified until the verification flow exists'
+);
+
+-- Added after the same bug happened a fifth time. 0020 added
+-- photos.moderation_detail, the existing grant was the column list
+-- `update (moderation_state)`, and a new column is never covered by one. The
+-- scanner could not record what it had just decided.
+select ok(
+  has_column_privilege('service_role', 'photos', 'moderation_detail', 'UPDATE'),
+  'moderate-photo can record which scanner objected, not just that one did'
+);
+
+-- Suspending on a known-material match goes through a security definer
+-- function, so this stays false. A key that can write one column of profiles is
+-- a key that can be talked into writing others.
+select ok(
+  not has_column_privilege('service_role', 'profiles', 'suspended_at', 'UPDATE'),
+  'service_role still cannot touch profiles directly, suspension included'
+);
+
+select ok(
+  has_function_privilege('service_role', 'suspend_for_known_material(uuid, text)', 'EXECUTE'),
+  'and reaches suspension only through the function that is allowed to'
 );
 
 -- The other side of the same coin: bypassrls is real, and is what lets the

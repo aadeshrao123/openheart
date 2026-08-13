@@ -285,6 +285,32 @@ Driven through `request-photo-upload`, a real `PUT` into the bucket, and
 near the database or the bucket, and prints the classification rather than the
 credential.
 
+### What a match does now
+
+Running it exposed the real gap: a Shield match and a photo of a beer produced
+the same outcome, so nothing downstream could tell them apart. 0020 records it.
+
+Verified the same way, against the same fixture:
+
+| | clean | known match |
+| :--- | :--- | :--- |
+| `moderation_state` | `approved` | `rejected` |
+| `moderation_detail` | `clean` | `csam` |
+| `csam_incidents` row | none | one, with the classification |
+| account | untouched | suspended, reason `csam` |
+| object | kept | queued for purge |
+
+With `PRESERVE_CSAM_MATCHES=true` the last row becomes "held, not queued" and
+the incident records `object_preserved`. **It defaults to off**, because holding
+this material is only defensible once it has been reported, and reporting needs
+an NCMEC registration that does not exist yet.
+
+Two grants were missing and both failed only when run. `service_role` held
+`update (moderation_state)` on `photos`, a column list, so it could not write
+the new `moderation_detail`. And suspension goes through
+`suspend_for_known_material()` rather than a grant, because 0017 deliberately
+leaves service_role no privilege on `profiles` at all.
+
 **Do not commit their fixture.** It is innocuous and it classifies as CSAM, so
 storing it in a public repository is a problem regardless of what it depicts.
 

@@ -1,7 +1,7 @@
 import { errorResponse, jsonResponse, readJsonObject, serveJson } from '../_shared/http.ts';
 import { createR2Client, getObject } from '../_shared/r2.ts';
 import { detectImageFormat } from '../_shared/media.ts';
-import { createModerationProvider } from '../_shared/moderation.ts';
+import { createModerationProvider, type ModerationResult } from '../_shared/moderation.ts';
 import {
   createRekognitionVerificationProvider,
   type VerificationChallenge,
@@ -86,7 +86,7 @@ serveJson(async (request) => {
   // The selfie goes through the same scan every uploaded photo does. It is
   // never shown to anyone, but a moderator opens the failures, and "we only
   // look at it in the review queue" is not a reason to skip it.
-  let moderation: string | null = null;
+  let moderation: ModerationResult;
 
   try {
     moderation = await createModerationProvider().scanImage(selfieBytes, selfieType);
@@ -95,7 +95,7 @@ serveJson(async (request) => {
     return errorResponse('verification_unavailable', 503);
   }
 
-  if (moderation === 'rejected') {
+  if (moderation.verdict === 'rejected') {
     return await finish(admin, attempt.id, attempt.selfie_r2_key, 'rejected', 'unsafe_image');
   }
 
