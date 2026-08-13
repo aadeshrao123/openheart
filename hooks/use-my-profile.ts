@@ -7,7 +7,7 @@ type ProfileRow = Database['public']['Tables']['profiles']['Row'];
 
 export const myProfileKey = ['profile', 'me'] as const;
 
-// Exactly the columns 0006_grants.sql allows a client to insert.
+// Exactly the columns 0006_grants.sql and 0021 allow a client to insert.
 export type NewProfile = Pick<
   ProfileRow,
   | 'display_name'
@@ -20,10 +20,29 @@ export type NewProfile = Pick<
   | 'age_max'
 >;
 
+// The depth fields from 0021. All optional, all nullable, and none of them
+// asked for during onboarding: a signup that demands twelve answers is a
+// signup people abandon.
+export type ProfileDetail = Partial<
+  Pick<
+    ProfileRow,
+    | 'height_cm'
+    | 'relationship_intent'
+    | 'drinking'
+    | 'smoking'
+    | 'exercise'
+    | 'children'
+    | 'education'
+    | 'job_title'
+    | 'languages'
+    | 'interests'
+  >
+>;
+
 // Exactly the columns it allows a client to update. birthdate is absent because
 // an age gate you can edit past is not a gate; a trigger rejects it too, so this
 // only decides whether the mistake is caught by tsc or by Postgres.
-export type ProfileEdit = Partial<Omit<NewProfile, 'birthdate'>>;
+export type ProfileEdit = Partial<Omit<NewProfile, 'birthdate'>> & ProfileDetail;
 
 // 0016 took birthdate, location and the suspension columns out of the client's
 // read grant, and a column grant applies to your own row too: `select *` on

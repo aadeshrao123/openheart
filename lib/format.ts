@@ -134,6 +134,37 @@ export function formatDistance(kilometres: number, locale = currentLocale()): st
   }).format(value);
 }
 
+const CM_PER_INCH = 2.54;
+const INCHES_PER_FOOT = 12;
+
+// Stored in centimetres and read in whatever the region uses. Feet and inches
+// are assembled from two Intl unit formats rather than a template, because
+// 5'11" is a Latin convention and not every locale writes it that way.
+export function formatHeight(centimetres: number, locale = currentLocale()): string {
+  if (!usesImperialUnits(locale)) {
+    return new Intl.NumberFormat(locale, {
+      style: 'unit',
+      unit: 'centimeter',
+      unitDisplay: 'short',
+      maximumFractionDigits: 0,
+    }).format(centimetres);
+  }
+
+  const totalInches = Math.round(centimetres / CM_PER_INCH);
+  const unit = (value: number, name: 'foot' | 'inch') =>
+    new Intl.NumberFormat(locale, {
+      style: 'unit',
+      unit: name,
+      unitDisplay: 'narrow',
+      maximumFractionDigits: 0,
+    }).format(value);
+
+  const feet = Math.floor(totalInches / INCHES_PER_FOOT);
+  const inches = totalInches % INCHES_PER_FOOT;
+
+  return `${unit(feet, 'foot')} ${unit(inches, 'inch')}`;
+}
+
 export function formatRelativeTime(date: Date, locale = currentLocale()): string {
   const formatter = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
   const elapsedMs = date.getTime() - Date.now();

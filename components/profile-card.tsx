@@ -3,7 +3,7 @@ import { Image } from 'expo-image';
 import { useTranslation } from 'react-i18next';
 import { Text } from '@/components/ui';
 import { cn } from '@/lib/cn';
-import { formatDistance } from '@/lib/format';
+import { formatDistance, formatHeight } from '@/lib/format';
 import { photoUrl } from '@/lib/photos';
 import type { Candidate } from '@/hooks/use-discovery';
 
@@ -16,6 +16,14 @@ export type ProfileCardProps = {
 export function ProfileCard({ candidate, onPress, className }: ProfileCardProps) {
   const { t } = useTranslation();
   const photoKey = candidate.photoKeys[0];
+
+  const summary = [
+    candidate.height_cm === null ? null : formatHeight(candidate.height_cm),
+    candidate.job_title,
+    candidate.relationship_intent === null
+      ? null
+      : t(`profile.intent_${candidate.relationship_intent}`),
+  ].filter((fact): fact is string => Boolean(fact));
 
   // Pressable only when it leads somewhere. The cards stacked behind the top one
   // are passed no handler, so they never become a tap target a screen reader
@@ -76,6 +84,20 @@ export function ProfileCard({ candidate, onPress, className }: ProfileCardProps)
           <Text variant="caption" tone="muted" numberOfLines={2}>
             {candidate.bio}
           </Text>
+        ) : null}
+
+        {/* Three at most on a card in the deck. The whole set is on the profile
+            behind it, and a card that scrolls is a card that cannot be swiped. */}
+        {summary.length > 0 ? (
+          <View className="flex-row flex-wrap gap-1.5 pt-0.5">
+            {summary.map((fact) => (
+              <View key={fact} className="rounded-control bg-surface px-2.5 py-1">
+                <Text variant="caption" tone="muted">
+                  {fact}
+                </Text>
+              </View>
+            ))}
+          </View>
         ) : null}
       </View>
     </Container>

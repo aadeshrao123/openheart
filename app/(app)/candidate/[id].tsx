@@ -7,6 +7,7 @@ import { Button, Card, Screen, Skeleton, Text } from '@/components/ui';
 import { formatDistance } from '@/lib/format';
 import { photoUrl } from '@/lib/photos';
 import { useDiscovery } from '@/hooks/use-discovery';
+import { ProfileDetails } from '@/components/profile-details';
 import { SafetyActions } from '@/components/safety-actions';
 
 // The photo, the name and distance under it, then the bio.
@@ -103,6 +104,8 @@ export default function CandidateScreen() {
           <Text>{candidate.bio}</Text>
         </Card>
       ) : null}
+
+      <ProfileDetails profile={candidate} />
 
       {/* The remaining photos. The first is already the header above. */}
       {candidate.photoKeys.slice(1).map((key) => (

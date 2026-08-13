@@ -16,7 +16,15 @@ vi.mock('expo-localization', () => ({
 
 import en from '@/locales/en.json';
 import { Constants } from '@/lib/database.types';
-import { GENDERS } from '@/lib/profile-options';
+import {
+  CHILDREN_OPTIONS,
+  EDUCATION_LEVELS,
+  GENDERS,
+  INTERESTS,
+  LIFESTYLE_FREQUENCIES,
+  PROMPTS,
+  RELATIONSHIP_INTENTS,
+} from '@/lib/profile-options';
 import { REACTION_CODES } from '@/lib/reactions';
 import { REPORT_REASONS } from '@/lib/report-reasons';
 import {
@@ -52,6 +60,12 @@ const DYNAMIC_KEYS: Record<string, readonly string[]> = {
   'safety.reason_': REPORT_REASONS,
   'chat.reaction_': REACTION_CODES,
   'profile.gender_': GENDERS,
+  'profile.intent_': RELATIONSHIP_INTENTS,
+  'profile.frequency_': LIFESTYLE_FREQUENCIES,
+  'profile.children_': CHILDREN_OPTIONS,
+  'profile.education_': EDUCATION_LEVELS,
+  'profile.interest_': INTERESTS,
+  'profile.prompt_': PROMPTS,
   'moderation.status_': RESOLVED_STATUSES,
   'verify.pose_': VERIFICATION_CHALLENGES,
   'verify.result_': VERIFICATION_RESULTS,

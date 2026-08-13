@@ -7,6 +7,15 @@ export { Icon, type IconProps } from './icon';
 export { Input, type InputProps } from './input';
 export { ListRow, type ListRowProps } from './list-row';
 export { Logo, type LogoProps } from './logo';
+export {
+  MultiSelect,
+  SingleSelect,
+  type MultiSelectProps,
+  type Option,
+  type SingleSelectProps,
+} from './option-group';
+export { Section, type SectionProps } from './section';
+export { RangeSlider, Slider, type RangeSliderProps, type SliderProps } from './slider';
 export { Rail, type RailProps } from './rail';
 export { Screen, type ScreenProps } from './screen';
 export { Skeleton, type SkeletonProps } from './skeleton';
