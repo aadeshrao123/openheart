@@ -122,8 +122,11 @@ Baseline policies:
 
 - A profile is readable only if neither party has blocked the other.
 - `messages` are readable only by the two users in that `match_id`.
-- `swipes` are readable only by their author. Never expose who swiped which way
-  on whom - that is the single most sensitive table in the app.
+- A **pass** on `swipes` is readable only by its author, always. Never tell
+  somebody they were passed on. A **like** is also readable by the person it is
+  aimed at, which is what makes an incoming like visible at all rather than a
+  paid feature. Nothing else about the table is readable by anyone: a swipe
+  between two other people is nobody's business.
 - `reports` are insert-only for users; readable only by moderators.
 
 Every new table gets policies in the same migration that creates it.

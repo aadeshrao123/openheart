@@ -18,7 +18,8 @@ Applies to: OpenHeart, the app and openheartapp.org
 - Your exact location never reaches our database. It is rounded to about a
   kilometre before it is stored, and other people are only ever told a rounded
   distance.
-- Nobody is ever told who swiped which way on them.
+- Nobody is ever told that somebody passed on them. A like is shown to the
+  person it was aimed at, which is how you see who likes you, and it is free.
 - Deleting your account erases your personal data and keeps a blank row, so the
   people you talked to keep their own messages and a record of any report about
   you survives.
