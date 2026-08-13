@@ -4,6 +4,7 @@ export { Button, type ButtonProps } from './button';
 export { Card, type CardProps } from './card';
 export { Chip, type ChipProps } from './chip';
 export { Icon, type IconProps } from './icon';
+export { IconButton, type IconButtonProps } from './icon-button';
 export { Input, type InputProps } from './input';
 export { ListRow, type ListRowProps } from './list-row';
 export { Logo, type LogoProps } from './logo';

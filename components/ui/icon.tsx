@@ -25,6 +25,14 @@ const shapes = {
   close: ['M6 6 L18 18', 'M18 6 L6 18'],
   flag: ['M6 21 L6 3.5', 'M6 4.5 L18.5 4.5 L15.5 9.5 L18.5 14.5 L6 14.5'],
   shield: ['M12 2.5 L20 6 L20 11.5 C20 16.5 16.5 20 12 21.5 C7.5 20 4 16.5 4 11.5 L4 6 Z'],
+  heart: [
+    'M12 21 C12 21 4 15.5 4 9.5 C4 6.5 6.2 4.5 8.8 4.5 C10.4 4.5 11.5 5.4 12 6.2 ' +
+      'C12.5 5.4 13.6 4.5 15.2 4.5 C17.8 4.5 20 6.5 20 9.5 C20 15.5 12 21 12 21 Z',
+  ],
+  pin: [
+    'M12 21.5 C12 21.5 19 15.2 19 9.8 A7 7 0 0 0 5 9.8 C5 15.2 12 21.5 12 21.5 Z',
+    'M9.6 9.6 A2.4 2.4 0 1 0 14.4 9.6 A2.4 2.4 0 1 0 9.6 9.6 Z',
+  ],
 } as const;
 
 // A tick and a cross are symbols, not directions, so they must not mirror.
@@ -42,9 +50,18 @@ export type IconProps = {
   // A text-* token class, never a colour value.
   className?: string;
   strokeWidth?: number;
+  // Solid rather than outlined. Only shapes drawn as a closed path fill
+  // sensibly, which today means heart.
+  filled?: boolean;
 };
 
-export function Icon({ name, size = 'md', className = 'text-fg', strokeWidth = 2 }: IconProps) {
+export function Icon({
+  name,
+  size = 'md',
+  className = 'text-fg',
+  strokeWidth = 2,
+  filled = false,
+}: IconProps) {
   const { i18n } = useTranslation();
   const pixels = sizes[size];
 
@@ -68,8 +85,9 @@ export function Icon({ name, size = 'md', className = 'text-fg', strokeWidth = 2
         <Path
           key={definition}
           d={definition}
+          fill={filled ? 'currentColor' : 'none'}
           stroke="currentColor"
-          strokeWidth={strokeWidth}
+          strokeWidth={filled ? 0 : strokeWidth}
           strokeLinecap="round"
           strokeLinejoin="round"
         />

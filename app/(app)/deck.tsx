@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { Button, Screen, Skeleton, Text } from '@/components/ui';
+import { Button, IconButton, Screen, Skeleton, Text } from '@/components/ui';
 import { LoadFailed } from '@/components/load-failed';
 import { MatchCelebration } from '@/components/match-celebration';
 import { SwipeDeck, type SwipeDeckHandle } from '@/components/swipe-deck';
@@ -56,9 +56,9 @@ function DeckSkeleton() {
         </View>
       </View>
 
-      <View className="flex-row gap-4">
-        <Skeleton shape="block" className="h-13 flex-1 rounded-control" />
-        <Skeleton shape="block" className="h-13 flex-1 rounded-control" />
+      <View className="flex-row items-center justify-center gap-6">
+        <Skeleton shape="block" className="h-14 w-14 rounded-full" />
+        <Skeleton shape="block" className="h-16 w-16 rounded-full" />
       </View>
     </View>
   );
@@ -256,19 +256,21 @@ export default function DeckScreen() {
             ) : null}
 
             {/* The only route through this screen that works with a screen
-                reader, so they carry real labels rather than being decoration
-                under the deck. */}
-            <View className="flex-row justify-center gap-4">
-              <Button
-                variant="secondary"
+                reader. The label is still the accessible name, so dropping the
+                printed word costs nothing: each is announced as before. */}
+            <View className="flex-row items-center justify-center gap-6">
+              <IconButton
+                name="close"
+                variant="pass"
+                size="md"
                 label={t('deck.pass')}
-                className="flex-1"
                 disabled={swipe.isPending || celebration !== null}
                 onPress={() => deckRef.current?.swipe('pass')}
               />
-              <Button
+              <IconButton
+                name="heart"
+                variant="like"
                 label={t('deck.like')}
-                className="flex-1"
                 disabled={swipe.isPending || celebration !== null}
                 onPress={() => deckRef.current?.swipe('like')}
               />

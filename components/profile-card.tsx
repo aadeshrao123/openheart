@@ -1,7 +1,7 @@
 import { Pressable, View } from 'react-native';
 import { Image } from 'expo-image';
 import { useTranslation } from 'react-i18next';
-import { Scrim, Text } from '@/components/ui';
+import { Icon, Scrim, Text } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { formatDistance, formatHeight } from '@/lib/format';
 import { photoUrl } from '@/lib/photos';
@@ -18,13 +18,19 @@ export function ProfileCard({ candidate, onPress, className }: ProfileCardProps)
   const { t } = useTranslation();
   const photoKey = candidate.photoKeys[0];
 
+  // Interests lead, because "Indie, Coffee, Travel" is a person and "5 ft 9,
+  // Engineer" is a record. The facts fill whatever is left, so a profile that
+  // has not picked any interests still says something.
   const summary = [
+    ...(candidate.interests ?? []).map((interest) => t(`profile.interest_${interest}`)),
     candidate.height_cm === null ? null : formatHeight(candidate.height_cm),
     candidate.job_title,
     candidate.relationship_intent === null
       ? null
       : t(`profile.intent_${candidate.relationship_intent}`),
-  ].filter((fact): fact is string => Boolean(fact));
+  ]
+    .filter((fact): fact is string => Boolean(fact))
+    .slice(0, 3);
 
   // Pressable only when it leads somewhere. The cards stacked behind the top one
   // are passed no handler, so they never become a tap target a screen reader
@@ -82,13 +88,17 @@ export function ProfileCard({ candidate, onPress, className }: ProfileCardProps)
         </Text>
 
         {/* Bucket zero means nearer than the smallest 5km bucket, not zero. */}
-        <Text variant="overline" tone="accent">
-          {candidate.distance_bucket_km === 0
-            ? t('deck.distance_very_close')
-            : t('deck.distance_away', {
-                distance: formatDistance(candidate.distance_bucket_km),
-              })}
-        </Text>
+        <View className="flex-row items-center gap-1.5">
+          <Icon name="pin" size="sm" className="text-accent" />
+
+          <Text variant="overline" tone="accent">
+            {candidate.distance_bucket_km === 0
+              ? t('deck.distance_very_close')
+              : t('deck.distance_away', {
+                  distance: formatDistance(candidate.distance_bucket_km),
+                })}
+          </Text>
+        </View>
 
         {candidate.bio ? (
           <Text variant="caption" tone="muted" numberOfLines={1}>
@@ -100,12 +110,19 @@ export function ProfileCard({ candidate, onPress, className }: ProfileCardProps)
             behind it, and a card that scrolls is a card that cannot be swiped. */}
         {summary.length > 0 ? (
           <View className="flex-row flex-wrap gap-1.5 pt-0.5">
-            {summary.map((fact) => (
+            {summary.map((fact, index) => (
               <View
                 key={fact}
-                className="rounded-control border border-border bg-surface-raised/80 px-2.5 py-1"
+                className={cn(
+                  'rounded-control border px-2.5 py-1',
+                  // The first one carries the brand so the row has a focal
+                  // point rather than reading as three grey boxes.
+                  index === 0
+                    ? 'border-brand/40 bg-brand-subtle'
+                    : 'border-border bg-surface-raised/80',
+                )}
               >
-                <Text variant="caption" tone="muted">
+                <Text variant="caption" tone={index === 0 ? 'brand' : 'muted'}>
                   {fact}
                 </Text>
               </View>
