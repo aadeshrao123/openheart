@@ -40,3 +40,26 @@ export async function authenticateRequest(
 
   return data.user.id;
 }
+
+// The same claim public.is_moderator() reads in SQL. app_metadata is admin-only
+// in GoTrue, and getUser verifies against the Auth server rather than decoding
+// locally, so a client can neither set it nor forge it.
+export async function authenticateModerator(
+  request: Request,
+  admin: AdminClient,
+): Promise<string | null> {
+  const authorization = request.headers.get('Authorization');
+
+  if (!authorization) {
+    return null;
+  }
+
+  const token = authorization.replace(/^Bearer\s+/i, '');
+  const { data, error } = await admin.auth.getUser(token);
+
+  if (error || !data.user || data.user.app_metadata.moderator !== true) {
+    return null;
+  }
+
+  return data.user.id;
+}

@@ -59,6 +59,25 @@ export async function presignUpload(
   return signed.url;
 }
 
+// The browser fetches the object directly, so the bucket stays private and no
+// Edge Function has to stream image bytes.
+export async function presignDownload(
+  r2: R2Client,
+  key: string,
+  expiresInSeconds: number,
+): Promise<string> {
+  const url = new URL(`${r2.bucketUrl}/${key}`);
+
+  url.searchParams.set('X-Amz-Expires', String(expiresInSeconds));
+
+  const signed = await r2.signer.sign(url.toString(), {
+    method: 'GET',
+    aws: { signQuery: true },
+  });
+
+  return signed.url;
+}
+
 export async function getObject(r2: R2Client, key: string): Promise<Response> {
   return await r2.signer.fetch(`${r2.bucketUrl}/${key}`, { method: 'GET' });
 }
