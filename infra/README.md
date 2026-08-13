@@ -193,6 +193,39 @@ domain command. Workers and Pages -> openheart -> Custom domains ->
 `openheartapp.org`. The DNS record is created automatically while the zone is
 on the same account.
 
+## Image Worker
+
+Serves photos from the private bucket, resized. `infra/image-worker`, on
+`images.openheartapp.org`, which `custom_domain = true` created along with the
+DNS record.
+
+```bash
+cd infra/image-worker && wrangler deploy
+```
+
+The R2 binding is the credential, so there is no key in the Worker and the
+bucket keeps no public URL. URLs are `/<variant>/<key>` and the Worker owns the
+sizes: a client that could name its own width could ask for a 10000px transform
+of every object in the bucket.
+
+Only keys under `quarantine/` are served. `verification/` holds selfies, which
+are moderator-only through a short lived signed URL, and serving any key would
+hand somebody's face to anyone who learned one. Checked against the real bucket
+with a selfie actually in it:
+
+```
+thumb of a profile photo       200  image/webp  1008B   from 11674B
+medium of the same             200  image/webp  3636B
+a verification selfie          404
+an invented variant            404
+an object that does not exist  404
+```
+
+Every response carries `X-Robots-Tag: noindex, noimageindex`.
+
+Deploying from CI needs **Workers Scripts: Edit** on the API token, which
+Pages: Edit does not cover.
+
 ## API tokens
 
 Wrangler cannot create the S3-compatible Access Key ID and Secret Access Key

@@ -1,0 +1,19 @@
+name = "openheart-images"
+main = "src/index.ts"
+compatibility_date = "2026-08-13"
+
+# custom_domain creates the DNS record as well as the route, so the subdomain
+# is not a second thing to remember in the dashboard.
+[[routes]]
+pattern = "images.openheartapp.org"
+custom_domain = true
+
+[[r2_buckets]]
+binding = "PHOTOS"
+bucket_name = "openheart-photos"
+
+[images]
+binding = "IMAGES"
+
+# No secrets. The binding is the credential, so there is no R2 key here for a
+# leaked repository to carry.

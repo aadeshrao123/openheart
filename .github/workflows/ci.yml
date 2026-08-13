@@ -239,3 +239,13 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy dist --project-name openheart --branch main
+
+      # Needs Workers Scripts: Edit on the token, which Pages: Edit does not
+      # cover, so this step fails until that permission is added.
+      - name: Deploy the image Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: infra/image-worker
+          command: deploy
