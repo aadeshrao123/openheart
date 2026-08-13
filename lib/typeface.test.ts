@@ -16,15 +16,17 @@ const PLATFORM_LANGUAGES = ['zh-Hans', 'hi', 'bn', 'ar', 'ur'];
 
 // font-display and friends name a family, font-semibold and italic do not.
 const FAMILY_CLASS = new RegExp(`font-(${Object.keys(tokens.fontFamily).join('|')})\\b`);
-const WEIGHT_OR_STYLE_CLASS = /font-(normal|medium|semibold|bold)\b|\bitalic\b/;
+const WEIGHT_OR_STYLE_CLASS = /font-(normal|medium|semibold|bold|extrabold)\b|\bitalic\b/;
 
 // What the family names in tokens.js say about weight and slant. React Native
-// does not synthesize weights, so a brand face spells both out: Fraunces
-// _600SemiBold, Fraunces_500Medium_Italic, InstrumentSans_400Regular.
+// does not synthesize weights, so a brand face spells both out:
+// PlusJakartaSans_800ExtraBold, PlusJakartaSans_500Medium_Italic.
 const WEIGHT_CLASSES: Readonly<Partial<Record<string, string>>> = {
   '400': 'font-normal',
   '500': 'font-medium',
   '600': 'font-semibold',
+  '700': 'font-bold',
+  '800': 'font-extrabold',
 };
 
 function expectedPlatformClasses(role: (typeof ROLES)[number]): string {

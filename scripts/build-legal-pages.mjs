@@ -10,18 +10,59 @@
 // the questions a lawyer still has to answer, which belongs in the repository
 // and not on the website.
 
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { marked } from 'marked';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 const OUT = path.join(ROOT, 'public');
 
+// The app's own face, self hosted next to the pages that use it. Copied from
+// node_modules rather than committed by hand so a font upgrade is one npm
+// install, and served locally rather than from Google's CDN because a legal
+// page that phones a third party while explaining that the app does not track
+// you is its own kind of wrong.
+//
+// Two weights, not three. Regular carries the body and ExtraBold carries the
+// headings and the bold runs inside them, which avoids the browser synthesising
+// a bold from the regular cut.
+const FONTS = [
+  { family: 'PlusJakartaSans_400Regular', weight: 400, dir: '400Regular' },
+  { family: 'PlusJakartaSans_800ExtraBold', weight: 800, dir: '800ExtraBold' },
+];
+
+// The same mark components/ui/logo.tsx draws, as inline SVG so the header needs
+// no image request.
+const HEART =
+  'M12 20.7l-1.45-1.32C5.4 14.74 2 11.66 2 7.9 2 4.82 4.42 2.4 7.5 2.4c1.74 0 ' +
+  '3.41.81 4.5 2.09 1.09-1.28 2.76-2.09 4.5-2.09 3.08 0 5.5 2.42 5.5 5.5 0 ' +
+  '3.76-3.4 6.84-8.55 11.49L12 20.7z';
+
 const INTERNAL_SECTION = /\n## Open items[\s\S]*$/;
 
 const SITE = 'https://openheartapp.org';
 const REPOSITORY = 'https://github.com/aadeshrao123/openheart';
 const CONTACT = 'support@openheartapp.org';
+const APP_NAME = 'OpenHeart';
+
+// Cloudflare Pages serves foo.html at /foo, so the extension never appears in a
+// link. Keeping that in one function means the nav, the footer and the sitemap
+// cannot disagree about what a page is called.
+const href = (out) => `/${out.replace(/\.html$/, '')}`;
+
+const mark = (size) =>
+  `<svg width="${size}" height="${size}" viewBox="0 0 24 24" aria-hidden="true">` +
+  `<path d="${HEART}"/></svg>`;
+
+function navigation(current) {
+  const links = PAGES.map((page) => {
+    const active = page.out === current ? ' aria-current="page"' : '';
+
+    return `<a href="${href(page.out)}"${active}>${page.title}</a>`;
+  });
+
+  return [...links, `<a class="cta" href="/sign-in">Sign in</a>`].join('\n      ');
+}
 
 // Read out of global.css rather than copied, because a legal page that does not
 // look like the app it belongs to reads as somebody else's page, and these were
@@ -62,25 +103,103 @@ ${palette(/\.dark:root\s*\{([^}]*)\}/)}
   }
 }
 
+${FONTS.map(
+  (font) => `@font-face {
+  font-family: 'Plus Jakarta Sans';
+  src: url('/fonts/${font.family}.ttf') format('truetype');
+  font-weight: ${font.weight};
+  font-style: normal;
+  font-display: swap;
+}`,
+).join('\n')}
+
 * { box-sizing: border-box; }
 
 body {
   margin: 0;
-  padding: 3rem 1.25rem 6rem;
   background: rgb(var(--bg));
   color: rgb(var(--fg));
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
   font-size: 17px;
-  line-height: 1.65;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
 }
 
-main { max-width: 42rem; margin: 0 auto; }
+/* 800 rather than 700, because that is the cut actually loaded. Asking for a
+   weight between the two makes the browser synthesise one by smearing the
+   regular, which is the blurry bold nobody can name but everybody notices. */
+strong, b, th { font-weight: 800; }
 
-a { color: rgb(var(--brand)); }
+.shell { max-width: 60rem; margin: 0 auto; padding: 0 1.25rem; }
 
-h1 { font-size: 2rem; line-height: 1.2; margin: 0 0 1.5rem; }
-h2 { font-size: 1.35rem; margin: 2.75rem 0 0.75rem; }
-h3 { font-size: 1.1rem; margin: 2rem 0 0.5rem; }
+main { max-width: 42rem; margin: 0 auto; padding: 3rem 0 5rem; }
+
+a { color: rgb(var(--brand)); text-underline-offset: 2px; }
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgb(var(--bg) / 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgb(var(--border));
+}
+
+header .shell {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  min-height: 60px;
+  flex-wrap: wrap;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: rgb(var(--fg));
+  text-decoration: none;
+  font-weight: 800;
+  font-size: 1.05rem;
+  letter-spacing: -0.02em;
+}
+
+.brand svg { fill: rgb(var(--brand)); }
+
+nav { display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap; }
+
+nav a {
+  color: rgb(var(--fg-muted));
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 150ms ease;
+}
+
+nav a:hover { color: rgb(var(--fg)); }
+nav a[aria-current='page'] { color: rgb(var(--fg)); font-weight: 800; }
+
+nav a.cta {
+  color: rgb(var(--brand));
+  font-weight: 800;
+}
+
+h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  margin: 0 0 1.5rem;
+}
+
+h2 {
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 3rem 0 0.75rem;
+}
+
+h3 { font-size: 1.1rem; font-weight: 800; margin: 2rem 0 0.5rem; }
 
 hr { border: 0; border-top: 1px solid rgb(var(--border)); margin: 2.5rem 0; }
 
@@ -121,11 +240,22 @@ code {
 }
 
 footer {
-  margin-top: 4rem;
-  padding-top: 1.5rem;
   border-top: 1px solid rgb(var(--border));
   color: rgb(var(--fg-muted));
   font-size: 0.9rem;
+  padding: 2.5rem 0 3.5rem;
+}
+
+footer .shell { display: flex; flex-direction: column; gap: 1rem; }
+
+.footer-links { display: flex; flex-wrap: wrap; gap: 0.35rem 1.5rem; }
+
+footer a { color: rgb(var(--fg-muted)); text-decoration: none; }
+footer a:hover { color: rgb(var(--fg)); }
+
+@media (max-width: 640px) {
+  h1 { font-size: 2rem; }
+  header .shell { padding-top: 0.75rem; padding-bottom: 0.75rem; }
 }
 `;
 
@@ -183,20 +313,42 @@ for (const page of PAGES) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${page.title} - OpenHeart</title>
-<meta name="description" content="${page.title} for OpenHeart, a free and open source dating app.">
+<title>${page.title} - ${APP_NAME}</title>
+<meta name="description" content="${page.summary}">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="${APP_NAME}">
+<meta property="og:title" content="${page.title} - ${APP_NAME}">
+<meta property="og:description" content="${page.summary}">
+<meta name="twitter:card" content="summary">
 <style>${STYLE}</style>
 </head>
 <body>
+<header>
+  <div class="shell">
+    <a class="brand" href="/">${mark(22)}${APP_NAME}</a>
+    <nav>${navigation(page.out)}</nav>
+  </div>
+</header>
+
 <main>
 ${NOTICE}
 ${body}
-<footer>
-  <a href="/">OpenHeart</a> &middot;
-  <a href="mailto:${CONTACT}">${CONTACT}</a> &middot;
-  <a href="${REPOSITORY}">Source</a>
-</footer>
 </main>
+
+<footer>
+  <div class="shell">
+    <a class="brand" href="/">${mark(18)}${APP_NAME}</a>
+
+    <div class="footer-links">
+      <a href="/">Home</a>
+${PAGES.map((entry) => `      <a href="${href(entry.out)}">${entry.title}</a>`).join('\n')}
+      <a href="${REPOSITORY}">Source</a>
+      <a href="mailto:${CONTACT}">${CONTACT}</a>
+    </div>
+
+    <div>Free software. No ads, no trackers, no paywall.</div>
+  </div>
+</footer>
 </body>
 </html>
 `;
@@ -204,6 +356,23 @@ ${body}
   writeFileSync(path.join(OUT, page.out), html, 'utf8');
   console.log(`${page.out}: ${(html.length / 1024).toFixed(1)}KB`);
 }
+
+mkdirSync(path.join(OUT, 'fonts'), { recursive: true });
+
+for (const font of FONTS) {
+  const source = path.join(
+    ROOT,
+    'node_modules',
+    '@expo-google-fonts',
+    'plus-jakarta-sans',
+    font.dir,
+    `${font.family}.ttf`,
+  );
+
+  copyFileSync(source, path.join(OUT, 'fonts', `${font.family}.ttf`));
+}
+
+console.log(`fonts: ${FONTS.length} weights copied`);
 
 // The sitemap is written here rather than by hand because this file already
 // knows every public URL. Cloudflare Pages serves foo.html at /foo, so the
@@ -214,7 +383,7 @@ ${body}
 // Every other route in the export needs a session and is disallowed in
 // robots.txt, so nothing else belongs here.
 
-const urls = ['/', ...PAGES.map((page) => `/${page.out.replace(/\.html$/, '')}`)];
+const urls = ['/', ...PAGES.map((page) => href(page.out))];
 
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -233,8 +402,6 @@ console.log(`sitemap.xml: ${urls.length} URLs`);
 // This is worth more here than it usually is. The site is a single JavaScript
 // application, and a model that does not execute it sees the pre-rendered
 // markup and nothing else. Plain text costs nothing and removes the question.
-const APP_NAME = 'OpenHeart';
-
 const en = JSON.parse(readFileSync(path.join(ROOT, 'locales', 'en.json'), 'utf8'));
 
 const copy = Object.fromEntries(
@@ -259,7 +426,7 @@ const SAFEGUARDS = ['safety_scanning', 'safety_blocking', 'safety_queue', 'safet
 const section = (title, body) => `### ${title}\n\n${body}`;
 
 const pageLinks = PAGES.map((page) => {
-  const url = `${SITE}/${page.out.replace(/\.html$/, '')}`;
+  const url = `${SITE}${href(page.out)}`;
 
   return `- [${page.title}](${url}): ${page.summary}`;
 }).join('\n');

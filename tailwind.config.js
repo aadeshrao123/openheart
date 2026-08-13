@@ -62,6 +62,14 @@ module.exports = {
       fontFamily: tokens.fontFamily,
       fontSize: tokens.fontSize,
 
+      keyframes: tokens.keyframes,
+
+      // Delays are baked into named animations rather than exposed as a
+      // separate utility, because Tailwind has no animation-delay scale and the
+      // alternative is [animation-delay:180ms] in a component, which is the
+      // same defect as a hex code. A caller picks a step, not a number.
+      animation: tokens.animation,
+
       aspectRatio: {
         card: '4 / 5',
       },

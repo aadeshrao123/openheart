@@ -6,10 +6,10 @@ import { useTranslation } from 'react-i18next';
 // Which family answers that role depends on what the reader's language is
 // written in, because a font can only draw the scripts it has glyphs for and a
 // missing glyph is filled in by the platform silently. In a language the brand
-// faces do not cover, the Latin characters in a line ("OpenHeart", a digit, an
-// untranslated fragment) came out of Fraunces or Instrument Sans while the rest
-// of the same line came out of a system fallback: two sets of metrics, two
-// weights, one line, no warning.
+// face does not cover, the Latin characters in a line ("OpenHeart", a digit, an
+// untranslated fragment) came out of the brand face while the rest of the same
+// line came out of a system fallback: two sets of metrics, two weights, one
+// line, no warning.
 //
 // React Native's fontFamily takes a single family string and not a CSS stack,
 // so per-character fallback is not available here the way it is in a browser.
@@ -25,7 +25,7 @@ export type Typeface = Readonly<Record<FontRole, string>>;
 
 // Family only, and deliberately no weight or style class alongside it. These
 // families already encode their weight and their slant, because React Native
-// does not synthesize weights and each one is shipped as its own file. Adding
+// does not synthesize weights and each cut is shipped as its own file. Adding
 // font-semibold next to font-display would put a second, independent weight
 // request on a face that already has one: on Android that reaches
 // Typeface.create(typeface, weight, italic) in ReactFontManager.TypefaceStyle,
@@ -60,13 +60,13 @@ const BRAND: Typeface = {
 // derives the expected weight from the family name in tokens.js so the two
 // cannot drift:
 //
-//   display   Fraunces_600SemiBold         600
-//   quote     Fraunces_500Medium_Italic    500 italic
-//   body      InstrumentSans_400Regular    400
-//   emphasis  InstrumentSans_500Medium     500
-//   strong    InstrumentSans_600SemiBold   600
+//   display   PlusJakartaSans_800ExtraBold    800
+//   quote     PlusJakartaSans_500Medium_Ital  500 italic
+//   body      PlusJakartaSans_400Regular      400
+//   emphasis  PlusJakartaSans_500Medium       500
+//   strong    PlusJakartaSans_600SemiBold     600
 const PLATFORM_DEFAULT: Typeface = {
-  display: 'font-semibold',
+  display: 'font-extrabold',
   quote: 'font-medium italic',
   body: 'font-normal',
   emphasis: 'font-medium',
@@ -91,12 +91,12 @@ const SCRIPT_BY_LANGUAGE: Readonly<Partial<Record<string, Script>>> = {
   zh: 'han',
 };
 
-// Measured, not assumed: the cmap tables of the bundled faces carry 624
-// codepoints for Fraunces and 343 for Instrument Sans, and neither has a glyph
-// for U+0627, U+0905, U+0985 or U+4E00. Latin is all they cover, so Latin is
-// the only entry here and every other script gets the platform font for the
-// whole interface. An off-brand line that is internally consistent beats a
-// branded line that changes typeface halfway through.
+// Measured, not assumed: the cmap table of the bundled face carries 721
+// codepoints and has no glyph for U+0627, U+0905, U+0985, U+4E00 or even
+// U+0410. Latin is all it covers, so Latin is the only entry here and every
+// other script gets the platform font for the whole interface. An off-brand
+// line that is internally consistent beats a branded line that changes typeface
+// halfway through.
 //
 // Bundling a Noto face for a script later is one entry here plus its family in
 // tokens.js. No component changes.

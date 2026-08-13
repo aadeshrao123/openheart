@@ -1,6 +1,6 @@
 # OpenHeart
 
-> OpenHeart gives every feature to every person. It is funded by donations, so there is nothing to unlock, no tier above yours, and nobody deciding who gets shown based on who paid.
+> Every feature, free, for everyone. Funded by donations, so there is no tier above yours and nobody pays to be shown first.
 
 ## Dating without a price on being seen.
 
@@ -24,42 +24,42 @@ When a feature is proposed and the room disagrees, these are what decide it.
 
 ### Nothing sits behind a payment
 
-If a feature exists to take money from a lonely person, it does not ship. No subscription, no boosts, no fee to find out who is interested.
+If a feature exists to take money from a lonely person, it does not ship. No subscription, no boosts, no fee to see who likes you.
 
 ### Safety is not a premium tier
 
-Photo verification, reporting, blocking and image scanning run on every account. A safety control that only covers the people who paid protects nobody.
+Verification, reporting, blocking and photo scanning run on every account. Safety that only covers the people who paid protects nobody.
 
 ### You are not the product
 
-No advertising, no trackers, and nothing about you sold to anybody. Your exact location never leaves the server, and no one is ever sent another person's coordinates.
+No ads, no trackers, nothing about you sold. Your exact location never leaves the server, and nobody is ever sent another person's coordinates.
 
 ## How it works
 
 ### Prove you are a person
 
-A selfie in a pose we ask for, matched against your photos. It happens before anyone can see you, and it is the one rule that keeps the bots out.
+A selfie in a pose we ask for, matched to your photos. It happens before anyone can see you, and it is what keeps the bots out.
 
 ### See who is nearby
 
-Choose the distance and the age range you want. You get everyone who fits, ordered by who was here most recently, not by who paid to be first.
+Pick your distance and age range. You see everyone who fits, ordered by who was here most recently, not by who paid.
 
 ### Talk when you both agree
 
-A conversation opens only once two people have said yes. Either of you can unmatch, block or report from any screen, at any point.
+A conversation opens only when you both say yes. Either of you can unmatch, block or report from any screen.
 
-## The unglamorous half
+## Most of the work nobody advertises
 
-Most of the work in a dating app is the part nobody puts on a billboard.
+The parts that decide whether a dating app is safe are the parts you never see.
 
-- Every photo is scanned for illegal and adult content before a single person can see it.
-- Blocking reaches every table in the database, so a blocked account cannot reach you through a path we forgot.
-- Reports go to a queue a human reads, and the person reading it never gets a blanket view of your messages.
-- Your location is rounded before it is stored, and other people only ever see a rounded distance.
+- Every photo is checked for illegal and adult content before anyone sees it.
+- Blocking reaches everywhere at once, so a blocked account cannot find another way through.
+- Reports go to a queue a person reads, and that person never gets a general view of your messages.
+- Your location is rounded before it is saved. Other people only ever see a rounded distance.
 
 ## Funded by donations. Licensed so it stays that way.
 
-OpenHeart is AGPLv3, so anyone can read it, run it, and check that what this page claims is what the code does. It also means nobody can take it closed and start charging for it.
+OpenHeart is AGPLv3. Anyone can read it, run it, and check that this page matches the code. And nobody can take it closed and start charging.
 
 Repository: https://github.com/aadeshrao123/openheart
 Contact: support@openheartapp.org
