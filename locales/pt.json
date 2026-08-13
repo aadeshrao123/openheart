@@ -368,7 +368,14 @@
     "undo": "Desfazer",
     "undo_nothing": "Ainda não há nada para desfazer.",
     "undo_too_late": "Isso foi há tempo demais para desfazer.",
-    "undo_matched": "Ali houve conexão, então não é só sua para desfazer."
+    "undo_matched": "Ali houve conexão, então não é só sua para desfazer.",
+    "like_this": "Curti isso",
+    "like_hint": "Marque uma foto ou resposta para comentar.",
+    "liking_photo": "Curtindo esta foto",
+    "liking_answer": "Curtindo: {{prompt}}",
+    "comment_label": "Diga algo sobre isso",
+    "comment_placeholder": "Opcional, mas é a isso que vão responder",
+    "send_like": "Enviar"
   },
   "matches": {
     "title": "Conexões",
@@ -584,5 +591,14 @@
     "reason_no_match": "A selfie nao correspondeu claramente as suas fotos.",
     "reason_unsafe_image": "Essa foto nao pode ser usada.",
     "reason_not_an_image": "Esse arquivo nao era uma foto que possamos ler."
+  },
+  "likes": {
+    "title": "Curtiram você",
+    "waiting": "{{count}} esperando",
+    "body": "{{count}} pessoas curtiram você. Grátis, sempre.",
+    "empty": "Ninguém ainda. Aqui nada fica atrás de pagamento.",
+    "liked_prompt": "Curtiu sua resposta para: {{prompt}}",
+    "liked_photo": "A foto que curtiram",
+    "open_profile": "Ver o perfil"
   }
 }

@@ -366,7 +366,14 @@
     "undo": "撤销",
     "undo_nothing": "暂时没有可撤销的操作。",
     "undo_too_late": "那次操作太久了，无法撤销。",
-    "undo_matched": "那次已经配对成功，不是你一个人能撤销的。"
+    "undo_matched": "那次已经配对成功，不是你一个人能撤销的。",
+    "like_this": "喜欢这个",
+    "like_hint": "选一张照片或一个回答，说点什么。",
+    "liking_photo": "正在喜欢这张照片",
+    "liking_answer": "正在喜欢：{{prompt}}",
+    "comment_label": "说点什么",
+    "comment_placeholder": "可选，但对方就是回复这句",
+    "send_like": "发送"
   },
   "matches": {
     "title": "配对",
@@ -570,5 +577,14 @@
     "reason_no_match": "自拍和你的照片没有明显匹配上。",
     "reason_unsafe_image": "那张照片不能使用。",
     "reason_not_an_image": "那个文件不是我们能读取的照片。"
+  },
+  "likes": {
+    "title": "谁喜欢你",
+    "waiting": "{{count}} 条待看",
+    "body": "{{count}} 个人喜欢你。永远免费。",
+    "empty": "还没有。这里没有任何东西需要付费。",
+    "liked_prompt": "喜欢你对这个问题的回答：{{prompt}}",
+    "liked_photo": "他们喜欢的照片",
+    "open_profile": "查看资料"
   }
 }

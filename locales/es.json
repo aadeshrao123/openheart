@@ -368,7 +368,14 @@
     "undo": "Deshacer",
     "undo_nothing": "Todavía no hay nada que deshacer.",
     "undo_too_late": "Eso fue hace demasiado para deshacerlo.",
-    "undo_matched": "Ahí hubo conexión, así que no es solo tuyo para deshacer."
+    "undo_matched": "Ahí hubo conexión, así que no es solo tuyo para deshacer.",
+    "like_this": "Me gusta esto",
+    "like_hint": "Marca una foto o respuesta para comentarla.",
+    "liking_photo": "Te gusta esta foto",
+    "liking_answer": "Te gusta: {{prompt}}",
+    "comment_label": "Di algo sobre ello",
+    "comment_placeholder": "Opcional, pero es a lo que responderán",
+    "send_like": "Enviar"
   },
   "matches": {
     "title": "Coincidencias",
@@ -584,5 +591,14 @@
     "reason_no_match": "El selfie no coincidia claramente con tus fotos.",
     "reason_unsafe_image": "Esa foto no se puede usar.",
     "reason_not_an_image": "Ese archivo no era una foto que podamos leer."
+  },
+  "likes": {
+    "title": "Les gustas",
+    "waiting": "{{count}} esperando",
+    "body": "A {{count}} personas les gustas. Gratis, siempre.",
+    "empty": "Todavía nadie. Aquí nunca hay nada de pago.",
+    "liked_prompt": "Le gustó tu respuesta a: {{prompt}}",
+    "liked_photo": "La foto que le gustó",
+    "open_profile": "Ver su perfil"
   }
 }

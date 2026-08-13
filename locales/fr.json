@@ -368,7 +368,14 @@
     "undo": "Annuler",
     "undo_nothing": "Rien à annuler pour l'instant.",
     "undo_too_late": "C'était il y a trop longtemps pour annuler.",
-    "undo_matched": "Il y a eu un match, ce n'est donc pas à vous seul de l'annuler."
+    "undo_matched": "Il y a eu un match, ce n'est donc pas à vous seul de l'annuler.",
+    "like_this": "J'aime ça",
+    "like_hint": "Choisissez une photo ou une réponse pour en parler.",
+    "liking_photo": "Vous aimez cette photo",
+    "liking_answer": "Vous aimez : {{prompt}}",
+    "comment_label": "Dites quelque chose",
+    "comment_placeholder": "Facultatif, mais c'est ce à quoi on vous répondra",
+    "send_like": "Envoyer"
   },
   "matches": {
     "title": "Matchs",
@@ -584,5 +591,14 @@
     "reason_no_match": "Le selfie ne correspondait pas clairement a vos photos.",
     "reason_unsafe_image": "Cette photo ne peut pas etre utilisee.",
     "reason_not_an_image": "Ce fichier n'etait pas une photo que nous pouvons lire."
+  },
+  "likes": {
+    "title": "On vous aime",
+    "waiting": "{{count}} en attente",
+    "body": "{{count}} personnes vous ont aimé. Gratuit, toujours.",
+    "empty": "Personne pour l'instant. Rien ici n'est jamais payant.",
+    "liked_prompt": "A aimé votre réponse à : {{prompt}}",
+    "liked_photo": "La photo aimée",
+    "open_profile": "Voir le profil"
   }
 }

@@ -366,7 +366,14 @@
     "undo": "Urungkan",
     "undo_nothing": "Belum ada yang bisa diurungkan.",
     "undo_too_late": "Itu sudah terlalu lama untuk diurungkan.",
-    "undo_matched": "Yang itu cocok, jadi bukan hanya milikmu untuk diurungkan."
+    "undo_matched": "Yang itu cocok, jadi bukan hanya milikmu untuk diurungkan.",
+    "like_this": "Suka ini",
+    "like_hint": "Pilih satu foto atau jawaban untuk dikomentari.",
+    "liking_photo": "Menyukai foto ini",
+    "liking_answer": "Menyukai: {{prompt}}",
+    "comment_label": "Katakan sesuatu tentang ini",
+    "comment_placeholder": "Opsional, tapi inilah yang akan dibalas",
+    "send_like": "Kirim"
   },
   "matches": {
     "title": "Kecocokan",
@@ -570,5 +577,14 @@
     "reason_no_match": "Swafoto tidak jelas cocok dengan foto Anda.",
     "reason_unsafe_image": "Foto itu tidak bisa digunakan.",
     "reason_not_an_image": "Berkas itu bukan foto yang bisa kami baca."
+  },
+  "likes": {
+    "title": "Menyukaimu",
+    "waiting": "{{count}} menunggu",
+    "body": "{{count}} orang menyukaimu. Gratis, selalu.",
+    "empty": "Belum ada. Di sini tidak ada yang berbayar.",
+    "liked_prompt": "Menyukai jawabanmu untuk: {{prompt}}",
+    "liked_photo": "Foto yang disukai",
+    "open_profile": "Lihat profilnya"
   }
 }

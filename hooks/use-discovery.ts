@@ -80,11 +80,36 @@ export function useDiscovery() {
 type SwipeInput = {
   targetId: string;
   direction: SwipeDirection;
+  // What on the profile was liked, and what was said about it. 0024 refuses
+  // both at once, and refuses either on a pass.
+  likedPhotoId?: string | null;
+  likedPrompt?: string | null;
+  comment?: string | null;
 };
 
 export type SwipeResult = {
   matchedName: string | null;
 };
+
+export const likesKey = ['likes', 'received'] as const;
+
+// Free and never behind a payment, which is the single most common thing a
+// dating app charges for. 0024 makes an incoming like readable by the person
+// it is aimed at; a pass stays invisible to whoever was passed on.
+export function useLikesReceived() {
+  return useQuery({
+    queryKey: likesKey,
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc('likes_received');
+
+      if (error) {
+        throw error;
+      }
+
+      return data;
+    },
+  });
+}
 
 export const UNDO_TOO_LATE = 'P0001';
 export const UNDO_MATCHED = 'P0002';
@@ -117,7 +142,13 @@ export function useSwipe() {
   const userId = session?.user.id;
 
   return useMutation({
-    mutationFn: async ({ targetId, direction }: SwipeInput): Promise<SwipeResult> => {
+    mutationFn: async ({
+      targetId,
+      direction,
+      likedPhotoId = null,
+      likedPrompt = null,
+      comment = null,
+    }: SwipeInput): Promise<SwipeResult> => {
       if (!userId) {
         throw new Error('Cannot swipe while signed out');
       }
@@ -129,6 +160,9 @@ export function useSwipe() {
         swiper_id: userId,
         target_id: targetId,
         direction,
+        liked_photo_id: direction === 'like' ? likedPhotoId : null,
+        liked_prompt: direction === 'like' ? likedPrompt : null,
+        comment: direction === 'like' && comment?.trim() ? comment.trim() : null,
       });
 
       if (error) {
@@ -198,6 +232,7 @@ export function useSwipe() {
     onSuccess: (result) => {
       if (result.matchedName !== null) {
         void queryClient.invalidateQueries({ queryKey: matchesKey });
+        void queryClient.invalidateQueries({ queryKey: likesKey });
       }
     },
   });

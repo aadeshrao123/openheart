@@ -15,6 +15,7 @@ import {
   UNDO_TOO_LATE,
   useDiscovery,
   useSwipe,
+  useLikesReceived,
   useUndoSwipe,
   type Candidate,
   type SwipeDirection,
@@ -94,12 +95,14 @@ export default function DeckScreen() {
   const { data, isPending, isError, isFetching, refetch } = useDiscovery();
   const swipe = useSwipe();
   const undo = useUndoSwipe();
+  const { data: incoming } = useLikesReceived();
 
   const deckRef = useRef<SwipeDeckHandle>(null);
   const [celebrations, setCelebrations] = useState<Celebration[]>([]);
   const [notice, setNotice] = useState<string | null>(null);
 
   const deck = data ?? [];
+  const likes = incoming ?? [];
   const celebration: Celebration | null = celebrations[0] ?? null;
 
   // The two refusals from 0023 are the interesting outcomes, and both are
@@ -216,12 +219,25 @@ export default function DeckScreen() {
                 onPress={undoLast}
               />
 
-              <Button
-                variant="ghost"
-                size="sm"
-                label={t('deck.filters')}
-                onPress={() => router.push('/filters')}
-              />
+              <View className="flex-row items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  label={
+                    likes.length > 0
+                      ? t('likes.waiting', { count: likes.length })
+                      : t('likes.title')
+                  }
+                  onPress={() => router.push('/likes')}
+                />
+
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  label={t('deck.filters')}
+                  onPress={() => router.push('/filters')}
+                />
+              </View>
             </View>
 
             <SwipeDeck

@@ -367,7 +367,14 @@
     "undo": "Undo",
     "undo_nothing": "Nothing to undo yet.",
     "undo_too_late": "That was too long ago to undo.",
-    "undo_matched": "That one matched, so it is not only yours to undo."
+    "undo_matched": "That one matched, so it is not only yours to undo.",
+    "like_this": "Like this",
+    "like_hint": "Like one photo or answer to say something about it.",
+    "liking_photo": "Liking this photo",
+    "liking_answer": "Liking: {{prompt}}",
+    "comment_label": "Say something about it",
+    "comment_placeholder": "Optional, but it is what they will reply to",
+    "send_like": "Send like"
   },
   "matches": {
     "title": "Matches",
@@ -577,5 +584,14 @@
     "reason_no_match": "The selfie did not clearly match your photos.",
     "reason_unsafe_image": "That photo cannot be used.",
     "reason_not_an_image": "That file was not a photo we can read."
+  },
+  "likes": {
+    "title": "Likes you",
+    "waiting": "{{count}} waiting",
+    "body": "{{count}} people liked you. Free, always.",
+    "empty": "Nobody yet. Nothing here is ever behind a payment.",
+    "liked_prompt": "They liked your answer to: {{prompt}}",
+    "liked_photo": "The photo they liked",
+    "open_profile": "See their profile"
   }
 }

@@ -7,21 +7,27 @@
 -- should not see a row does not see it.
 
 begin;
-select plan(7);
+select plan(8);
 
 -- fixtures -------------------------------------------------------------------
 insert into auth.users (id, email) values
   ('11111111-1111-1111-1111-111111111111', 'a@test.dev'),
   ('22222222-2222-2222-2222-222222222222', 'b@test.dev'),
-  ('33333333-3333-3333-3333-333333333333', 'c@test.dev');
+  ('33333333-3333-3333-3333-333333333333', 'c@test.dev'),
+  ('44444444-4444-4444-4444-444444444444', 'd@test.dev');
 
 insert into profiles (id, display_name, birthdate, photo_verified) values
   ('11111111-1111-1111-1111-111111111111', 'Ana',  '1995-01-01', true),
   ('22222222-2222-2222-2222-222222222222', 'Ben',  '1994-01-01', true),
-  ('33333333-3333-3333-3333-333333333333', 'Cleo', '1993-01-01', true);
+  ('33333333-3333-3333-3333-333333333333', 'Cleo', '1993-01-01', true),
+  ('44444444-4444-4444-4444-444444444444', 'Dan',  '1992-01-01', true);
 
+-- Ben likes Ana, Dan passes on her, and Dan also likes Cleo, which is nothing
+-- to do with Ana at all.
 insert into swipes (swiper_id, target_id, direction) values
-  ('22222222-2222-2222-2222-222222222222', '11111111-1111-1111-1111-111111111111', 'like');
+  ('22222222-2222-2222-2222-222222222222', '11111111-1111-1111-1111-111111111111', 'like'),
+  ('44444444-4444-4444-4444-444444444444', '11111111-1111-1111-1111-111111111111', 'pass'),
+  ('44444444-4444-4444-4444-444444444444', '33333333-3333-3333-3333-333333333333', 'like');
 
 insert into blocks (blocker_id, blocked_id) values
   ('33333333-3333-3333-3333-333333333333', '11111111-1111-1111-1111-111111111111');
@@ -33,9 +39,20 @@ set local request.jwt.claims = '{
   "role": "authenticated"
 }';
 
+-- 0024 narrowed this on purpose. A like aimed at you is readable, because that
+-- is the only way to show an incoming like at all and the alternative is
+-- charging for it. A pass is still invisible to the person passed on, and a
+-- swipe between two other people is invisible to everyone.
 select is(
-  (select count(*) from swipes)::int, 0,
-  'a user cannot read swipes made by others (who-liked-you must not leak)'
+  (select count(*) from swipes where direction = 'pass')::int, 0,
+  'a pass never reaches the person who was passed on'
+);
+
+select is(
+  (select count(*) from swipes
+    where swiper_id = '44444444-4444-4444-4444-444444444444'
+      and target_id = '33333333-3333-3333-3333-333333333333')::int, 0,
+  'a swipe between two other people is nobody else business'
 );
 
 select is(
