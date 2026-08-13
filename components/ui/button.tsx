@@ -13,22 +13,23 @@ type Size = keyof typeof sizes;
 // screen because the send button starts empty and therefore starts disabled.
 const variants = {
   primary: {
-    container: 'bg-brand active:bg-brand-pressed',
+    container: 'bg-brand hover:bg-brand-hover active:bg-brand-pressed',
     tone: 'inverted',
     disabled: { container: 'bg-surface border border-border', tone: 'subtle' },
   },
   secondary: {
-    container: 'bg-surface-raised border border-border active:bg-surface',
+    container:
+      'bg-surface-raised border border-border hover:bg-surface-hover active:bg-surface-pressed',
     tone: 'default',
     disabled: { container: 'bg-surface border border-border', tone: 'subtle' },
   },
   ghost: {
-    container: 'bg-transparent active:bg-surface',
+    container: 'bg-transparent hover:bg-surface-hover active:bg-surface-pressed',
     tone: 'muted',
     disabled: { container: 'bg-transparent', tone: 'subtle' },
   },
   danger: {
-    container: 'bg-danger-subtle active:opacity-80',
+    container: 'bg-danger-subtle hover:bg-danger-subtle-hover active:bg-danger-subtle-hover',
     tone: 'danger',
     disabled: { container: 'bg-surface border border-border', tone: 'subtle' },
   },

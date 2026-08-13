@@ -25,6 +25,8 @@ module.exports = {
         surface: {
           DEFAULT: token('--surface'),
           raised: token('--surface-raised'),
+          hover: token('--surface-hover'),
+          pressed: token('--surface-pressed'),
         },
 
         fg: {
@@ -36,6 +38,7 @@ module.exports = {
 
         brand: {
           DEFAULT: token('--brand'),
+          hover: token('--brand-hover'),
           pressed: token('--brand-pressed'),
           subtle: token('--brand-subtle'),
         },
@@ -48,7 +51,10 @@ module.exports = {
         danger: {
           DEFAULT: token('--danger'),
           subtle: token('--danger-subtle'),
+          'subtle-hover': token('--danger-subtle-hover'),
         },
+
+        glow: token('--glow'),
 
         success: token('--success'),
         warning: token('--warning'),

@@ -18,6 +18,7 @@ export { Section, type SectionProps } from './section';
 export { RangeSlider, Slider, type RangeSliderProps, type SliderProps } from './slider';
 export { Rail, type RailProps } from './rail';
 export { Screen, type ScreenProps } from './screen';
+export { Scrim, type ScrimProps } from './scrim';
 export { Skeleton, type SkeletonProps } from './skeleton';
 export { Stepper, type StepperProps } from './stepper';
 export { Text, type TextComponentProps } from './text';

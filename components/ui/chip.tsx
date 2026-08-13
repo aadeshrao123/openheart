@@ -31,7 +31,7 @@ export function Chip({
         'min-h-11 items-center justify-center rounded-control border px-4',
         selected
           ? 'border-brand bg-brand-subtle'
-          : 'border-border bg-surface-raised active:bg-surface',
+          : 'border-border bg-surface-raised hover:bg-surface-hover active:bg-surface-pressed',
         className,
       )}
       {...props}

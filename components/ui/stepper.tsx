@@ -86,7 +86,7 @@ function StepperButton({ label, glyph, disabled, onPress }: StepperButtonProps) 
       onPress={onPress}
       className={cn(
         'h-11 w-11 items-center justify-center rounded-control',
-        disabled ? 'opacity-30' : 'active:bg-surface',
+        disabled ? 'opacity-30' : 'hover:bg-surface-hover active:bg-surface-pressed',
       )}
     >
       {/* The glyph is decorative: the button already carries a real label. */}

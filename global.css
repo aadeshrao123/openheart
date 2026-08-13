@@ -19,31 +19,48 @@
   The three neutrals stay well separated. When they sat within nine levels of
   each other a raised card had no visible edge, which is what makes a restrained
   palette look unfinished rather than considered.
+
+  The dark values are sampled from public/og.jpg rather than chosen: the ground
+  is the card's #0A090B and the brand is the pink of its heart, #F1677B. The
+  previous pink was a shade lighter and noticeably less saturated, which is what
+  reads as washed out on a near-black ground.
+
+  Every interactive family carries hover and pressed. Opacity was doing that job
+  and opacity is the wrong tool on a dark ground: it fades a control towards the
+  background, so pressing something looked like it had been disabled rather than
+  pressed. Hover lifts and press sinks, which means hover is lighter than the
+  base in the dark theme and darker in the light one.
 */
 
 @layer base {
   :root {
-    --bg: 253 252 252;
-    --surface: 245 244 246;
+    --bg: 254 252 253;
+    --surface: 248 243 245;
     --surface-raised: 255 255 255;
-    --border: 223 221 227;
+    --surface-hover: 242 235 238;
+    --surface-pressed: 234 226 230;
+    --border: 228 220 226;
 
-    --fg: 23 22 26;
-    --fg-muted: 92 90 100;
-    --fg-subtle: 106 104 114;
+    --fg: 26 20 24;
+    --fg-muted: 94 86 92;
+    --fg-subtle: 108 100 108;
     --fg-inverted: 255 255 255;
 
-    --brand: 193 40 82;
-    --brand-pressed: 165 30 68;
-    --brand-subtle: 252 231 238;
+    --brand: 206 30 72;
+    --brand-hover: 184 24 62;
+    --brand-pressed: 162 18 52;
+    --brand-subtle: 255 236 241;
 
     --accent: 150 92 40;
     --accent-subtle: 250 238 224;
+
+    --glow: 244 186 202;
 
     --success: 22 122 84;
     --warning: 168 116 20;
     --danger: 198 44 48;
     --danger-subtle: 253 230 231;
+    --danger-subtle-hover: 250 214 216;
 
     --like: 22 122 84;
     --pass: 142 140 152;
@@ -63,19 +80,24 @@
   }
 
   .dark:root {
-    --bg: 17 17 20;
-    --surface: 25 25 29;
-    --surface-raised: 34 34 39;
-    --border: 58 58 66;
+    --bg: 10 9 12;
+    --surface: 21 20 25;
+    --surface-raised: 31 29 36;
+    --surface-hover: 42 40 49;
+    --surface-pressed: 25 24 30;
+    --border: 56 53 65;
 
-    --fg: 250 250 252;
-    --fg-muted: 172 172 184;
-    --fg-subtle: 150 150 162;
-    --fg-inverted: 17 17 20;
+    --fg: 250 249 252;
+    --fg-muted: 176 172 186;
+    --fg-subtle: 152 148 163;
+    --fg-inverted: 10 9 12;
 
-    --brand: 246 122 146;
-    --brand-pressed: 228 100 126;
-    --brand-subtle: 56 28 38;
+    --brand: 241 103 123;
+    --brand-hover: 248 132 150;
+    --brand-pressed: 212 70 95;
+    --brand-subtle: 64 21 34;
+
+    --glow: 132 26 44;
 
     --accent: 236 176 112;
     --accent-subtle: 56 42 28;
@@ -83,7 +105,8 @@
     --success: 82 200 140;
     --warning: 240 180 80;
     --danger: 250 116 116;
-    --danger-subtle: 60 28 32;
+    --danger-subtle: 66 26 32;
+    --danger-subtle-hover: 84 33 40;
 
     --like: 82 200 140;
     --pass: 112 112 126;
@@ -91,5 +114,24 @@
     --receipt-seen: 14 62 40;
 
     --shadow-ambient: 0 0 0;
+  }
+}
+
+/*
+  The card's depth comes from light falling across the frame, and a flat fill
+  cannot produce that. The gradient lives here rather than in a component for
+  the same reason every other colour does, and as a named class rather than an
+  arbitrary value, which would be the same defect as a hex code.
+
+  Web only, and used only from .web.tsx files: native has no radial-gradient,
+  and reaching for expo-linear-gradient would put the colour back in JavaScript.
+*/
+@layer components {
+  .glow-corner {
+    background-image: radial-gradient(
+      70% 70% at 100% 100%,
+      rgb(var(--glow) / 0.5),
+      transparent 68%
+    );
   }
 }

@@ -50,7 +50,11 @@ export function ListRow({
       aria-disabled={disabled}
       disabled={disabled}
       onPress={onPress}
-      className={cn('px-4 active:bg-surface', disabled && 'opacity-50', className)}
+      className={cn(
+        'px-4 hover:bg-surface-hover active:bg-surface-pressed',
+        disabled && 'opacity-50',
+        className,
+      )}
     >
       {content}
     </Pressable>

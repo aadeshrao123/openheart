@@ -124,7 +124,7 @@ function Slot({ position, photo, busy, isFirst, isLast, onAdd, onDelete, onMove 
         onPress={() => onAdd(position)}
         className={cn(
           'aspect-card flex-1 items-center justify-center rounded-card border border-border',
-          busy ? 'opacity-50' : 'bg-surface active:bg-surface-raised',
+          busy ? 'opacity-50' : 'bg-surface hover:bg-surface-hover active:bg-surface-pressed',
         )}
       >
         <Text variant="title" tone="subtle" aria-hidden>
@@ -164,7 +164,7 @@ function Slot({ position, photo, busy, isFirst, isLast, onAdd, onDelete, onMove 
           onPress={() => onDelete(photo)}
           className={cn(
             'absolute end-1 top-1 rounded-full border border-border',
-            'bg-surface-raised active:bg-surface',
+            'bg-surface-raised hover:bg-surface-hover active:bg-surface-pressed',
           )}
         />
       </View>
@@ -216,7 +216,7 @@ function SlotAction({
       onPress={onPress}
       className={cn(
         'h-11 w-11 items-center justify-center rounded-control',
-        disabled ? 'opacity-30' : 'active:bg-surface',
+        disabled ? 'opacity-30' : 'hover:bg-surface-hover active:bg-surface-pressed',
         className,
       )}
     >

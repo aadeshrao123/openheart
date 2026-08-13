@@ -1,7 +1,7 @@
 import { Pressable, View } from 'react-native';
 import { Image } from 'expo-image';
 import { useTranslation } from 'react-i18next';
-import { Text } from '@/components/ui';
+import { Scrim, Text } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { formatDistance, formatHeight } from '@/lib/format';
 import { photoUrl } from '@/lib/photos';
@@ -65,16 +65,21 @@ export function ProfileCard({ candidate, onPress, className }: ProfileCardProps)
         )}
       </View>
 
-      <View className="gap-2.5 p-5">
+      <View className="absolute start-4 top-4">
+        <VerifiedBadge />
+      </View>
+
+      {/* The photograph is the card and what somebody wrote sits on it, rather
+          than a picture with a panel of text underneath. The panel was the
+          single biggest reason this read as a form rather than as a person. */}
+      <Scrim />
+
+      <View className="absolute inset-x-0 bottom-0 gap-2 p-5">
         {/* One key, not a name concatenated with an age: word order and
             punctuation between the two differ by language. */}
-        <View className="flex-row items-center gap-2">
-          <Text variant="title" numberOfLines={1} className="flex-1">
-            {t('deck.name_age', { name: candidate.display_name, age: candidate.age })}
-          </Text>
-
-          <VerifiedBadge compact />
-        </View>
+        <Text variant="title" numberOfLines={1}>
+          {t('deck.name_age', { name: candidate.display_name, age: candidate.age })}
+        </Text>
 
         {/* Bucket zero means nearer than the smallest 5km bucket, not zero. */}
         <Text variant="overline" tone="accent">
@@ -86,7 +91,7 @@ export function ProfileCard({ candidate, onPress, className }: ProfileCardProps)
         </Text>
 
         {candidate.bio ? (
-          <Text variant="caption" tone="muted" numberOfLines={2}>
+          <Text variant="caption" tone="muted" numberOfLines={1}>
             {candidate.bio}
           </Text>
         ) : null}
@@ -96,7 +101,10 @@ export function ProfileCard({ candidate, onPress, className }: ProfileCardProps)
         {summary.length > 0 ? (
           <View className="flex-row flex-wrap gap-1.5 pt-0.5">
             {summary.map((fact) => (
-              <View key={fact} className="rounded-control bg-surface px-2.5 py-1">
+              <View
+                key={fact}
+                className="rounded-control border border-border bg-surface-raised/80 px-2.5 py-1"
+              >
                 <Text variant="caption" tone="muted">
                   {fact}
                 </Text>

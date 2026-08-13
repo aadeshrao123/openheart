@@ -45,14 +45,14 @@ function DeckSkeleton() {
         <Skeleton shape="block" className="h-11 w-24 rounded-control" />
       </View>
 
+      {/* The card is one photograph now, so the skeleton is one block with the
+          name and distance where they land on it rather than in a panel. */}
       <View className="flex-1 overflow-hidden rounded-card border border-border bg-surface-raised">
         <Skeleton shape="block" className="h-auto flex-1 rounded-none" />
 
-        <View className="gap-2.5 p-5">
+        <View className="absolute inset-x-0 bottom-0 gap-2.5 p-5">
           <Skeleton shape="title" className="w-1/2" />
           <Skeleton shape="caption" className="w-1/3" />
-          <Skeleton shape="line" className="w-full" />
-          <Skeleton shape="line" className="w-2/3" />
         </View>
       </View>
 

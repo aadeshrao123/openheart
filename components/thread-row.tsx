@@ -1,6 +1,7 @@
 import { Pressable, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Avatar, Text } from '@/components/ui';
+import { cn } from '@/lib/cn';
 import { formatRelativeTime } from '@/lib/format';
 import type { Thread } from '@/hooks/use-threads';
 
@@ -37,7 +38,10 @@ export function ThreadRow({ thread, isMine, onPress }: ThreadRowProps) {
       onPress={onPress}
       accessibilityRole="button"
       accessibilityLabel={t('chat.open_thread', { name })}
-      className="flex-row items-center gap-4 rounded-card px-2 py-3 active:bg-surface"
+      className={cn(
+        'flex-row items-center gap-4 rounded-card px-2 py-3',
+        'hover:bg-surface-hover active:bg-surface-pressed',
+      )}
     >
       <Avatar
         name={name}

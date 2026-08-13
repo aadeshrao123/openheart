@@ -106,34 +106,49 @@ function ConnectionMark() {
   return (
     <View className="relative h-80 w-full items-center justify-center">
       <View className="pointer-events-none absolute items-center justify-center">
+        {/* will-change puts each animated element on its own compositor layer.
+            Without it the browser animates on the main thread and rounds to
+            whole pixels, and a 12px drift over seven seconds moves well under a
+            pixel per frame, so it ticks rather than glides. The blurred disc is
+            the expensive one: a 64px blur re-rasterises every frame unless the
+            layer is promoted, and once promoted it is rasterised once and the
+            compositor only scales and fades it. */}
         <View
           className={cn(
             'h-72 w-72 rounded-full bg-brand opacity-20 blur-3xl',
-            'motion-safe:animate-breathe',
+            'motion-safe:animate-breathe will-change-transform',
           )}
         />
       </View>
 
       <View className="flex-row items-center justify-center">
-        <View className={cn(CARD, '-rotate-6 motion-safe:animate-drift')}>
-          <View className="h-14 w-14 rounded-full bg-brand-subtle" />
-          <View className="mt-4 h-2 w-16 rounded-full bg-border" />
-          <View className="mt-2 h-2 w-10 rounded-full bg-border" />
+        {/* The tilt is a wrapper rather than a class on the animated view. An
+            animated transform replaces the static one outright, so -rotate-6 on
+            the drifting element was being dropped for the whole animation and
+            the cards sat upright. */}
+        <View className="-rotate-6">
+          <View className={cn(CARD, 'motion-safe:animate-drift will-change-transform')}>
+            <View className="h-14 w-14 rounded-full bg-brand-subtle" />
+            <View className="mt-4 h-2 w-16 rounded-full bg-border" />
+            <View className="mt-2 h-2 w-10 rounded-full bg-border" />
+          </View>
         </View>
 
         <View
           className={cn(
             'z-10 -mx-5 h-16 w-16 items-center justify-center rounded-full',
-            'border border-border bg-bg motion-safe:animate-beat',
+            'border border-border bg-bg motion-safe:animate-beat will-change-transform',
           )}
         >
           <Logo size={30} />
         </View>
 
-        <View className={cn(CARD, 'rotate-6 motion-safe:animate-drift-slow')}>
-          <View className="h-14 w-14 rounded-full bg-accent-subtle" />
-          <View className="mt-4 h-2 w-16 rounded-full bg-border" />
-          <View className="mt-2 h-2 w-10 rounded-full bg-border" />
+        <View className="rotate-6">
+          <View className={cn(CARD, 'motion-safe:animate-drift-slow will-change-transform')}>
+            <View className="h-14 w-14 rounded-full bg-accent-subtle" />
+            <View className="mt-4 h-2 w-16 rounded-full bg-border" />
+            <View className="mt-2 h-2 w-10 rounded-full bg-border" />
+          </View>
         </View>
       </View>
     </View>
@@ -246,7 +261,7 @@ export function LandingView() {
                   variant="label"
                   tone="brand"
                   font="strong"
-                  className="transition hover:opacity-70"
+                  className="transition hover:text-brand-hover"
                 >
                   {t('auth.sign_in')}
                 </Text>
@@ -255,7 +270,7 @@ export function LandingView() {
           </Section>
         </View>
 
-        <View className="w-full overflow-hidden">
+        <View className="glow-corner w-full overflow-hidden">
           <Section className="pb-24 pt-16 lg:pt-24">
             <View className="gap-16 lg:flex-row lg:items-center lg:gap-20">
               <View className="flex-1 gap-7">
@@ -279,7 +294,7 @@ export function LandingView() {
                   <Button
                     label={t('landing.cta_start')}
                     size="lg"
-                    className="transition hover:opacity-90"
+                    className="transition"
                     onPress={start}
                   />
 
@@ -287,7 +302,7 @@ export function LandingView() {
                     variant="secondary"
                     size="lg"
                     label={t('landing.cta_source')}
-                    className="transition hover:opacity-90"
+                    className="transition"
                     onPress={openSource}
                   />
                 </View>
@@ -451,7 +466,7 @@ export function LandingView() {
               <Button
                 label={t('landing.cta_start')}
                 size="lg"
-                className="transition hover:opacity-90"
+                className="transition"
                 onPress={start}
               />
 
@@ -459,7 +474,7 @@ export function LandingView() {
                 variant="secondary"
                 size="lg"
                 label={t('landing.cta_source')}
-                className="transition hover:opacity-90"
+                className="transition"
                 onPress={openSource}
               />
             </View>
