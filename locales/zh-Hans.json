@@ -3,6 +3,7 @@
     "cancel": "取消",
     "save": "保存",
     "retry": "重试",
+    "refresh": "刷新",
     "load_failed_title": "没能加载出来",
     "load_failed_body": "传输途中出了点问题。可能是网络断开了，重试一次通常就好了。",
     "loading": "加载中",
@@ -231,7 +232,12 @@
     "donate": "支持 OpenHeart",
     "help": "帮助",
     "contact": "联系我们",
-    "contact_body": "任何事情都可以写信告诉我们，包括安全方面的顾虑。每一封都有人会看。"
+    "contact_body": "任何事情都可以写信告诉我们，包括安全方面的顾虑。每一封都有人会看。",
+    "privacy_policy": "隐私政策",
+    "terms": "服务条款",
+    "sounds": "声音",
+    "sounds_on": "消息提示音",
+    "sounds_body": "发送和收到消息时播放一段短提示音。"
   },
   "filters": {
     "title": "你会看到谁",
@@ -259,6 +265,20 @@
     "status_reviewed": "已审核，未做处理。",
     "status_actioned": "已处理。",
     "status_dismissed": "已忽略。"
+  },
+  "review": {
+    "title": "验证队列",
+    "open_queue": "打开验证队列",
+    "intro": "这些自拍没有自动通过。该检查在深色皮肤上准确度较低，所以机器说不通过只是需要人看一眼的理由，不是结论。",
+    "empty": "没有待处理的。这是好结果。",
+    "open": "查看这一条",
+    "selfie": "自拍",
+    "profile_photos": "资料里的照片",
+    "question": "这是同一个人吗？姿势和要求的一致吗？",
+    "action_approve": "是同一个人，通过验证",
+    "action_reject": "不是同一个人",
+    "load_failed": "照片加载失败。请关闭后重新打开。",
+    "attempt_count_other": "该账号已尝试 {{count}} 次"
   },
   "suspended": {
     "title": "你的账号已被封禁",

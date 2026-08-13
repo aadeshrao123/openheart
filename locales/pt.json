@@ -3,6 +3,7 @@
     "cancel": "Cancelar",
     "save": "Salvar",
     "retry": "Tentar de novo",
+    "refresh": "Atualizar",
     "load_failed_title": "Isso não carregou",
     "load_failed_body": "Algo deu errado no caminho até aqui. Sua conexão pode ter caído, e tentar de novo costuma resolver.",
     "loading": "Carregando",
@@ -239,7 +240,12 @@
     "donate": "Apoiar o OpenHeart",
     "help": "Ajuda",
     "contact": "Fale conosco",
-    "contact_body": "Escreva para nos sobre qualquer coisa, inclusive uma preocupacao de seguranca. Uma pessoa le cada mensagem."
+    "contact_body": "Escreva para nos sobre qualquer coisa, inclusive uma preocupacao de seguranca. Uma pessoa le cada mensagem.",
+    "privacy_policy": "Politica de privacidade",
+    "terms": "Termos de servico",
+    "sounds": "Sons",
+    "sounds_on": "Sons das mensagens",
+    "sounds_body": "Um som curto ao enviar uma mensagem e ao receber uma."
   },
   "filters": {
     "title": "Quem você vê",
@@ -271,6 +277,22 @@
     "status_reviewed": "Analisada, nenhuma ação tomada.",
     "status_actioned": "Ação tomada.",
     "status_dismissed": "Descartada."
+  },
+  "review": {
+    "title": "Fila de verificação",
+    "open_queue": "Abrir a fila de verificação",
+    "intro": "Estas selfies não passaram automaticamente. A checagem é menos precisa em peles mais escuras, entao um nao da maquina e motivo para olhar, nao um veredito.",
+    "empty": "Nada em espera. Esse e o bom resultado.",
+    "open": "Ver esta",
+    "selfie": "A selfie",
+    "profile_photos": "Fotos do perfil",
+    "question": "E a mesma pessoa, na pose que foi pedida?",
+    "action_approve": "Mesma pessoa, verificar",
+    "action_reject": "Nao e a mesma pessoa",
+    "load_failed": "Nao foi possivel carregar as fotos. Feche e abra de novo.",
+    "attempt_count_one": "{{count}} tentativa desta conta",
+    "attempt_count_many": "{{count}} de tentativas desta conta",
+    "attempt_count_other": "{{count}} tentativas desta conta"
   },
   "suspended": {
     "title": "Sua conta está suspensa",

@@ -10,3 +10,9 @@ export const APP_NAME = Constants.expoConfig?.name ?? 'OpenHeart';
 // rather than in the translations, so it is one line to change and cannot drift
 // between ten language files.
 export const SUPPORT_EMAIL = 'support@openheart.app';
+
+// Tracked in docs/legal/, so the site and the repository cannot disagree.
+// Untranslated on purpose: a machine-drafted legal document reads as
+// authoritative and is not.
+export const PRIVACY_POLICY_URL = 'https://openheart.app/privacy';
+export const TERMS_URL = 'https://openheart.app/terms';

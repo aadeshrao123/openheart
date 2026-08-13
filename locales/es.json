@@ -3,6 +3,7 @@
     "cancel": "Cancelar",
     "save": "Guardar",
     "retry": "Reintentar",
+    "refresh": "Actualizar",
     "load_failed_title": "Eso no se pudo cargar",
     "load_failed_body": "Algo falló por el camino. Puede que se haya cortado tu conexión, y volver a intentarlo casi siempre lo soluciona.",
     "loading": "Cargando",
@@ -239,7 +240,12 @@
     "donate": "Apoyar a OpenHeart",
     "help": "Ayuda",
     "contact": "Contactanos",
-    "contact_body": "Escribenos sobre cualquier cosa, incluida una preocupacion de seguridad. Una persona lee cada mensaje."
+    "contact_body": "Escribenos sobre cualquier cosa, incluida una preocupacion de seguridad. Una persona lee cada mensaje.",
+    "privacy_policy": "Politica de privacidad",
+    "terms": "Terminos del servicio",
+    "sounds": "Sonidos",
+    "sounds_on": "Sonidos de mensajes",
+    "sounds_body": "Un sonido breve al enviar un mensaje y al recibir uno."
   },
   "filters": {
     "title": "A quién ves",
@@ -271,6 +277,22 @@
     "status_reviewed": "Revisado, no se tomó ninguna medida.",
     "status_actioned": "Se tomó una medida.",
     "status_dismissed": "Descartado."
+  },
+  "review": {
+    "title": "Cola de verificación",
+    "open_queue": "Abrir la cola de verificación",
+    "intro": "Estos selfies no pasaron automáticamente. La comprobación es menos precisa en pieles oscuras, así que un no de la máquina es un motivo para mirar, no un veredicto.",
+    "empty": "Nada en espera. Ese es el buen resultado.",
+    "open": "Revisar este",
+    "selfie": "El selfie",
+    "profile_photos": "Fotos del perfil",
+    "question": "¿Es la misma persona, en la pose que se pidió?",
+    "action_approve": "Es la misma persona, verificar",
+    "action_reject": "No es la misma persona",
+    "load_failed": "No se pudieron cargar las fotos. Cierra esto y ábrelo de nuevo.",
+    "attempt_count_one": "{{count}} intento desde esta cuenta",
+    "attempt_count_many": "{{count}} de intentos desde esta cuenta",
+    "attempt_count_other": "{{count}} intentos desde esta cuenta"
   },
   "suspended": {
     "title": "Tu cuenta está suspendida",

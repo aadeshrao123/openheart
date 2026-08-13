@@ -3,6 +3,7 @@
     "cancel": "Cancel",
     "save": "Save",
     "retry": "Try again",
+    "refresh": "Refresh",
     "load_failed_title": "That did not load",
     "load_failed_body": "Something went wrong on the way here. Your connection may have dropped, and trying again usually fixes it.",
     "loading": "Loading",
@@ -235,7 +236,12 @@
     "donate": "Support OpenHeart",
     "help": "Help",
     "contact": "Contact us",
-    "contact_body": "Write to us about anything, including a safety concern. A person reads every message."
+    "contact_body": "Write to us about anything, including a safety concern. A person reads every message.",
+    "privacy_policy": "Privacy policy",
+    "terms": "Terms of service",
+    "sounds": "Sounds",
+    "sounds_on": "Message sounds",
+    "sounds_body": "A short sound when you send a message and when one arrives."
   },
   "filters": {
     "title": "Who you see",
@@ -265,6 +271,21 @@
     "status_reviewed": "Reviewed, no action taken.",
     "status_actioned": "Actioned.",
     "status_dismissed": "Dismissed."
+  },
+  "review": {
+    "title": "Verification queue",
+    "open_queue": "Open the verification queue",
+    "intro": "These selfies did not pass automatically. The check is less accurate on darker skin, so a machine saying no is a reason to look rather than a verdict.",
+    "empty": "Nothing waiting. That is the good outcome.",
+    "open": "Look at this one",
+    "selfie": "The selfie",
+    "profile_photos": "Photos on the profile",
+    "question": "Is this the same person, in the pose that was asked for?",
+    "action_approve": "Same person, verify them",
+    "action_reject": "Not the same person",
+    "load_failed": "The photos could not be loaded. Close this and open it again.",
+    "attempt_count_one": "{{count}} attempt from this account",
+    "attempt_count_other": "{{count}} attempts from this account"
   },
   "suspended": {
     "title": "Your account is suspended",

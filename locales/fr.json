@@ -3,6 +3,7 @@
     "cancel": "Annuler",
     "save": "Enregistrer",
     "retry": "Réessayer",
+    "refresh": "Actualiser",
     "load_failed_title": "Ça n'a pas chargé",
     "load_failed_body": "Quelque chose s'est mal passé en chemin. Ta connexion a peut-être été coupée, et réessayer suffit le plus souvent.",
     "loading": "Chargement",
@@ -239,7 +240,12 @@
     "donate": "Soutenir OpenHeart",
     "help": "Aide",
     "contact": "Nous contacter",
-    "contact_body": "Ecrivez-nous a propos de tout, y compris une inquietude sur la securite. Une personne lit chaque message."
+    "contact_body": "Ecrivez-nous a propos de tout, y compris une inquietude sur la securite. Une personne lit chaque message.",
+    "privacy_policy": "Politique de confidentialite",
+    "terms": "Conditions d'utilisation",
+    "sounds": "Sons",
+    "sounds_on": "Sons des messages",
+    "sounds_body": "Un son bref quand vous envoyez un message et quand vous en recevez un."
   },
   "filters": {
     "title": "Qui tu vois",
@@ -271,6 +277,22 @@
     "status_reviewed": "Examiné, aucune mesure prise.",
     "status_actioned": "Mesure prise.",
     "status_dismissed": "Rejeté."
+  },
+  "review": {
+    "title": "File de vérification",
+    "open_queue": "Ouvrir la file de vérification",
+    "intro": "Ces selfies ne sont pas passés automatiquement. Le contrôle est moins précis sur les peaux foncées, donc un refus de la machine est une raison de regarder, pas un verdict.",
+    "empty": "Rien en attente. C'est une bonne nouvelle.",
+    "open": "Examiner celui-ci",
+    "selfie": "Le selfie",
+    "profile_photos": "Photos du profil",
+    "question": "Est-ce la même personne, dans la pose demandée ?",
+    "action_approve": "Même personne, valider",
+    "action_reject": "Ce n'est pas la même personne",
+    "load_failed": "Les photos n'ont pas pu être chargées. Fermez et rouvrez.",
+    "attempt_count_one": "{{count}} tentative depuis ce compte",
+    "attempt_count_many": "{{count}} tentatives depuis ce compte",
+    "attempt_count_other": "{{count}} tentatives depuis ce compte"
   },
   "suspended": {
     "title": "Ton compte est suspendu",

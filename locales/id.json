@@ -3,6 +3,7 @@
     "cancel": "Batal",
     "save": "Simpan",
     "retry": "Coba lagi",
+    "refresh": "Muat ulang",
     "load_failed_title": "Gagal dimuat",
     "load_failed_body": "Ada yang tidak beres di perjalanan. Koneksimu mungkin terputus, dan mencoba lagi biasanya sudah cukup.",
     "loading": "Memuat",
@@ -231,7 +232,12 @@
     "donate": "Dukung OpenHeart",
     "help": "Bantuan",
     "contact": "Hubungi kami",
-    "contact_body": "Tulis kepada kami tentang apa saja, termasuk masalah keamanan. Setiap pesan dibaca oleh manusia."
+    "contact_body": "Tulis kepada kami tentang apa saja, termasuk masalah keamanan. Setiap pesan dibaca oleh manusia.",
+    "privacy_policy": "Kebijakan privasi",
+    "terms": "Ketentuan layanan",
+    "sounds": "Suara",
+    "sounds_on": "Suara pesan",
+    "sounds_body": "Suara singkat saat kamu mengirim pesan dan saat pesan masuk."
   },
   "filters": {
     "title": "Siapa yang kamu lihat",
@@ -259,6 +265,20 @@
     "status_reviewed": "Ditinjau, tidak ada tindakan.",
     "status_actioned": "Sudah ditindak.",
     "status_dismissed": "Diabaikan."
+  },
+  "review": {
+    "title": "Antrean verifikasi",
+    "open_queue": "Buka antrean verifikasi",
+    "intro": "Swafoto ini tidak lolos secara otomatis. Pemeriksaan kurang akurat pada kulit gelap, jadi penolakan mesin adalah alasan untuk melihat, bukan keputusan akhir.",
+    "empty": "Tidak ada yang menunggu. Itu hasil yang baik.",
+    "open": "Lihat yang ini",
+    "selfie": "Swafoto",
+    "profile_photos": "Foto di profil",
+    "question": "Apakah ini orang yang sama, dengan pose yang diminta?",
+    "action_approve": "Orang yang sama, verifikasi",
+    "action_reject": "Bukan orang yang sama",
+    "load_failed": "Foto tidak dapat dimuat. Tutup lalu buka lagi.",
+    "attempt_count_other": "{{count}} percobaan dari akun ini"
   },
   "suspended": {
     "title": "Akunmu ditangguhkan",

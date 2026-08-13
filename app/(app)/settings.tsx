@@ -5,10 +5,11 @@ import { useTranslation } from 'react-i18next';
 import { Button, Card, Chip, ListRow, Screen, Text } from '@/components/ui';
 import { useSignOut } from '@/hooks/use-auth';
 import { useLanguage } from '@/hooks/use-language';
+import { useSoundPreference } from '@/hooks/use-sound-preference';
 import { useDeleteAccount, useMyProfile } from '@/hooks/use-my-profile';
 import { useSession } from '@/hooks/use-session';
 import { useIsModerator } from '@/hooks/use-moderation';
-import { SUPPORT_EMAIL } from '@/lib/app';
+import { PRIVACY_POLICY_URL, SUPPORT_EMAIL, TERMS_URL } from '@/lib/app';
 import * as Linking from 'expo-linking';
 
 export default function SettingsScreen() {
@@ -17,6 +18,7 @@ export default function SettingsScreen() {
   const { data: session } = useSession();
   const { data: profile } = useMyProfile();
   const language = useLanguage();
+  const sounds = useSoundPreference();
   const signOut = useSignOut();
   const deleteAccount = useDeleteAccount();
   const isModerator = useIsModerator();
@@ -43,11 +45,9 @@ export default function SettingsScreen() {
         </Card>
       </View>
 
-      {/* Apple guideline 1.2 asks for published contact information alongside
-          filtering, reporting and blocking. The address is shown as well as
-          linked, because openURL does nothing on a device with no mail client
-          configured and a row that silently fails is worse than a plain
-          address somebody can copy. */}
+      {/* The address is shown as well as linked: openURL does nothing on a
+          device with no mail client, and a row that silently fails is worse
+          than an address somebody can copy. */}
       <View className="gap-3">
         <Text variant="label" tone="muted" className="px-4">
           {t('settings.help')}
@@ -59,6 +59,18 @@ export default function SettingsScreen() {
             value={SUPPORT_EMAIL}
             onPress={() => {
               void Linking.openURL(`mailto:${SUPPORT_EMAIL}`);
+            }}
+          />
+          <ListRow
+            label={t('settings.privacy_policy')}
+            onPress={() => {
+              void Linking.openURL(PRIVACY_POLICY_URL);
+            }}
+          />
+          <ListRow
+            label={t('settings.terms')}
+            onPress={() => {
+              void Linking.openURL(TERMS_URL);
             }}
           />
         </Card>
@@ -79,9 +91,32 @@ export default function SettingsScreen() {
               label={t('moderation.open_queue')}
               onPress={() => router.push('/moderation')}
             />
+            <ListRow
+              label={t('review.open_queue')}
+              onPress={() => router.push('/verification-reviews')}
+            />
           </Card>
         </View>
       ) : null}
+
+      <View className="gap-3">
+        <Text variant="label" tone="muted" className="px-4">
+          {t('settings.sounds')}
+        </Text>
+
+        <View className="px-4">
+          <Chip
+            mode="checkbox"
+            label={t('settings.sounds_on')}
+            selected={!sounds.muted}
+            onPress={sounds.toggle}
+          />
+        </View>
+
+        <Text variant="caption" tone="subtle" className="px-4">
+          {t('settings.sounds_body')}
+        </Text>
+      </View>
 
       <View className="gap-3">
         <Text variant="label" tone="muted" className="px-4">
