@@ -107,7 +107,8 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "OpenHeart needs your photos so you can add them to your profile."
+          "photosPermission": "OpenHeart needs your photos so you can add them to your profile.",
+          "microphonePermission": false
         }
       ],
       [
@@ -133,9 +134,21 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "Used for the selfie that verifies your profile is really you."
+          "cameraPermission": "Used for the selfie that verifies your profile is really you.",
+          "microphonePermission": false,
+          "recordAudioAndroid": false
         }
-      ]
+      ],
+      [
+        "expo-audio",
+        {
+          "microphonePermission": false,
+          "recordAudioAndroid": false,
+          "enableBackgroundPlayback": false,
+          "enableBackgroundRecording": false
+        }
+      ],
+      "expo-asset"
     ],
     "experiments": {
       "typedRoutes": true,

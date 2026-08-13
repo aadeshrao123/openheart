@@ -25,6 +25,8 @@
     "clsx": "^2.1.1",
     "expo": "~57.0.12",
     "expo-application": "~57.0.2",
+    "expo-asset": "~57.0.10",
+    "expo-audio": "~57.0.3",
     "expo-camera": "~57.0.3",
     "expo-constants": "~57.0.10",
     "expo-font": "~57.0.1",
