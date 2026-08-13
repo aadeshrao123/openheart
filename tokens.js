@@ -7,26 +7,29 @@
 // Named by role rather than by weight: "medium" would collide with Tailwind's
 // own font-medium weight utility.
 //
-// One family across all five roles, and that is the point. This was a Fraunces
-// and Instrument Sans pairing: a display serif with a deliberate wobble in its
-// outlines over a narrow grotesque set at a tight line height. Two voices, both
-// with opinions, and long body copy underneath them was tiring to read rather
-// than characterful. Plus Jakarta Sans has open apertures and a tall x-height,
-// and the weight range from 400 to 800 carries the whole hierarchy on its own.
-//
-// It covers Latin only: 721 codepoints, with no Arabic, Devanagari, Bengali,
-// Han or even Cyrillic glyph, measured off the cmap table rather than assumed.
-// A component never names one of these directly - lib/typeface.ts decides
-// whether the reader's script is one it can draw and hands back the platform
-// font when it is not. Adding a face for another script means a family here and
-// one entry there.
+// Inter. 2849 codepoints measured off the cmap: Latin, Greek, Cyrillic, and no
+// Arabic, Devanagari, Bengali or Han, which is what lib/typeface.ts routes on.
+// A family per cut because React Native does not synthesize weights; on web the
+// same five names alias one variable woff2, in app/+html.tsx.
 const fontFamily = {
-  display: ['PlusJakartaSans_800ExtraBold'],
-  quote: ['PlusJakartaSans_500Medium_Italic'],
-  body: ['PlusJakartaSans_400Regular'],
-  emphasis: ['PlusJakartaSans_500Medium'],
-  strong: ['PlusJakartaSans_600SemiBold'],
+  display: ['Inter_800ExtraBold'],
+  quote: ['Inter_500Medium_Italic'],
+  body: ['Inter_400Regular'],
+  emphasis: ['Inter_500Medium'],
+  strong: ['Inter_600SemiBold'],
 };
+
+// Web only. Tailwind emits the bare family above, and a bare unknown family
+// falls back to the browser default, which is a serif. Native cannot take a
+// comma list, so this is appended in app/+html.tsx rather than added above.
+const fallbackStack = [
+  'ui-sans-serif',
+  'system-ui',
+  '-apple-system',
+  'Segoe UI',
+  'Roboto',
+  'sans-serif',
+];
 
 // Tracking tightens as the size grows, which is the normal correction: letter
 // spacing that reads as generous at 16px reads as loose at 64px.
@@ -105,4 +108,4 @@ const animation = {
   beat: 'beat 2.6s ease-in-out infinite',
 };
 
-module.exports = { fontFamily, fontSize, borderRadius, keyframes, animation };
+module.exports = { fontFamily, fallbackStack, fontSize, borderRadius, keyframes, animation };

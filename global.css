@@ -11,43 +11,42 @@
   block when darkMode is "class". Anything else compiles on web and is silently
   ignored on native.
 
-  The palette is deliberately warm and unsaturated rather than the bright look
-  every other dating app uses. That look belongs to products designed to feel
-  like a slot machine, and this one is funded by donations.
+  Near-neutral surfaces with one saturated brand colour, rather than the tinted
+  everything a dating app usually reaches for. The surfaces were warm brown and
+  read as muddy once anything was placed on them; the warmth is now carried by
+  the brand and the accent, where it is doing work.
 
-  Unsaturated is not the same as washed out, which is what it drifted into: the
-  three neutral surfaces sat within nine levels of each other, so a raised card
-  on a screen background was a rectangle with no edge, and the hairline between
-  them was invisible at any brightness below full. Separation is what makes a
-  restrained palette read as considered instead of unfinished.
+  The three neutrals stay well separated. When they sat within nine levels of
+  each other a raised card had no visible edge, which is what makes a restrained
+  palette look unfinished rather than considered.
 */
 
 @layer base {
   :root {
-    --bg: 252 250 247;
-    --surface: 244 240 234;
-    --surface-raised: 255 254 252;
-    --border: 219 211 200;
+    --bg: 253 252 252;
+    --surface: 245 244 246;
+    --surface-raised: 255 255 255;
+    --border: 223 221 227;
 
-    --fg: 28 25 23;
-    --fg-muted: 99 92 86;
-    --fg-subtle: 112 105 99;
-    --fg-inverted: 252 250 247;
+    --fg: 23 22 26;
+    --fg-muted: 92 90 100;
+    --fg-subtle: 106 104 114;
+    --fg-inverted: 255 255 255;
 
-    --brand: 166 58 76;
-    --brand-pressed: 138 44 60;
-    --brand-subtle: 246 232 231;
+    --brand: 193 40 82;
+    --brand-pressed: 165 30 68;
+    --brand-subtle: 252 231 238;
 
-    --accent: 144 96 50;
-    --accent-subtle: 245 235 222;
+    --accent: 150 92 40;
+    --accent-subtle: 250 238 224;
 
-    --success: 62 122 88;
-    --warning: 176 122 38;
-    --danger: 176 58 52;
-    --danger-subtle: 248 231 229;
+    --success: 22 122 84;
+    --warning: 168 116 20;
+    --danger: 198 44 48;
+    --danger-subtle: 253 230 231;
 
-    --like: 62 122 88;
-    --pass: 156 147 138;
+    --like: 22 122 84;
+    --pass: 142 140 152;
 
     /* Read receipts sit on a brand bubble, so this is picked for contrast
        against --brand rather than against --bg, and it inverts between the
@@ -64,32 +63,32 @@
   }
 
   .dark:root {
-    --bg: 22 20 19;
-    --surface: 35 32 30;
-    --surface-raised: 48 43 41;
-    --border: 76 68 64;
+    --bg: 17 17 20;
+    --surface: 25 25 29;
+    --surface-raised: 34 34 39;
+    --border: 58 58 66;
 
-    --fg: 248 245 241;
-    --fg-muted: 176 166 158;
-    --fg-subtle: 158 150 144;
-    --fg-inverted: 22 20 19;
+    --fg: 250 250 252;
+    --fg-muted: 172 172 184;
+    --fg-subtle: 150 150 162;
+    --fg-inverted: 17 17 20;
 
-    --brand: 224 132 142;
-    --brand-pressed: 202 110 122;
-    --brand-subtle: 62 36 40;
+    --brand: 246 122 146;
+    --brand-pressed: 228 100 126;
+    --brand-subtle: 56 28 38;
 
-    --accent: 216 164 106;
-    --accent-subtle: 60 47 34;
+    --accent: 236 176 112;
+    --accent-subtle: 56 42 28;
 
-    --success: 116 176 138;
-    --warning: 216 168 88;
-    --danger: 226 118 110;
-    --danger-subtle: 66 34 32;
+    --success: 82 200 140;
+    --warning: 240 180 80;
+    --danger: 250 116 116;
+    --danger-subtle: 60 28 32;
 
-    --like: 116 176 138;
-    --pass: 120 112 105;
+    --like: 82 200 140;
+    --pass: 112 112 126;
 
-    --receipt-seen: 12 66 40;
+    --receipt-seen: 14 62 40;
 
     --shadow-ambient: 0 0 0;
   }

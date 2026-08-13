@@ -1,15 +1,17 @@
 import {
-  PlusJakartaSans_400Regular,
-  PlusJakartaSans_500Medium,
-  PlusJakartaSans_500Medium_Italic,
-  PlusJakartaSans_600SemiBold,
-  PlusJakartaSans_800ExtraBold,
-} from '@expo-google-fonts/plus-jakarta-sans';
+  Inter_400Regular,
+  Inter_500Medium,
+  Inter_500Medium_Italic,
+  Inter_600SemiBold,
+  Inter_800ExtraBold,
+} from '@expo-google-fonts/inter';
 
+// Native only in practice. Web resolves the same five names from the
+// @font-face block in app/+html.tsx, which needs no JavaScript.
 export const appFonts = {
-  PlusJakartaSans_400Regular,
-  PlusJakartaSans_500Medium,
-  PlusJakartaSans_500Medium_Italic,
-  PlusJakartaSans_600SemiBold,
-  PlusJakartaSans_800ExtraBold,
+  Inter_400Regular,
+  Inter_500Medium,
+  Inter_500Medium_Italic,
+  Inter_600SemiBold,
+  Inter_800ExtraBold,
 };

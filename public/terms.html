@@ -12,56 +12,55 @@
 <meta name="twitter:card" content="summary">
 <style>
 :root {
-  --bg: 252 250 247;
-  --surface: 244 240 234;
-  --border: 219 211 200;
-  --fg: 28 25 23;
-  --fg-muted: 99 92 86;
-  --brand: 166 58 76;
+  --bg: 253 252 252;
+  --surface: 245 244 246;
+  --border: 223 221 227;
+  --fg: 23 22 26;
+  --fg-muted: 92 90 100;
+  --brand: 193 40 82;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-  --bg: 22 20 19;
-  --surface: 35 32 30;
-  --border: 76 68 64;
-  --fg: 248 245 241;
-  --fg-muted: 176 166 158;
-  --brand: 224 132 142;
+  --bg: 17 17 20;
+  --surface: 25 25 29;
+  --border: 58 58 66;
+  --fg: 250 250 252;
+  --fg-muted: 172 172 184;
+  --brand: 246 122 146;
   }
 }
 
 @font-face {
-  font-family: 'Plus Jakarta Sans';
-  src: url('/fonts/PlusJakartaSans_400Regular.ttf') format('truetype');
-  font-weight: 400;
+  font-family: 'Inter Variable';
+  src: url('/fonts/inter-latin-wght-normal.woff2') format('woff2');
+  font-weight: 100 900;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: 'Plus Jakarta Sans';
-  src: url('/fonts/PlusJakartaSans_800ExtraBold.ttf') format('truetype');
-  font-weight: 800;
-  font-style: normal;
+  font-family: 'Inter Variable';
+  src: url('/fonts/inter-latin-wght-italic.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: italic;
   font-display: swap;
 }
 
 * { box-sizing: border-box; }
 
+html { color-scheme: dark light; scroll-behavior: smooth; }
+
 body {
   margin: 0;
   background: rgb(var(--bg));
   color: rgb(var(--fg));
-  font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  font-family: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, sans-serif;
   font-size: 17px;
   line-height: 1.7;
   -webkit-font-smoothing: antialiased;
 }
 
-/* 800 rather than 700, because that is the cut actually loaded. Asking for a
-   weight between the two makes the browser synthesise one by smearing the
-   regular, which is the blurry bold nobody can name but everybody notices. */
-strong, b, th { font-weight: 800; }
+strong, b, th { font-weight: 700; }
 
 .shell { max-width: 60rem; margin: 0 auto; padding: 0 1.25rem; }
 
@@ -196,9 +195,7 @@ footer a:hover { color: rgb(var(--fg)); }
 <header>
   <div class="shell">
     <a class="brand" href="/"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.7l-1.45-1.32C5.4 14.74 2 11.66 2 7.9 2 4.82 4.42 2.4 7.5 2.4c1.74 0 3.41.81 4.5 2.09 1.09-1.28 2.76-2.09 4.5-2.09 3.08 0 5.5 2.42 5.5 5.5 0 3.76-3.4 6.84-8.55 11.49L12 20.7z"/></svg>OpenHeart</a>
-    <nav><a href="/privacy">Privacy Policy</a>
-      <a href="/terms" aria-current="page">Terms of Service</a>
-      <a href="/account-deletion">Deleting your account</a>
+    <nav><a href="https://github.com/aadeshrao123/openheart">Read the source</a>
       <a class="cta" href="/sign-in">Sign in</a></nav>
   </div>
 </header>
@@ -316,7 +313,7 @@ in the git repository.</p>
       <a href="/privacy">Privacy Policy</a>
       <a href="/terms">Terms of Service</a>
       <a href="/account-deletion">Deleting your account</a>
-      <a href="https://github.com/aadeshrao123/openheart">Source</a>
+      <a href="https://github.com/aadeshrao123/openheart">Read the source</a>
       <a href="mailto:support@openheartapp.org">support@openheartapp.org</a>
     </div>
 

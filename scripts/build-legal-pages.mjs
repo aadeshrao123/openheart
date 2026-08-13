@@ -17,22 +17,15 @@ import { marked } from 'marked';
 const ROOT = path.resolve(import.meta.dirname, '..');
 const OUT = path.join(ROOT, 'public');
 
-// The app's own face, self hosted next to the pages that use it. Copied from
-// node_modules rather than committed by hand so a font upgrade is one npm
-// install, and served locally rather than from Google's CDN because a legal
-// page that phones a third party while explaining that the app does not track
-// you is its own kind of wrong.
-//
-// Two weights, not three. Regular carries the body and ExtraBold carries the
-// headings and the bold runs inside them, which avoids the browser synthesising
-// a bold from the regular cut.
+// The same two files app/+html.tsx serves the app, so both draw one typeface.
+const FONT_DIR = path.join(ROOT, 'node_modules', '@fontsource-variable', 'inter', 'files');
+
 const FONTS = [
-  { family: 'PlusJakartaSans_400Regular', weight: 400, dir: '400Regular' },
-  { family: 'PlusJakartaSans_800ExtraBold', weight: 800, dir: '800ExtraBold' },
+  { file: 'inter-latin-wght-normal.woff2', style: 'normal' },
+  { file: 'inter-latin-wght-italic.woff2', style: 'italic' },
 ];
 
-// The same mark components/ui/logo.tsx draws, as inline SVG so the header needs
-// no image request.
+// The mark components/ui/logo.tsx draws.
 const HEART =
   'M12 20.7l-1.45-1.32C5.4 14.74 2 11.66 2 7.9 2 4.82 4.42 2.4 7.5 2.4c1.74 0 ' +
   '3.41.81 4.5 2.09 1.09-1.28 2.76-2.09 4.5-2.09 3.08 0 5.5 2.42 5.5 5.5 0 ' +
@@ -45,24 +38,25 @@ const REPOSITORY = 'https://github.com/aadeshrao123/openheart';
 const CONTACT = 'support@openheartapp.org';
 const APP_NAME = 'OpenHeart';
 
-// Cloudflare Pages serves foo.html at /foo, so the extension never appears in a
-// link. Keeping that in one function means the nav, the footer and the sitemap
-// cannot disagree about what a page is called.
+// Pages serves foo.html at /foo, so the extension never appears in a link.
 const href = (out) => `/${out.replace(/\.html$/, '')}`;
 
 const mark = (size) =>
   `<svg width="${size}" height="${size}" viewBox="0 0 24 24" aria-hidden="true">` +
   `<path d="${HEART}"/></svg>`;
 
-function navigation(current) {
-  const links = PAGES.map((page) => {
-    const active = page.out === current ? ' aria-current="page"' : '';
+// Deliberately identical to the landing page header and footer, because a
+// reader crossing between them should not notice they changed technology.
+const HEADER_LINKS = `<a href="${REPOSITORY}">Read the source</a>
+      <a class="cta" href="/sign-in">Sign in</a>`;
 
-    return `<a href="${href(page.out)}"${active}>${page.title}</a>`;
-  });
-
-  return [...links, `<a class="cta" href="/sign-in">Sign in</a>`].join('\n      ');
-}
+const footerLinks = () =>
+  [
+    `<a href="/">Home</a>`,
+    ...PAGES.map((page) => `<a href="${href(page.out)}">${page.title}</a>`),
+    `<a href="${REPOSITORY}">Read the source</a>`,
+    `<a href="mailto:${CONTACT}">${CONTACT}</a>`,
+  ].join('\n      ');
 
 // Read out of global.css rather than copied, because a legal page that does not
 // look like the app it belongs to reads as somebody else's page, and these were
@@ -105,30 +99,29 @@ ${palette(/\.dark:root\s*\{([^}]*)\}/)}
 
 ${FONTS.map(
   (font) => `@font-face {
-  font-family: 'Plus Jakarta Sans';
-  src: url('/fonts/${font.family}.ttf') format('truetype');
-  font-weight: ${font.weight};
-  font-style: normal;
+  font-family: 'Inter Variable';
+  src: url('/fonts/${font.file}') format('woff2');
+  font-weight: 100 900;
+  font-style: ${font.style};
   font-display: swap;
 }`,
 ).join('\n')}
 
 * { box-sizing: border-box; }
 
+html { color-scheme: dark light; scroll-behavior: smooth; }
+
 body {
   margin: 0;
   background: rgb(var(--bg));
   color: rgb(var(--fg));
-  font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  font-family: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, sans-serif;
   font-size: 17px;
   line-height: 1.7;
   -webkit-font-smoothing: antialiased;
 }
 
-/* 800 rather than 700, because that is the cut actually loaded. Asking for a
-   weight between the two makes the browser synthesise one by smearing the
-   regular, which is the blurry bold nobody can name but everybody notices. */
-strong, b, th { font-weight: 800; }
+strong, b, th { font-weight: 700; }
 
 .shell { max-width: 60rem; margin: 0 auto; padding: 0 1.25rem; }
 
@@ -326,7 +319,7 @@ for (const page of PAGES) {
 <header>
   <div class="shell">
     <a class="brand" href="/">${mark(22)}${APP_NAME}</a>
-    <nav>${navigation(page.out)}</nav>
+    <nav>${HEADER_LINKS}</nav>
   </div>
 </header>
 
@@ -340,10 +333,7 @@ ${body}
     <a class="brand" href="/">${mark(18)}${APP_NAME}</a>
 
     <div class="footer-links">
-      <a href="/">Home</a>
-${PAGES.map((entry) => `      <a href="${href(entry.out)}">${entry.title}</a>`).join('\n')}
-      <a href="${REPOSITORY}">Source</a>
-      <a href="mailto:${CONTACT}">${CONTACT}</a>
+      ${footerLinks()}
     </div>
 
     <div>Free software. No ads, no trackers, no paywall.</div>
@@ -360,19 +350,10 @@ ${PAGES.map((entry) => `      <a href="${href(entry.out)}">${entry.title}</a>`).
 mkdirSync(path.join(OUT, 'fonts'), { recursive: true });
 
 for (const font of FONTS) {
-  const source = path.join(
-    ROOT,
-    'node_modules',
-    '@expo-google-fonts',
-    'plus-jakarta-sans',
-    font.dir,
-    `${font.family}.ttf`,
-  );
-
-  copyFileSync(source, path.join(OUT, 'fonts', `${font.family}.ttf`));
+  copyFileSync(path.join(FONT_DIR, font.file), path.join(OUT, 'fonts', font.file));
 }
 
-console.log(`fonts: ${FONTS.length} weights copied`);
+console.log(`fonts: ${FONTS.length} files copied`);
 
 // The sitemap is written here rather than by hand because this file already
 // knows every public URL. Cloudflare Pages serves foo.html at /foo, so the
