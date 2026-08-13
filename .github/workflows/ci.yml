@@ -27,7 +27,9 @@ jobs:
 
             # Exemptions are all generated files, rewritten wholesale by their
             # tool on the next run, so editing them to satisfy a column limit
-            # accomplishes nothing. locales/*.json is exempt for a different
+            # accomplishes nothing. public/ is written by
+            # scripts/build-legal-pages.mjs from docs/legal/, which is itself
+            # held to the limit. locales/*.json is exempt for a different
             # reason: a translation string cannot be wrapped without changing
             # its value.
             matches=$(LC_ALL=C git grep -nI "$pattern" \
@@ -35,6 +37,7 @@ jobs:
                  ':!locales/*.json' \
                  ':!package-lock.json' \
                  ':!nativewind-env.d.ts' \
+                 ':!public/*' \
                  "$@") || grep_status=$?
 
             # git grep exits 1 for "nothing matched" and 2 or more for a real
