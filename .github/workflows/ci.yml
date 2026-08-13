@@ -5,8 +5,6 @@ on:
   push:
     branches: [main]
 
-  # Deploying is a decision, not a consequence of merging. The tests run on
-  # every push; the site changes when somebody asks for it. See the deploy job.
   workflow_dispatch:
 
 permissions:
@@ -212,15 +210,8 @@ jobs:
     name: Deploy the web build
     runs-on: ubuntu-latest
 
-    # Manual only. Actions -> CI -> Run workflow, on main.
-    #
-    # Not on push, deliberately. Merging and publishing are different decisions,
-    # and a green test suite is not the same claim as "this is safe for the
-    # people using it". There is no alerting here yet and nobody else reviewing,
-    # so the gap between the two is a person choosing.
-    #
-    # It still needs every other job, so pressing the button on a broken commit
-    # deploys nothing.
+    # Manual, because merging and publishing are different decisions. Needs
+    # every other job, so the button does nothing on a broken commit.
     needs: [style, app, functions, database]
     if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
 
@@ -234,9 +225,7 @@ jobs:
 
       - run: npm ci
 
-      # No .env.production in CI, so scripts/build-web.mjs reads these. It
-      # refuses to emit a bundle carrying a local address, which is the mistake
-      # that produced this script in the first place.
+      # build-web.mjs refuses to emit a bundle carrying a local address.
       - name: Build
         env:
           EXPO_PUBLIC_SUPABASE_URL: ${{ secrets.EXPO_PUBLIC_SUPABASE_URL }}

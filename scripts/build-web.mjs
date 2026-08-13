@@ -1,16 +1,11 @@
-// Builds the web bundle for deployment, and refuses to hand over one that
-// points at a database nobody can reach.
+// Builds the web bundle and refuses to hand over one pointing at localhost.
 //
 //   node scripts/build-web.mjs
 //
-// Reads .env.production when it exists, which is how a laptop supplies the
-// values, and otherwise uses whatever the environment already holds, which is
-// how CI supplies them. Explicit environment variables win over Expo's dotenv
-// precedence either way.
-//
-// This exists because `expo export` quietly used .env and baked localhost into
-// a bundle that was about to be deployed. It built, it was 21KB a route, and
-// every request it made would have gone nowhere.
+// Exists because `expo export` used .env instead of .env.production and baked
+// 127.0.0.1 into a bundle that was one command from being deployed. Explicit
+// environment variables beat Expo's dotenv precedence; .env.production is how a
+// laptop supplies them and the ambient environment is how CI does.
 
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
@@ -48,9 +43,8 @@ if (missing.length) {
   process.exit(1);
 }
 
-// Expo's own entry through node, rather than npx. shell: true is deprecated
-// because arguments are concatenated instead of escaped, and npx.cmd cannot be
-// spawned directly on Windows at all.
+// Expo's entry through node: shell: true is deprecated, and npx.cmd cannot be
+// spawned directly on Windows.
 execFileSync(process.execPath, [
   path.join(ROOT, 'node_modules', 'expo', 'bin', 'cli'),
   'export',
@@ -59,8 +53,7 @@ execFileSync(process.execPath, [
   '--clear',
 ], { cwd: ROOT, env, stdio: 'inherit' });
 
-// The check the failure above earned. A bundle is a pile of hashed files, so
-// this reads them rather than trusting that the right variable was in scope.
+// Reads the emitted bundle rather than trusting the variable was in scope.
 const bundleDir = path.join(ROOT, 'dist', '_expo', 'static', 'js', 'web');
 const bundles = readdirSync(bundleDir).filter((f) => f.endsWith('.js'));
 const source = bundles.map((f) => readFileSync(path.join(bundleDir, f), 'utf8')).join('');
