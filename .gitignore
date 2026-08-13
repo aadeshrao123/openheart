@@ -10,9 +10,14 @@ MY_DOCS/
 .claude/
 
 # Secrets
+#
+# Every .env variant, then the one exception. The previous list named .env,
+# .env.local and .env.*.local, so .env.production would have been committed:
+# caught by checking `git check-ignore` before writing a production key into
+# one, rather than after.
 .env
-.env.local
-.env.*.local
+.env.*
+!.env.example
 
 # Dependencies
 node_modules/
