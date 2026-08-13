@@ -49,6 +49,7 @@
     "continue_with_apple": "المتابعة عبر Apple",
     "continue_with_google": "المتابعة عبر Google",
     "continue_with_x": "المتابعة باستخدام X",
+    "provider_failed": "لم ينجح ذلك. حاول مرة أخرى أو استخدم بريدك الإلكتروني.",
     "continue_with_microsoft": "المتابعة عبر Microsoft"
   },
   "onboarding": {

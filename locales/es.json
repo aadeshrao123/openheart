@@ -49,6 +49,7 @@
     "continue_with_apple": "Continuar con Apple",
     "continue_with_google": "Continuar con Google",
     "continue_with_x": "Continuar con X",
+    "provider_failed": "No funciono. Intentalo de nuevo o usa tu correo electronico.",
     "continue_with_microsoft": "Continuar con Microsoft"
   },
   "onboarding": {

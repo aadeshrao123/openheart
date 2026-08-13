@@ -1,4 +1,5 @@
 import { isAuthError } from '@supabase/supabase-js';
+import { OAUTH_CANCELLED } from '@/lib/oauth';
 
 // Auth server messages are developer text and English-only, so they are never
 // shown. Codes verified against the local server: otp_expired covers a wrong
@@ -17,4 +18,14 @@ export function authErrorKey(error: unknown): string {
   }
 
   return 'common.error_generic';
+}
+
+// Closing the provider's browser is a decision, not a failure, so it gets no
+// message at all. Returns null for that and a key for everything else.
+export function providerErrorKey(error: unknown): string | null {
+  if (error instanceof Error && error.message === OAUTH_CANCELLED) {
+    return null;
+  }
+
+  return 'auth.provider_failed';
 }

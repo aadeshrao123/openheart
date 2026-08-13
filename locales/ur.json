@@ -49,6 +49,7 @@
     "continue_with_apple": "ایپل سے جاری رکھیں",
     "continue_with_google": "گوگل سے جاری رکھیں",
     "continue_with_x": "X کے ساتھ جاری رکھیں",
+    "provider_failed": "یہ کام نہیں آیا۔ دوبارہ کوشش کریں، یا اپنا ای میل پتہ استعمال کریں۔",
     "continue_with_microsoft": "مائیکروسافٹ سے جاری رکھیں"
   },
   "onboarding": {

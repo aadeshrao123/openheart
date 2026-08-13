@@ -49,6 +49,7 @@
     "continue_with_apple": "通过 Apple 继续",
     "continue_with_google": "通过 Google 继续",
     "continue_with_x": "使用 X 继续",
+    "provider_failed": "没有成功。请重试，或改用你的邮箱地址。",
     "continue_with_microsoft": "通过 Microsoft 继续"
   },
   "onboarding": {

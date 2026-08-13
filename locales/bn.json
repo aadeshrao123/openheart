@@ -49,6 +49,7 @@
     "continue_with_apple": "Apple দিয়ে চালিয়ে যান",
     "continue_with_google": "Google দিয়ে চালিয়ে যান",
     "continue_with_x": "X দিয়ে চালিয়ে যান",
+    "provider_failed": "এটি কাজ করেনি। আবার চেষ্টা করুন, বা আপনার ইমেল ঠিকানা ব্যবহার করুন।",
     "continue_with_microsoft": "Microsoft দিয়ে চালিয়ে যান"
   },
   "onboarding": {

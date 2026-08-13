@@ -49,6 +49,7 @@
     "continue_with_apple": "Lanjut dengan Apple",
     "continue_with_google": "Lanjut dengan Google",
     "continue_with_x": "Lanjutkan dengan X",
+    "provider_failed": "Tidak berhasil. Coba lagi, atau gunakan alamat email kamu.",
     "continue_with_microsoft": "Lanjut dengan Microsoft"
   },
   "onboarding": {

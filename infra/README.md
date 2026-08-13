@@ -151,6 +151,44 @@ AWS states plainly that these APIs "don't detect whether an image includes
 illegal content, such as CSAM". That is why `createModerationProvider` requires
 a second provider and fails closed without it.
 
+## Pages
+
+The web build. `openheart`, production branch `main`, reachable at
+`openheart-5jx.pages.dev` before the custom domain is attached.
+
+```bash
+wrangler pages project create openheart --production-branch main
+node scripts/build-web.mjs
+wrangler pages deploy dist --project-name openheart --branch main
+```
+
+Deploys run from CI rather than a laptop. The `deploy` job in
+`.github/workflows/ci.yml` needs all four other jobs, so a red test never
+reaches the domain, and is restricted to pushes on `main` so a pull request
+from a fork cannot deploy unreviewed code with the production keys.
+
+It needs five GitHub secrets:
+
+| Secret | What |
+| :--- | :--- |
+| `CLOUDFLARE_API_TOKEN` | Cloudflare Pages: Edit, scoped to this account |
+| `CLOUDFLARE_ACCOUNT_ID` | the account the bucket and Pages project live in |
+| `EXPO_PUBLIC_SUPABASE_URL` | the production project URL |
+| `EXPO_PUBLIC_SUPABASE_ANON_KEY` | public by design, still not committed |
+| `EXPO_PUBLIC_IMAGE_BASE_URL` | the image Worker origin |
+
+**Never build with `expo export` directly.** `scripts/build-web.mjs` exists
+because that command read `.env` and baked `127.0.0.1:54321` into a bundle that
+was one command away from being deployed. It built, every route was the right
+size, and every request it made would have gone nowhere. The script reads
+`.env.production` when present and the ambient environment otherwise, then
+greps the emitted bundle and refuses to hand over one carrying a local address.
+
+The custom domain is attached in the dashboard, because Wrangler has no Pages
+domain command. Workers and Pages -> openheart -> Custom domains ->
+`openheartapp.org`. The DNS record is created automatically while the zone is
+on the same account.
+
 ## API tokens
 
 Wrangler cannot create the S3-compatible Access Key ID and Secret Access Key

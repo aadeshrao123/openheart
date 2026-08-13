@@ -203,3 +203,40 @@ jobs:
 
       - name: Run pgTAP tests
         run: supabase test db --local
+
+  deploy:
+    name: Deploy the web build
+    runs-on: ubuntu-latest
+
+    # Every other job, so a red test never reaches the domain. Pushes only:
+    # a pull request from a fork would otherwise deploy unreviewed code with
+    # the production keys.
+    needs: [style, app, functions, database]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - run: npm ci
+
+      # No .env.production in CI, so scripts/build-web.mjs reads these. It
+      # refuses to emit a bundle carrying a local address, which is the mistake
+      # that produced this script in the first place.
+      - name: Build
+        env:
+          EXPO_PUBLIC_SUPABASE_URL: ${{ secrets.EXPO_PUBLIC_SUPABASE_URL }}
+          EXPO_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.EXPO_PUBLIC_SUPABASE_ANON_KEY }}
+          EXPO_PUBLIC_IMAGE_BASE_URL: ${{ secrets.EXPO_PUBLIC_IMAGE_BASE_URL }}
+        run: node scripts/build-web.mjs
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name openheart --branch main

@@ -49,6 +49,7 @@
     "continue_with_apple": "Apple से आगे बढ़ें",
     "continue_with_google": "Google से आगे बढ़ें",
     "continue_with_x": "X से जारी रखें",
+    "provider_failed": "यह काम नहीं आया। फिर कोशिश करें, या अपने ईमेल पते से जारी रखें।",
     "continue_with_microsoft": "Microsoft से आगे बढ़ें"
   },
   "onboarding": {

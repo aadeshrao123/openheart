@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { Button, Input, Rail, Screen, Text } from '@/components/ui';
 import { useRequestEmailCode, useSignInWithProvider } from '@/hooks/use-auth';
-import { authErrorKey } from '@/lib/auth-errors';
+import { authErrorKey, providerErrorKey } from '@/lib/auth-errors';
 import { OAUTH_PROVIDERS } from '@/lib/auth-providers';
 import { APP_NAME } from '@/lib/app';
 
@@ -87,6 +87,15 @@ export default function SignInScreen() {
               onPress={() => signInWithProvider.mutate(provider.id)}
             />
           ))}
+
+          {/* Nothing rendered when somebody simply closed the browser. Without
+              this the whole path failed silently, because only the email form
+              showed its error. */}
+          {signInWithProvider.isError && providerErrorKey(signInWithProvider.error) ? (
+            <Text variant="caption" tone="danger">
+              {t(providerErrorKey(signInWithProvider.error) ?? 'common.error_generic')}
+            </Text>
+          ) : null}
         </View>
       ) : null}
 
