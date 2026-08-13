@@ -1,6 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import type { Provider } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
+import { signInWithProvider } from '@/lib/oauth';
 
 type VerifyInput = {
   email: string;
@@ -54,17 +55,12 @@ export function useVerifyEmailCode() {
   });
 }
 
-// Unused until a provider is added to OAUTH_PROVIDERS, and correct for all of
-// them when one is: Supabase's OAuth entry point takes the provider as data.
+// The platform split is in lib/oauth, because finishing the flow is genuinely
+// different: web navigates away and comes back, native opens a browser and has
+// to exchange the code itself.
 export function useSignInWithProvider() {
   return useMutation({
-    mutationFn: async (provider: Provider) => {
-      const { error } = await supabase.auth.signInWithOAuth({ provider });
-
-      if (error) {
-        throw error;
-      }
-    },
+    mutationFn: (provider: Provider) => signInWithProvider(provider),
   });
 }
 

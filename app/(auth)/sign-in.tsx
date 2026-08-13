@@ -73,9 +73,9 @@ export default function SignInScreen() {
         </Text>
       </View>
 
-      {/* Renders nothing while OAUTH_PROVIDERS is empty. Adding Google, Apple or
-          Microsoft is an entry in that list: the label keys already exist and
-          this loop already handles them. */}
+      {/* Still guarded, because the list is empty until a provider is both
+          configured in Supabase and added to it, and a button that opens a
+          browser onto an error is worse than no button. */}
       {OAUTH_PROVIDERS.length > 0 ? (
         <View className="gap-3">
           {OAUTH_PROVIDERS.map((provider) => (

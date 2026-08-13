@@ -48,6 +48,7 @@
     "age_gate": "يجب أن يكون عمرك 18 عامًا أو أكثر لاستخدام {{appName}}.",
     "continue_with_apple": "المتابعة عبر Apple",
     "continue_with_google": "المتابعة عبر Google",
+    "continue_with_x": "المتابعة باستخدام X",
     "continue_with_microsoft": "المتابعة عبر Microsoft"
   },
   "onboarding": {

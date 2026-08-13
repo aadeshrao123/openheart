@@ -48,6 +48,7 @@
     "age_gate": "{{appName}} ব্যবহার করতে হলে আপনার বয়স ১৮ বা তার বেশি হতে হবে।",
     "continue_with_apple": "Apple দিয়ে চালিয়ে যান",
     "continue_with_google": "Google দিয়ে চালিয়ে যান",
+    "continue_with_x": "X দিয়ে চালিয়ে যান",
     "continue_with_microsoft": "Microsoft দিয়ে চালিয়ে যান"
   },
   "onboarding": {

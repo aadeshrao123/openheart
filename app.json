@@ -82,13 +82,15 @@
             ]
           }
         ]
-      }
+      },
+      "bundleIdentifier": "org.openheartapp"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FCFAF7"
-      }
+      },
+      "package": "org.openheartapp"
     },
     "web": {
       "bundler": "metro",
@@ -148,7 +150,8 @@
           "enableBackgroundRecording": false
         }
       ],
-      "expo-asset"
+      "expo-asset",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true,

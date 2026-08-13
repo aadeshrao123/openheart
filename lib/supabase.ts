@@ -24,5 +24,13 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
     detectSessionInUrl: Platform.OS === 'web',
     autoRefreshToken: true,
     persistSession: true,
+
+    // auth-js defaults to implicit, which returns the access token in the
+    // redirect URL. On a phone any app can claim the openheart:// scheme, so
+    // that hands the session to whatever answers first. PKCE returns a code
+    // that is worthless without the verifier held here.
+    //
+    // The six digit email sign-in is unaffected: verifyOtp does not use this.
+    flowType: 'pkce',
   },
 });

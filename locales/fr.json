@@ -48,6 +48,7 @@
     "age_gate": "Il faut avoir 18 ans ou plus pour utiliser {{appName}}.",
     "continue_with_apple": "Continuer avec Apple",
     "continue_with_google": "Continuer avec Google",
+    "continue_with_x": "Continuer avec X",
     "continue_with_microsoft": "Continuer avec Microsoft"
   },
   "onboarding": {

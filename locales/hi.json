@@ -48,6 +48,7 @@
     "age_gate": "{{appName}} इस्तेमाल करने के लिए आपकी उम्र 18 साल या उससे ज़्यादा होनी चाहिए।",
     "continue_with_apple": "Apple से आगे बढ़ें",
     "continue_with_google": "Google से आगे बढ़ें",
+    "continue_with_x": "X से जारी रखें",
     "continue_with_microsoft": "Microsoft से आगे बढ़ें"
   },
   "onboarding": {

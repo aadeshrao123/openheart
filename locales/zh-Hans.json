@@ -48,6 +48,7 @@
     "age_gate": "你需要年满 18 岁才能使用 {{appName}}。",
     "continue_with_apple": "通过 Apple 继续",
     "continue_with_google": "通过 Google 继续",
+    "continue_with_x": "使用 X 继续",
     "continue_with_microsoft": "通过 Microsoft 继续"
   },
   "onboarding": {
