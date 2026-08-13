@@ -1,0 +1,419 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy Policy - OpenHeart</title>
+<meta name="description" content="Privacy Policy for OpenHeart, a free and open source dating app.">
+<style>
+:root {
+  --bg: 252 250 247;
+  --surface: 246 243 238;
+  --border: 226 220 211;
+  --fg: 28 25 23;
+  --fg-muted: 106 99 92;
+  --brand: 166 58 76;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: 22 20 19;
+    --surface: 31 28 27;
+    --border: 60 54 51;
+    --fg: 244 240 235;
+    --fg-muted: 168 158 150;
+    --brand: 224 132 142;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 3rem 1.25rem 6rem;
+  background: rgb(var(--bg));
+  color: rgb(var(--fg));
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-size: 17px;
+  line-height: 1.65;
+}
+
+main { max-width: 42rem; margin: 0 auto; }
+
+a { color: rgb(var(--brand)); }
+
+h1 { font-size: 2rem; line-height: 1.2; margin: 0 0 1.5rem; }
+h2 { font-size: 1.35rem; margin: 2.75rem 0 0.75rem; }
+h3 { font-size: 1.1rem; margin: 2rem 0 0.5rem; }
+
+hr { border: 0; border-top: 1px solid rgb(var(--border)); margin: 2.5rem 0; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.25rem 0;
+  font-size: 0.95rem;
+  display: block;
+  overflow-x: auto;
+}
+
+th, td {
+  border: 1px solid rgb(var(--border));
+  padding: 0.5rem 0.7rem;
+  text-align: start;
+  vertical-align: top;
+}
+
+th { background: rgb(var(--surface)); }
+
+code {
+  background: rgb(var(--surface));
+  padding: 0.1rem 0.35rem;
+  border-radius: 0.25rem;
+  font-size: 0.9em;
+}
+
+.notice {
+  background: rgb(var(--surface));
+  border: 1px solid rgb(var(--border));
+  border-inline-start: 3px solid rgb(var(--brand));
+  padding: 1rem 1.25rem;
+  border-radius: 0.5rem;
+  margin-bottom: 2.5rem;
+  color: rgb(var(--fg-muted));
+  font-size: 0.95rem;
+}
+
+footer {
+  margin-top: 4rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgb(var(--border));
+  color: rgb(var(--fg-muted));
+  font-size: 0.9rem;
+}
+</style>
+</head>
+<body>
+<main>
+
+<div class="notice">
+  <strong>OpenHeart is not open to the public yet.</strong>
+  This document describes how the app will work when it launches. It has not
+  been reviewed by a lawyer, and it may change before anyone can sign up.
+</div>
+
+<h1>Privacy Policy</h1>
+<p><strong>Draft. Not yet reviewed by a lawyer, and not yet published.</strong> Three items at
+the bottom need a legal answer before this can go live. Everything else was
+written from the code rather than from a template, and every claim in it is one
+you can check against this repository.</p>
+<p>Last updated: 12 August 2026
+Applies to: OpenHeart, the app and openheartapp.org</p>
+<hr>
+<h2>The short version</h2>
+<ul>
+<li>You must be 18 or older.</li>
+<li>We never sell your data, and there is nothing to upsell you, so there is no
+commercial reason to collect more than the app needs.</li>
+<li>Your exact location never reaches our database. It is rounded to about a
+kilometre before it is stored, and other people are only ever told a rounded
+distance.</li>
+<li>Nobody is ever told who swiped which way on them.</li>
+<li>Deleting your account erases your personal data and keeps a blank row, so the
+people you talked to keep their own messages and a record of any report about
+you survives.</li>
+</ul>
+<h2>Who we are</h2>
+<p>OpenHeart is a free, open source dating app funded by donations. The source
+code, including every database policy described here, is public under the
+AGPL-3.0 at <a href="https://github.com/aadeshrao123/openheart">https://github.com/aadeshrao123/openheart</a>.</p>
+<p>For anything in this policy, including a request about your data, write to
+<a href="mailto:support@openheartapp.org">support@openheartapp.org</a>. A person reads every message.</p>
+<p>If you are in the UK or EU, this is where the data controller&#39;s registered
+name and address go. That is one of the items still to be filled in.</p>
+<h2>What we collect, and why</h2>
+<h3>You give us</h3>
+<table>
+<thead>
+<tr>
+<th align="left">What</th>
+<th align="left">Why</th>
+<th align="left">Can you avoid it</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">Email address</td>
+<td align="left">To sign you in. There is no password.</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left">Display name</td>
+<td align="left">Shown on your profile</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left">Date of birth</td>
+<td align="left">The 18+ check. Set once and never editable.</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left">Gender, who you are looking for</td>
+<td align="left">To show you relevant people, and them you</td>
+<td align="left">No</td>
+</tr>
+<tr>
+<td align="left">Bio</td>
+<td align="left">Your profile</td>
+<td align="left">Yes, leave it blank</td>
+</tr>
+<tr>
+<td align="left">Photos</td>
+<td align="left">Your profile</td>
+<td align="left">No, a profile needs one photo</td>
+</tr>
+<tr>
+<td align="left">A verification selfie</td>
+<td align="left">To prove there is a real person behind the profile</td>
+<td align="left">No, but see below</td>
+</tr>
+<tr>
+<td align="left">Distance, age range</td>
+<td align="left">Your search preferences</td>
+<td align="left">Defaults are used if you do not set them</td>
+</tr>
+<tr>
+<td align="left">Messages and reactions</td>
+<td align="left">To deliver them</td>
+<td align="left">Yes, by not sending any</td>
+</tr>
+<tr>
+<td align="left">Reports you file</td>
+<td align="left">So a moderator can act</td>
+<td align="left">Yes, by not filing one</td>
+</tr>
+</tbody></table>
+<h3>Your device gives us</h3>
+<table>
+<thead>
+<tr>
+<th align="left">What</th>
+<th align="left">Why</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">Approximate location</td>
+<td align="left">To show you people nearby</td>
+</tr>
+<tr>
+<td align="left">Time you were last active</td>
+<td align="left">To order results, so you see people who are actually around</td>
+</tr>
+<tr>
+<td align="left">App version</td>
+<td align="left">To tell you when a version is too old to be safe to run</td>
+</tr>
+<tr>
+<td align="left">Push notification token</td>
+<td align="left">To tell you about a match or a message, once notifications ship</td>
+</tr>
+</tbody></table>
+<h3>We do not collect</h3>
+<p>No advertising identifiers. No tracking across other apps or websites. No
+analytics SDK. No contacts, no calendar, no microphone, no health data. The app
+declares no tracking in its App Store privacy manifest, and that is true because
+there is nothing in the codebase that could do it.</p>
+<h2>Location, specifically</h2>
+<p>This is the part most dating apps get wrong, so it is worth being exact.</p>
+<p>Your coordinates are rounded to roughly one kilometre by a database trigger
+before they are written. The precise value never lands in the table, which means
+it can never leak from it, including to us.</p>
+<p>Other users are never sent your coordinates at all. They are sent a distance,
+and that distance is bucketed to five kilometres before it leaves the server.
+Precise distances measured from a few different points can be combined to locate
+a home address. That is a documented, real attack on dating apps, not a
+hypothetical one, and the bucketing exists to defeat it.</p>
+<h2>Photos, and how they become visible</h2>
+<p>A photo you upload is not visible to anyone until it has been checked.</p>
+<ol>
+<li>Your app asks our server for a one-time upload link.</li>
+<li>The photo lands in a private area that no user can read.</li>
+<li>It is scanned, twice. Once by Amazon Rekognition for adult content, and once
+by the Canadian Centre for Child Protection&#39;s Arachnid Shield service, which
+compares it against a database of known child sexual abuse material.</li>
+<li>Only if both pass does it become visible.</li>
+</ol>
+<p>There is no &quot;upload now, check later&quot;. A photo that fails is queued for deletion
+from storage.</p>
+<h2>Photo verification, and your face</h2>
+<p>To enter anyone&#39;s deck you take one selfie in a pose we choose at the moment you
+start. We ask you to agree to this before the camera opens.</p>
+<p>What happens to it:</p>
+<ul>
+<li>It is compared against the photos already on your profile, using Amazon
+Rekognition, to check they are the same person.</li>
+<li>Amazon documents these operations as stateless: they do not store the image
+and do not add you to any collection.</li>
+<li>We store the result, which is a pass, a fail, or a reason code such as &quot;too
+dark&quot;. We do not store a similarity score, a face template, or any other
+measurement of your face.</li>
+<li>The selfie itself is queued for deletion as soon as the result is final.</li>
+<li>If the automated check is not confident, one of our moderators looks at the
+selfie and your profile photos, and the selfie is deleted once they decide. We
+do this rather than rejecting you automatically because face comparison is
+measurably less accurate on darker skin, and an automatic no would lock real
+people out unevenly.</li>
+</ul>
+<p>Your selfie never appears on your profile and nobody you match with ever sees
+it.</p>
+<p><strong>If you are in the EU or UK</strong>, this processing is biometric data used to
+identify you, and we rely on your explicit consent, which is the agreement
+screen shown before the camera opens. You can withdraw it by deleting your
+account. <strong>If you are in Illinois, Texas or Washington</strong>, state biometric law
+applies and the required written-consent and retention-schedule wording is one
+of the open items below.</p>
+<h2>Who else touches your data</h2>
+<p>These are processors. None of them is allowed to use your data for their own
+purposes, and none of them is paid for your data.</p>
+<table>
+<thead>
+<tr>
+<th align="left">Who</th>
+<th align="left">What they handle</th>
+<th align="left">Where</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">Supabase</td>
+<td align="left">Database, sign-in, realtime messaging</td>
+<td align="left">To be confirmed at launch</td>
+</tr>
+<tr>
+<td align="left">Cloudflare</td>
+<td align="left">Photo storage and delivery (R2 and Images)</td>
+<td align="left">Western Europe</td>
+</tr>
+<tr>
+<td align="left">Amazon Web Services</td>
+<td align="left">Adult-content scan and the face comparison, via Rekognition</td>
+<td align="left">ap-south-1</td>
+</tr>
+<tr>
+<td align="left">Canadian Centre for Child Protection</td>
+<td align="left">Abuse-material matching, via Arachnid Shield</td>
+<td align="left">Canada</td>
+</tr>
+<tr>
+<td align="left">Expo</td>
+<td align="left">Delivering push notifications, once they ship</td>
+<td align="left">United States</td>
+</tr>
+</tbody></table>
+<p>Photos leave the EU for the two scans and for the Cloudflare origin. The
+transfer mechanism is an open item below.</p>
+<p>We do not use an analytics provider. If we ever add error reporting, it will be
+listed here before it is switched on.</p>
+<h2>How long we keep things</h2>
+<table>
+<thead>
+<tr>
+<th align="left">What</th>
+<th align="left">How long</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">Your profile, while your account is open</td>
+<td align="left">Until you delete it</td>
+</tr>
+<tr>
+<td align="left">A verification selfie</td>
+<td align="left">Until the check finishes, then queued for deletion</td>
+</tr>
+<tr>
+<td align="left">A rejected photo</td>
+<td align="left">Queued for deletion immediately</td>
+</tr>
+<tr>
+<td align="left">Messages</td>
+<td align="left">While the conversation exists. See below.</td>
+</tr>
+<tr>
+<td align="left">Swipes</td>
+<td align="left">While your account is open</td>
+</tr>
+<tr>
+<td align="left">A report you file, or one about you</td>
+<td align="left">Kept after account deletion, see below</td>
+</tr>
+<tr>
+<td align="left">Suspension records</td>
+<td align="left">Kept after account deletion</td>
+</tr>
+<tr>
+<td align="left">Push notification tokens</td>
+<td align="left">Until you sign out or delete your account</td>
+</tr>
+</tbody></table>
+<h2>Deleting your account</h2>
+<p>Settings, then Delete account. It is two taps and a confirmation, it is real,
+and it happens immediately.</p>
+<p>What it does:</p>
+<ul>
+<li>Erases your name, bio, gender, who you are looking for, your location and your
+date of birth.</li>
+<li>Queues every photo for deletion from storage.</li>
+<li>Ends every open conversation.</li>
+<li>Deletes your sign-in record, so the email address is gone.</li>
+<li>Removes your devices, so no notification can reach you afterwards.</li>
+</ul>
+<p>What it deliberately does not do, and why:</p>
+<ul>
+<li><strong>The row is kept, blank, with only an identifier.</strong> A hard delete would take
+every report about you with it, and deleting-then-re-registering is the
+standard way an abusive user erases their record.</li>
+<li><strong>Messages you sent are kept.</strong> They are the other person&#39;s conversation as
+much as yours, and they can remove their own copy whenever they want. Neither
+of you can erase the other&#39;s.</li>
+<li><strong>A suspension is kept.</strong> Leaving does not clear a moderation record.</li>
+</ul>
+<p>If you believe the retained record should also be erased, write to us and say
+so. We will weigh your request against the safety reason for keeping it, which
+is what the law requires us to do rather than refusing outright.</p>
+<h2>Blocking and reporting</h2>
+<p>If you block someone, they are not told. Your conversation closes on their side
+in a way that is indistinguishable from an ordinary unmatch, and they keep the
+history so that losing it is not itself a signal.</p>
+<p>When you report someone, you choose whether to attach a snapshot of the messages
+you are reporting. That snapshot is the only conversation content a moderator
+can ever see. Moderators have no general access to anybody&#39;s messages.</p>
+<h2>Your rights</h2>
+<p>If you are in the UK or EU, you have the right to access your data, correct it,
+delete it, take it elsewhere, object to processing based on legitimate
+interests, and complain to your data protection authority. If you are in
+California, you have the right to know, delete, correct, and not be
+discriminated against for asking. We do not sell or share personal information
+as those terms are defined by the CCPA.</p>
+<p>Write to <a href="mailto:support@openheartapp.org">support@openheartapp.org</a>. We will answer within 30 days.</p>
+<p>The legal grounds we rely on are: performing our contract with you, for running
+the service; your consent, for location, camera and notifications; our
+legitimate interest in keeping people safe, for moderation, blocking, reports
+and abuse prevention; and legal obligation, for reporting child sexual abuse
+material.</p>
+<h2>Children</h2>
+<p>The app is 18+. The age gate runs before a profile is created and the date of
+birth cannot be edited afterwards. If you believe a minor is using the app,
+report the profile in the app or write to <a href="mailto:support@openheartapp.org">support@openheartapp.org</a> and we will act
+on it as a priority.</p>
+<h2>Changes</h2>
+<p>We will post any change here and, if it is significant, in the app. The history
+of this document is in the git repository, so you can see exactly what changed
+and when.</p>
+<hr>
+
+<footer>
+  <a href="/">OpenHeart</a> &middot;
+  <a href="mailto:support@openheartapp.org">support@openheartapp.org</a> &middot;
+  <a href="https://github.com/aadeshrao123/openheart">Source</a>
+</footer>
+</main>
+</body>
+</html>
