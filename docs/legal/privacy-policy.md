@@ -236,10 +236,23 @@ labelled is a task and one presented as fact is a liability.
 
 1. **Controller identity.** A registered name and address for the data
    controller, and whether an EU or UK representative is required.
-2. **The CSAM retention conflict.** The REPORT Act amended 18 USC 2258A(h) to
-   require a year's retention of reported material. That conflicts with deleting
-   a rejected photo immediately. A lawyer has to resolve which wins, and this
-   document has to say so honestly once they have.
+2. **The CSAM retention conflict, now the most urgent item here.** The scan is
+   live and both verdicts have been exercised against the real service, so the
+   app can now detect this material rather than merely being built to. The
+   moment it does so on a real user's upload, a legal duty may attach.
+
+   The Canadian Centre confirmed by email that Shield itself imposes no
+   retention or reporting rules on a provider. So the duty, where one exists,
+   comes from law rather than from them, and it differs by jurisdiction.
+
+   The conflict is concrete: the REPORT Act amended 18 USC 2258A(h) to require a
+   year's retention of reported material, and this pipeline currently queues a
+   rejected photo for deletion in the same call that rejects it, then purges it
+   from storage. That was verified end to end. If a preservation duty applies,
+   the current behaviour destroys the thing the law says to keep.
+
+   Nothing about that is a design decision to make here. A lawyer decides, and
+   this document says what they decided.
 3. **Biometric consent wording.** Illinois BIPA and the Texas and Washington
    equivalents require specific written consent and a published retention and
    destruction schedule. The app already asks for consent and already destroys

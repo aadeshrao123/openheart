@@ -263,10 +263,30 @@ Verified end to end:
 - the 0011 delete trigger: dropping photo rows queued their objects, including
   one whose object was never uploaded, and the purge counted that 404 as done
 
-Nothing ever reached `approved`, which is the point.
+### Both verdicts, against the live Shield API
 
-Still unverified: every path through an actual moderation verdict, since there
-is no provider to produce one.
+The line that used to sit here said no path through an actual moderation
+verdict had been exercised, because no provider existed to produce one. The
+credentials arrived and both halves now have.
+
+The Canadian Centre supplied an innocuous image that returns a `csam`
+classification, because their `test` classification is not in production yet.
+Driven through `request-photo-upload`, a real `PUT` into the bucket, and
+`moderate-photo`:
+
+- an ordinary image classified `no-known-match` and reached **`approved`**,
+  which nothing in this project had ever done before
+- their fixture classified `csam`, the photo went to `rejected`, and its key was
+  queued in `deleted_media` by the same call
+- `purge-deleted-media` then returned `{"purged":1,"failed":0,"remaining":0}`
+  and the object left the bucket
+
+`scripts/check-shield.mjs` checks the credentials on their own, without going
+near the database or the bucket, and prints the classification rather than the
+credential.
+
+**Do not commit their fixture.** It is innocuous and it classifies as CSAM, so
+storing it in a public repository is a problem regardless of what it depicts.
 
 Three defects surfaced on that first run:
 
