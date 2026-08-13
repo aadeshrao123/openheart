@@ -406,7 +406,18 @@
   "filters": {
     "title": "Who you see",
     "body": "Only people inside these limits appear in your deck, and you only appear in theirs.",
-    "apply": "Apply"
+    "apply": "Apply",
+    "section_reach": "How far and how old",
+    "section_looking": "What they are looking for",
+    "section_height": "Height",
+    "section_interests": "Shared interests",
+    "section_profile": "Their profile",
+    "optional": "Leave empty to see everyone.",
+    "height_range": "Between",
+    "height_min": "Shortest",
+    "height_max": "Tallest",
+    "has_bio": "Only people who wrote a bio",
+    "clear": "Clear the optional filters"
   },
   "moderation": {
     "title": "Moderation",

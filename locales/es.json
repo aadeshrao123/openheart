@@ -410,7 +410,18 @@
   "filters": {
     "title": "A quién ves",
     "body": "Solo aparecen entre tus sugerencias las personas dentro de estos límites, y tú solo apareces entre las suyas.",
-    "apply": "Aplicar"
+    "apply": "Aplicar",
+    "section_reach": "Distancia y edad",
+    "section_looking": "Qué buscan",
+    "section_height": "Altura",
+    "section_interests": "Intereses en común",
+    "section_profile": "Su perfil",
+    "optional": "Déjalo vacío para ver a todo el mundo.",
+    "height_range": "Entre",
+    "height_min": "Más baja",
+    "height_max": "Más alta",
+    "has_bio": "Solo quien escribió una descripción",
+    "clear": "Quitar los filtros opcionales"
   },
   "moderation": {
     "title": "Moderación",

@@ -402,7 +402,18 @@
   "filters": {
     "title": "Siapa yang kamu lihat",
     "body": "Hanya orang di dalam batas ini yang muncul di dekmu, dan kamu hanya muncul di dek mereka.",
-    "apply": "Terapkan"
+    "apply": "Terapkan",
+    "section_reach": "Jarak dan usia",
+    "section_looking": "Yang mereka cari",
+    "section_height": "Tinggi badan",
+    "section_interests": "Minat yang sama",
+    "section_profile": "Profil mereka",
+    "optional": "Kosongkan untuk melihat semua orang.",
+    "height_range": "Antara",
+    "height_min": "Terpendek",
+    "height_max": "Tertinggi",
+    "has_bio": "Hanya yang menulis deskripsi",
+    "clear": "Hapus filter opsional"
   },
   "moderation": {
     "title": "Moderasi",

@@ -42,7 +42,20 @@ export type ProfileDetail = Partial<
 // Exactly the columns it allows a client to update. birthdate is absent because
 // an age gate you can edit past is not a gate; a trigger rejects it too, so this
 // only decides whether the mistake is caught by tsc or by Postgres.
-export type ProfileEdit = Partial<Omit<NewProfile, 'birthdate'>> & ProfileDetail;
+// What the owner wants to see, from 0022. Not readable off the table by
+// anyone, including them: my_profile() is the only way back to these.
+export type ProfileFilters = Partial<
+  Pick<
+    ProfileRow,
+    | 'filter_intents'
+    | 'filter_interests'
+    | 'filter_height_min_cm'
+    | 'filter_height_max_cm'
+    | 'filter_has_bio'
+  >
+>;
+
+export type ProfileEdit = Partial<Omit<NewProfile, 'birthdate'>> & ProfileDetail & ProfileFilters;
 
 // 0016 took birthdate, location and the suspension columns out of the client's
 // read grant, and a column grant applies to your own row too: `select *` on

@@ -410,7 +410,18 @@
   "filters": {
     "title": "Qui tu vois",
     "body": "Seules les personnes correspondant à ces critères apparaissent dans tes suggestions, et tu n'apparais que dans les leurs.",
-    "apply": "Appliquer"
+    "apply": "Appliquer",
+    "section_reach": "Distance et âge",
+    "section_looking": "Ce qu'ils cherchent",
+    "section_height": "Taille",
+    "section_interests": "Centres d'intérêt communs",
+    "section_profile": "Leur profil",
+    "optional": "Laissez vide pour voir tout le monde.",
+    "height_range": "Entre",
+    "height_min": "Plus petite",
+    "height_max": "Plus grande",
+    "has_bio": "Seulement les profils avec une description",
+    "clear": "Effacer les filtres facultatifs"
   },
   "moderation": {
     "title": "Modération",

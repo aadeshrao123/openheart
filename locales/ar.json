@@ -422,7 +422,18 @@
   "filters": {
     "title": "من يظهر لك",
     "body": "لا يظهر أمامك إلا من ينطبق عليهم هذا النطاق، ولا يظهر ملفك إلا أمامهم.",
-    "apply": "تطبيق"
+    "apply": "تطبيق",
+    "section_reach": "المسافة والعمر",
+    "section_looking": "عما يبحثون",
+    "section_height": "الطول",
+    "section_interests": "اهتمامات مشتركة",
+    "section_profile": "ملفهم",
+    "optional": "اتركه فارغا لرؤية الجميع.",
+    "height_range": "بين",
+    "height_min": "الأقصر",
+    "height_max": "الأطول",
+    "has_bio": "فقط من كتب نبذة عنه",
+    "clear": "مسح المرشحات الاختيارية"
   },
   "moderation": {
     "title": "الإشراف",

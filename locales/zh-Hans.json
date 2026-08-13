@@ -402,7 +402,18 @@
   "filters": {
     "title": "你会看到谁",
     "body": "只有符合这些条件的人会出现在你的推荐里，你也只会出现在这些人的推荐里。",
-    "apply": "应用"
+    "apply": "应用",
+    "section_reach": "距离和年龄",
+    "section_looking": "他们在找什么",
+    "section_height": "身高",
+    "section_interests": "共同兴趣",
+    "section_profile": "他们的资料",
+    "optional": "留空即可看到所有人。",
+    "height_range": "介于",
+    "height_min": "最矮",
+    "height_max": "最高",
+    "has_bio": "只看写了简介的人",
+    "clear": "清除可选筛选"
   },
   "moderation": {
     "title": "审核",

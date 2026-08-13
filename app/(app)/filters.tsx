@@ -3,15 +3,37 @@ import { View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { Button, Screen, Skeleton, Text } from '@/components/ui';
+import {
+  Button,
+  Chip,
+  MultiSelect,
+  Screen,
+  Section,
+  Skeleton,
+  Slider,
+  Text,
+} from '@/components/ui';
 import { AgePreference, DistancePreference } from '@/components/preference-fields';
 import { useMyProfile, useUpdateProfile } from '@/hooks/use-my-profile';
 import { discoveryKey } from '@/hooks/use-discovery';
+import { formatHeight } from '@/lib/format';
+import {
+  HEIGHT_MAX_CM,
+  HEIGHT_MIN_CM,
+  INTERESTS,
+  INTERESTS_MAX,
+  RELATIONSHIP_INTENTS,
+} from '@/lib/profile-options';
 
 type Filters = {
   maxDistanceKm: number;
   ageMin: number;
   ageMax: number;
+  intents: string[];
+  interests: string[];
+  heightMin: number | null;
+  heightMax: number | null;
+  hasBio: boolean;
 };
 
 // Separate from edit-profile on purpose. These are the only fields that change
@@ -29,9 +51,6 @@ export default function FiltersScreen() {
   // and save over it, which is worse than the blank screen it guards against.
   const [form, setForm] = useState<Filters | null>(null);
 
-  // The layout gate resolves the profile before this renders, so no path gets
-  // here without one. It loads rather than returning null anyway: if that ever
-  // stops holding, a blank screen is the one failure a user cannot act on.
   if (!profile) {
     return (
       <Screen scroll className="gap-8 py-8">
@@ -54,6 +73,11 @@ export default function FiltersScreen() {
     maxDistanceKm: profile.max_distance_km,
     ageMin: profile.age_min,
     ageMax: profile.age_max,
+    intents: profile.filter_intents ?? [],
+    interests: profile.filter_interests ?? [],
+    heightMin: profile.filter_height_min_cm,
+    heightMax: profile.filter_height_max_cm,
+    hasBio: profile.filter_has_bio,
   };
 
   const patch = (next: Partial<Filters>) => setForm({ ...current, ...next });
@@ -69,10 +93,17 @@ export default function FiltersScreen() {
     router.replace('/deck');
   };
 
-  const unchanged =
-    current.maxDistanceKm === profile.max_distance_km &&
-    current.ageMin === profile.age_min &&
-    current.ageMax === profile.age_max;
+  const list = (values: string[]) => (values.length > 0 ? values : null);
+
+  const clearAll = () =>
+    patch({ intents: [], interests: [], heightMin: null, heightMax: null, hasBio: false });
+
+  const narrowed =
+    current.intents.length > 0 ||
+    current.interests.length > 0 ||
+    current.heightMin !== null ||
+    current.heightMax !== null ||
+    current.hasBio;
 
   const save = () => {
     updateProfile.mutate(
@@ -80,6 +111,11 @@ export default function FiltersScreen() {
         max_distance_km: current.maxDistanceKm,
         age_min: current.ageMin,
         age_max: current.ageMax,
+        filter_intents: list(current.intents),
+        filter_interests: list(current.interests),
+        filter_height_min_cm: current.heightMin,
+        filter_height_max_cm: current.heightMax,
+        filter_has_bio: current.hasBio,
       },
       {
         onSuccess: () => {
@@ -94,30 +130,99 @@ export default function FiltersScreen() {
   };
 
   return (
-    <Screen scroll className="gap-8 py-8">
+    <Screen scroll className="gap-10 py-8">
       <View className="gap-3">
         <Text variant="title">{t('filters.title')}</Text>
         <Text tone="muted">{t('filters.body')}</Text>
       </View>
 
-      <DistancePreference
-        value={current.maxDistanceKm}
-        onChange={(maxDistanceKm) => patch({ maxDistanceKm })}
-      />
+      <Section title={t('filters.section_reach')}>
+        <DistancePreference
+          value={current.maxDistanceKm}
+          onChange={(maxDistanceKm) => patch({ maxDistanceKm })}
+        />
 
-      <AgePreference
-        min={current.ageMin}
-        max={current.ageMax}
-        onChange={(next) => patch(next)}
-      />
+        <AgePreference min={current.ageMin} max={current.ageMax} onChange={(next) => patch(next)} />
+      </Section>
+
+      <Section title={t('filters.section_looking')} description={t('filters.optional')}>
+        <MultiSelect
+          label={t('profile.relationship_intent')}
+          values={current.intents}
+          onChange={(intents) => patch({ intents })}
+          options={RELATIONSHIP_INTENTS.map((value) => ({
+            value,
+            label: t(`profile.intent_${value}`),
+          }))}
+        />
+      </Section>
+
+      <Section title={t('filters.section_height')} description={t('filters.optional')}>
+        <View className="flex-row items-center justify-between">
+          <Text variant="overline" tone="subtle">
+            {t('filters.height_range')}
+          </Text>
+
+          <Text variant="label" font="strong">
+            {current.heightMin === null && current.heightMax === null
+              ? t('profile.unset')
+              : t('profile.age_range', {
+                  min: formatHeight(current.heightMin ?? HEIGHT_MIN_CM),
+                  max: formatHeight(current.heightMax ?? HEIGHT_MAX_CM),
+                })}
+          </Text>
+        </View>
+
+        <Slider
+          label={t('filters.height_min')}
+          value={current.heightMin ?? HEIGHT_MIN_CM}
+          min={HEIGHT_MIN_CM}
+          max={HEIGHT_MAX_CM}
+          onChange={(heightMin) =>
+            patch({ heightMin, heightMax: Math.max(heightMin, current.heightMax ?? HEIGHT_MAX_CM) })
+          }
+        />
+
+        <Slider
+          label={t('filters.height_max')}
+          value={current.heightMax ?? HEIGHT_MAX_CM}
+          min={HEIGHT_MIN_CM}
+          max={HEIGHT_MAX_CM}
+          onChange={(heightMax) =>
+            patch({ heightMax, heightMin: Math.min(heightMax, current.heightMin ?? HEIGHT_MIN_CM) })
+          }
+        />
+      </Section>
+
+      <Section title={t('filters.section_interests')} description={t('filters.optional')}>
+        <MultiSelect
+          label={t('profile.interests')}
+          values={current.interests}
+          max={INTERESTS_MAX}
+          onChange={(interests) => patch({ interests })}
+          options={INTERESTS.map((value) => ({
+            value,
+            label: t(`profile.interest_${value}`),
+          }))}
+        />
+      </Section>
+
+      <Section title={t('filters.section_profile')} description={t('filters.optional')}>
+        <Chip
+          mode="checkbox"
+          label={t('filters.has_bio')}
+          selected={current.hasBio}
+          onPress={() => patch({ hasBio: !current.hasBio })}
+          className="self-start"
+        />
+      </Section>
 
       <View className="gap-3">
-        <Button
-          label={t('filters.apply')}
-          loading={updateProfile.isPending}
-          disabled={unchanged}
-          onPress={save}
-        />
+        <Button label={t('filters.apply')} loading={updateProfile.isPending} onPress={save} />
+
+        {narrowed ? (
+          <Button variant="secondary" label={t('filters.clear')} onPress={clearAll} />
+        ) : null}
 
         <Button variant="ghost" label={t('common.cancel')} onPress={leave} />
       </View>
