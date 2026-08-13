@@ -9,3 +9,10 @@
 // so it is left alone rather than merged in here.
 
 /// <reference types="expo/types" />
+
+// Metro resolves an asset import to its numeric registry id, which is what
+// expo-audio accepts as a source. Nothing in expo/types declares one.
+declare module '*.wav' {
+  const assetId: number;
+  export default assetId;
+}

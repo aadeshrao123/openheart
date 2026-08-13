@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { freshChannel } from '@/lib/realtime';
+import { playSound } from '@/lib/sounds';
 import { useSession } from '@/hooks/use-session';
 import { threadsKey } from '@/hooks/use-threads';
 import {
@@ -10,7 +11,7 @@ import {
   RATE_LIMITED,
   RATE_LIMIT_SQLSTATE,
 } from '@/lib/db-errors';
-import type { RealtimeChannel } from '@supabase/supabase-js';
+import type { RealtimeChannel, RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 import type { Database } from '@/lib/database.types';
 import type { ReactionCode } from '@/lib/reactions';
 
@@ -49,11 +50,25 @@ export function useMessages(matchId: string) {
 
 export function useChatRealtime(matchId: string) {
   const queryClient = useQueryClient();
+  const { data: session } = useSession();
+  const userId = session?.user.id;
 
   useEffect(() => {
     const refresh = () => {
       void queryClient.invalidateQueries({ queryKey: messagesKey(matchId) });
       void queryClient.invalidateQueries({ queryKey: threadsKey });
+    };
+
+    // Receipts and unsends are updates, and the user's own message already made
+    // its sound on send.
+    const refreshMessages = (payload: RealtimePostgresChangesPayload<MessageRow>) => {
+      const arrived = payload.eventType === 'INSERT' && payload.new.sender_id !== userId;
+
+      if (arrived) {
+        playSound('received');
+      }
+
+      refresh();
     };
 
     let cancelled = false;
@@ -71,7 +86,7 @@ export function useChatRealtime(matchId: string) {
         .on(
           'postgres_changes',
           { event: '*', schema: 'public', table: 'messages', filter: `match_id=eq.${matchId}` },
-          refresh,
+          refreshMessages,
         )
         // Reactions carry no match_id, so there is nothing to filter on and
         // RLS is the filter instead: only reactions inside the caller's own
@@ -91,7 +106,7 @@ export function useChatRealtime(matchId: string) {
         void supabase.removeChannel(channel);
       }
     };
-  }, [matchId, queryClient]);
+  }, [matchId, queryClient, userId]);
 }
 
 export function useSendMessage(matchId: string) {
@@ -119,6 +134,10 @@ export function useSendMessage(matchId: string) {
     },
 
     onMutate: async (body) => {
+      // With the optimistic append, so the sound lands with the bubble. Same
+      // reasoning as the swipe haptic: feedback belongs to the action.
+      playSound('sent');
+
       await queryClient.cancelQueries({ queryKey: messagesKey(matchId) });
 
       const previous = queryClient.getQueryData<ChatMessage[]>(messagesKey(matchId));
