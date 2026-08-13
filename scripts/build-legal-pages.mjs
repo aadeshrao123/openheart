@@ -312,7 +312,11 @@ for (const page of PAGES) {
 <meta property="og:site_name" content="${APP_NAME}">
 <meta property="og:title" content="${page.title} - ${APP_NAME}">
 <meta property="og:description" content="${page.summary}">
-<meta name="twitter:card" content="summary">
+<meta property="og:url" content="${SITE}${href(page.out)}">
+<meta property="og:image" content="${SITE}/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <style>${STYLE}</style>
 </head>
 <body>

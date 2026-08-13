@@ -98,7 +98,7 @@
       "name": "OpenHeart",
       "shortName": "OpenHeart",
       "description": "Dating that is actually free. No paywalls, no boosts, no charge to be seen.",
-      "themeColor": "#FCFAF7",
+      "themeColor": "#FDFCFC",
       "backgroundColor": "#FCFAF7",
       "lang": "en",
       "favicon": "./assets/favicon.png"

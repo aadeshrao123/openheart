@@ -27,11 +27,15 @@ const { name, description, themeColor, lang } = appJson.expo.web;
 // sharing, and every other exported route is an empty application shell that
 // robots.txt already asks crawlers to skip.
 //
-// og:image is deliberately absent. A 1200x630 card does not exist yet, and
-// pointing this at the favicon produces a stretched 48px square in every
-// preview, which looks worse than the no-image layout the platforms fall back
-// to. It is a real gap and it is listed as one.
+// og:image has to be absolute. A crawler resolves it against nothing, so a
+// relative path is simply dropped and the card silently disappears.
+//
+// JPEG rather than WebP, which would be a third smaller. The card's whole job
+// is that a shared link always shows something, and WebP support across
+// crawlers is uneven in a way that fails blank rather than degrading.
 const SITE_URL = 'https://openheartapp.org';
+const OG_IMAGE = `${SITE_URL}/og.jpg`;
+const OG_ALT = 'A profile card in the OpenHeart app, showing somebody a few kilometres away.';
 
 // expo-font registers faces from JavaScript, so the pre-rendered page drew in
 // Times until the bundle ran. Declaring them here makes the first paint correct
@@ -87,7 +91,13 @@ export default function Root({ children }: PropsWithChildren) {
         <meta property="og:title" content={name} />
         <meta property="og:description" content={description} />
         <meta property="og:url" content={SITE_URL} />
-        <meta name="twitter:card" content="summary" />
+        <meta property="og:image" content={OG_IMAGE} />
+        <meta property="og:image:type" content="image/jpeg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content={OG_ALT} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image:alt" content={OG_ALT} />
 
         {/* The upright cut draws nearly every character on the page. */}
         <link

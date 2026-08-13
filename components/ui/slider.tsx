@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { PanResponder, View, type LayoutChangeEvent } from 'react-native';
 import { cn } from '@/lib/cn';
 
@@ -22,24 +22,26 @@ function quantise(raw: number, min: number, max: number, step: number): number {
 
 // PanResponder rather than a slider package: every one of them takes its
 // colours as JavaScript props, which would put a colour outside global.css.
+//
+// Every child is pointerEvents="none", including the thumbs. locationX is
+// measured against whichever view the touch landed on, and on native that is
+// the deepest one under the finger, so grabbing a thumb reported a position
+// inside the 28px thumb rather than along the track. Web resolves it against
+// the responder and was right by accident.
 export function Slider({ value, min, max, step = 1, onChange, label, className }: SliderProps) {
   const [width, setWidth] = useState(0);
 
   const onLayout = (event: LayoutChangeEvent) => setWidth(event.nativeEvent.layout.width);
 
-  // Rebuilt when the geometry or the handler changes. A responder held in a ref
-  // would close over the first width it ever saw, which is zero.
-  const responder = useMemo(
-    () =>
-      PanResponder.create({
-        onStartShouldSetPanResponder: () => true,
-        onMoveShouldSetPanResponder: () => true,
-        onPanResponderGrant: (event) => onChange(at(event.nativeEvent.locationX)),
-        onPanResponderMove: (event) => onChange(at(event.nativeEvent.locationX)),
-      }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [width, min, max, step, onChange],
-  );
+  // Built fresh every render rather than memoised or held in a ref, so the
+  // handlers always see the current width. A ref would close over the first
+  // width it ever saw, which is zero.
+  const responder = PanResponder.create({
+    onStartShouldSetPanResponder: () => true,
+    onMoveShouldSetPanResponder: () => true,
+    onPanResponderGrant: (event) => onChange(at(event.nativeEvent.locationX)),
+    onPanResponderMove: (event) => onChange(at(event.nativeEvent.locationX)),
+  });
 
   function at(x: number): number {
     const usable = Math.max(1, width - THUMB);
@@ -68,19 +70,21 @@ export function Slider({ value, min, max, step = 1, onChange, label, className }
       className={cn('h-11 justify-center', className)}
       {...responder.panHandlers}
     >
-      <View className="h-1.5 w-full rounded-full bg-surface-raised" />
+      <View pointerEvents="none" className="h-1.5 w-full rounded-full bg-surface-raised" />
 
       <View
+        pointerEvents="none"
         className="absolute h-1.5 rounded-full bg-brand"
         style={{ width: Math.max(THUMB / 2, offset + THUMB / 2) }}
       />
 
       <View
+        pointerEvents="none"
         className={cn(
           'absolute h-7 w-7 rounded-full border-2 border-brand bg-bg',
           'shadow-sm shadow-shadow/20',
         )}
-        style={{ transform: [{ translateX: offset }] }}
+        style={{ start: offset }}
       />
     </View>
   );
@@ -121,29 +125,24 @@ export function RangeSlider({
   const span = Math.max(0, width - THUMB);
   const place = (value: number) => (max === min ? 0 : ((value - min) / (max - min)) * span);
 
-  const responder = useMemo(
-    () =>
-      PanResponder.create({
-        onStartShouldSetPanResponder: () => true,
-        onMoveShouldSetPanResponder: () => true,
+  const responder = PanResponder.create({
+    onStartShouldSetPanResponder: () => true,
+    onMoveShouldSetPanResponder: () => true,
 
-        // Whichever thumb is nearer to the touch, decided once on grant. Picking
-        // it again on every move makes the thumbs swap under the finger when
-        // they are close together.
-        onPanResponderGrant: (event) => {
-          const x = event.nativeEvent.locationX;
-          const nearer = Math.abs(x - place(low)) <= Math.abs(x - place(high)) ? 'low' : 'high';
+    // Whichever thumb is nearer to the touch, decided once on grant. Picking it
+    // again on every move makes the thumbs swap under the finger when they are
+    // close together.
+    onPanResponderGrant: (event) => {
+      const x = event.nativeEvent.locationX;
+      const nearer = Math.abs(x - place(low)) <= Math.abs(x - place(high)) ? 'low' : 'high';
 
-          setDragging(nearer);
-          apply(nearer, x);
-        },
+      setDragging(nearer);
+      apply(nearer, x);
+    },
 
-        onPanResponderMove: (event) => apply(dragging, event.nativeEvent.locationX),
-        onPanResponderRelease: () => setDragging(null),
-      }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [width, min, max, step, low, high, dragging, onChange],
-  );
+    onPanResponderMove: (event) => apply(dragging, event.nativeEvent.locationX),
+    onPanResponderRelease: () => setDragging(null),
+  });
 
   function apply(thumb: 'low' | 'high' | null, x: number) {
     if (thumb === null) {
@@ -176,9 +175,10 @@ export function RangeSlider({
       className={cn('h-11 justify-center', className)}
       {...responder.panHandlers}
     >
-      <View className="h-1.5 w-full rounded-full bg-surface-raised" />
+      <View pointerEvents="none" className="h-1.5 w-full rounded-full bg-surface-raised" />
 
       <View
+        pointerEvents="none"
         className="absolute h-1.5 rounded-full bg-brand"
         style={{ start: place(low) + THUMB / 2, width: Math.max(0, place(high) - place(low)) }}
       />
@@ -186,6 +186,7 @@ export function RangeSlider({
       {(['low', 'high'] as const).map((thumb) => (
         <View
           key={thumb}
+          pointerEvents="none"
           accessibilityRole="adjustable"
           accessibilityLabel={thumb === 'low' ? lowLabel : highLabel}
           aria-valuenow={thumb === 'low' ? low : high}
@@ -199,7 +200,7 @@ export function RangeSlider({
             'absolute h-7 w-7 rounded-full border-2 border-brand bg-bg',
             'shadow-sm shadow-shadow/20',
           )}
-          style={{ transform: [{ translateX: place(thumb === 'low' ? low : high) }] }}
+          style={{ start: place(thumb === 'low' ? low : high) }}
         />
       ))}
     </View>
