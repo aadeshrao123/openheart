@@ -250,7 +250,8 @@
     "interest_travel": "سفر",
     "interest_volunteering": "رضاکارانہ کام",
     "interest_writing": "لکھنا",
-    "interest_yoga": "یوگا"
+    "interest_yoga": "یوگا",
+    "verified": "تصویر تصدیق شدہ"
   },
   "home": {
     "not_visible_title": "آپ ابھی کسی کے ڈیک میں نہیں ہیں",
@@ -295,7 +296,11 @@
     "distance_very_close": "بہت قریب",
     "open_profile": "{{name}} کی پروفائل کھولیں",
     "filters": "فلٹرز",
-    "rate_limited": "تھوڑی دیر میں بہت سے سوائپ ہو چکے ہیں۔ ذرا وقفہ لے کر واپس آئیں۔"
+    "rate_limited": "تھوڑی دیر میں بہت سے سوائپ ہو چکے ہیں۔ ذرا وقفہ لے کر واپس آئیں۔",
+    "undo": "واپس لیں",
+    "undo_nothing": "ابھی واپس لینے کو کچھ نہیں۔",
+    "undo_too_late": "یہ واپس لینے کے لیے بہت پہلے کی بات ہے۔",
+    "undo_matched": "وہاں میچ ہو گیا تھا، اس لیے اسے اکیلے آپ واپس نہیں لے سکتے۔"
   },
   "matches": {
     "title": "میچز",

@@ -250,7 +250,8 @@
     "interest_travel": "Jalan-jalan",
     "interest_volunteering": "Kerja sukarela",
     "interest_writing": "Menulis",
-    "interest_yoga": "Yoga"
+    "interest_yoga": "Yoga",
+    "verified": "Foto terverifikasi"
   },
   "home": {
     "not_visible_title": "Kamu belum ada di dek siapa pun",
@@ -294,7 +295,11 @@
     "distance_very_close": "Sangat dekat",
     "open_profile": "Buka profil {{name}}",
     "filters": "Filter",
-    "rate_limited": "Kamu sudah banyak menggeser kartu. Istirahat sebentar lalu kembali lagi."
+    "rate_limited": "Kamu sudah banyak menggeser kartu. Istirahat sebentar lalu kembali lagi.",
+    "undo": "Urungkan",
+    "undo_nothing": "Belum ada yang bisa diurungkan.",
+    "undo_too_late": "Itu sudah terlalu lama untuk diurungkan.",
+    "undo_matched": "Yang itu cocok, jadi bukan hanya milikmu untuk diurungkan."
   },
   "matches": {
     "title": "Kecocokan",

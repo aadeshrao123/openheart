@@ -250,7 +250,8 @@
     "interest_travel": "Viajar",
     "interest_volunteering": "Voluntariado",
     "interest_writing": "Escrever",
-    "interest_yoga": "Yoga"
+    "interest_yoga": "Yoga",
+    "verified": "Foto verificada"
   },
   "home": {
     "not_visible_title": "Você ainda não aparece nas sugestões de ninguém",
@@ -296,7 +297,11 @@
     "distance_very_close": "Muito perto",
     "open_profile": "Abrir o perfil de {{name}}",
     "filters": "Filtros",
-    "rate_limited": "Você deslizou bastante. Faça uma pausa curta e volte."
+    "rate_limited": "Você deslizou bastante. Faça uma pausa curta e volte.",
+    "undo": "Desfazer",
+    "undo_nothing": "Ainda não há nada para desfazer.",
+    "undo_too_late": "Isso foi há tempo demais para desfazer.",
+    "undo_matched": "Ali houve conexão, então não é só sua para desfazer."
   },
   "matches": {
     "title": "Conexões",

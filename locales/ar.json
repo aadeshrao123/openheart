@@ -250,7 +250,8 @@
     "interest_travel": "السفر",
     "interest_volunteering": "العمل التطوعي",
     "interest_writing": "الكتابة",
-    "interest_yoga": "اليوغا"
+    "interest_yoga": "اليوغا",
+    "verified": "صورة موثقة"
   },
   "home": {
     "not_visible_title": "ملفك لا يظهر لأحد بعد",
@@ -299,7 +300,11 @@
     "distance_very_close": "على مسافة قريبة جدًا",
     "open_profile": "فتح ملف {{name}} الشخصي",
     "filters": "التصفية",
-    "rate_limited": "لقد أكثرت من السحب. يرجى أخذ استراحة قصيرة ثم العودة."
+    "rate_limited": "لقد أكثرت من السحب. يرجى أخذ استراحة قصيرة ثم العودة.",
+    "undo": "تراجع",
+    "undo_nothing": "لا شيء للتراجع عنه بعد.",
+    "undo_too_late": "مضى وقت طويل على ذلك للتراجع عنه.",
+    "undo_matched": "ذلك أصبح توافقا، فليس التراجع عنه لك وحدك."
   },
   "matches": {
     "title": "المطابقات",

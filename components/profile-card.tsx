@@ -5,6 +5,7 @@ import { Text } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { formatDistance, formatHeight } from '@/lib/format';
 import { photoUrl } from '@/lib/photos';
+import { VerifiedBadge } from '@/components/verified-badge';
 import type { Candidate } from '@/hooks/use-discovery';
 
 export type ProfileCardProps = {
@@ -67,9 +68,13 @@ export function ProfileCard({ candidate, onPress, className }: ProfileCardProps)
       <View className="gap-2.5 p-5">
         {/* One key, not a name concatenated with an age: word order and
             punctuation between the two differ by language. */}
-        <Text variant="title" numberOfLines={1}>
-          {t('deck.name_age', { name: candidate.display_name, age: candidate.age })}
-        </Text>
+        <View className="flex-row items-center gap-2">
+          <Text variant="title" numberOfLines={1} className="flex-1">
+            {t('deck.name_age', { name: candidate.display_name, age: candidate.age })}
+          </Text>
+
+          <VerifiedBadge compact />
+        </View>
 
         {/* Bucket zero means nearer than the smallest 5km bucket, not zero. */}
         <Text variant="overline" tone="accent">

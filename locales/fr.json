@@ -250,7 +250,8 @@
     "interest_travel": "Voyages",
     "interest_volunteering": "Bénévolat",
     "interest_writing": "Écriture",
-    "interest_yoga": "Yoga"
+    "interest_yoga": "Yoga",
+    "verified": "Photo vérifiée"
   },
   "home": {
     "not_visible_title": "Personne ne te voit encore",
@@ -296,7 +297,11 @@
     "distance_very_close": "Tout près",
     "open_profile": "Ouvrir le profil de {{name}}",
     "filters": "Filtres",
-    "rate_limited": "Tu enchaînes les profils depuis un moment. Fais une petite pause et reviens."
+    "rate_limited": "Tu enchaînes les profils depuis un moment. Fais une petite pause et reviens.",
+    "undo": "Annuler",
+    "undo_nothing": "Rien à annuler pour l'instant.",
+    "undo_too_late": "C'était il y a trop longtemps pour annuler.",
+    "undo_matched": "Il y a eu un match, ce n'est donc pas à vous seul de l'annuler."
   },
   "matches": {
     "title": "Matchs",

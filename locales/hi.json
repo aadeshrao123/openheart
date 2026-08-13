@@ -250,7 +250,8 @@
     "interest_travel": "यात्रा",
     "interest_volunteering": "स्वयंसेवा",
     "interest_writing": "लिखना",
-    "interest_yoga": "योग"
+    "interest_yoga": "योग",
+    "verified": "फ़ोटो सत्यापित"
   },
   "home": {
     "not_visible_title": "अभी आपकी प्रोफ़ाइल किसी को नहीं दिख रही",
@@ -295,7 +296,11 @@
     "distance_very_close": "बहुत पास",
     "open_profile": "{{name}} की प्रोफ़ाइल खोलें",
     "filters": "फ़िल्टर",
-    "rate_limited": "काफ़ी स्वाइप हो चुके हैं। थोड़ा रुककर वापस आएं।"
+    "rate_limited": "काफ़ी स्वाइप हो चुके हैं। थोड़ा रुककर वापस आएं।",
+    "undo": "वापस लें",
+    "undo_nothing": "अभी वापस लेने को कुछ नहीं है।",
+    "undo_too_late": "यह वापस लेने के लिए बहुत पहले की बात है।",
+    "undo_matched": "वहाँ मैच हो गया था, इसलिए इसे अकेले आप वापस नहीं ले सकते।"
   },
   "matches": {
     "title": "मैच",

@@ -11,8 +11,11 @@ import {
   discoveryKey,
   RATE_LIMITED,
   REFILL_THRESHOLD,
+  UNDO_MATCHED,
+  UNDO_TOO_LATE,
   useDiscovery,
   useSwipe,
+  useUndoSwipe,
   type Candidate,
   type SwipeDirection,
 } from '@/hooks/use-discovery';
@@ -90,6 +93,7 @@ export default function DeckScreen() {
   const queryClient = useQueryClient();
   const { data, isPending, isError, isFetching, refetch } = useDiscovery();
   const swipe = useSwipe();
+  const undo = useUndoSwipe();
 
   const deckRef = useRef<SwipeDeckHandle>(null);
   const [celebrations, setCelebrations] = useState<Celebration[]>([]);
@@ -97,6 +101,27 @@ export default function DeckScreen() {
 
   const deck = data ?? [];
   const celebration: Celebration | null = celebrations[0] ?? null;
+
+  // The two refusals from 0023 are the interesting outcomes, and both are
+  // things the user did rather than errors, so each says what happened.
+  const undoLast = () => {
+    undo.mutate(undefined, {
+      onSuccess: (undone) => setNotice(undone === null ? t('deck.undo_nothing') : null),
+      onError: (error) => {
+        const code =
+          typeof error === 'object' && error !== null && 'code' in error
+            ? String((error as { code: unknown }).code)
+            : '';
+
+        if (code === UNDO_TOO_LATE) {
+          setNotice(t('deck.undo_too_late'));
+          return;
+        }
+
+        setNotice(code === UNDO_MATCHED ? t('deck.undo_matched') : t('common.error_generic'));
+      },
+    });
+  };
 
   const handleSwipe = (candidate: Candidate, direction: SwipeDirection) => {
     swipe.mutate(
@@ -182,7 +207,15 @@ export default function DeckScreen() {
           />
         ) : (
           <>
-            <View className="flex-row items-center justify-end">
+            <View className="flex-row items-center justify-between">
+              <Button
+                variant="ghost"
+                size="sm"
+                label={t('deck.undo')}
+                disabled={undo.isPending}
+                onPress={undoLast}
+              />
+
               <Button
                 variant="ghost"
                 size="sm"

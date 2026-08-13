@@ -9,6 +9,7 @@ import { photoUrl } from '@/lib/photos';
 import { useDiscovery } from '@/hooks/use-discovery';
 import { ProfileDetails } from '@/components/profile-details';
 import { SafetyActions } from '@/components/safety-actions';
+import { VerifiedBadge } from '@/components/verified-badge';
 
 // The photo, the name and distance under it, then the bio.
 function CandidateSkeleton() {
@@ -86,9 +87,13 @@ export default function CandidateScreen() {
       </View>
 
       <View className="gap-2">
-        <Text variant="title">
-          {t('deck.name_age', { name: candidate.display_name, age: candidate.age })}
-        </Text>
+        <View className="flex-row items-center gap-3">
+          <Text variant="title" className="flex-1">
+            {t('deck.name_age', { name: candidate.display_name, age: candidate.age })}
+          </Text>
+
+          <VerifiedBadge />
+        </View>
 
         <Text variant="label" tone="brand">
           {candidate.distance_bucket_km === 0

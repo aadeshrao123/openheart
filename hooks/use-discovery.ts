@@ -86,6 +86,31 @@ export type SwipeResult = {
   matchedName: string | null;
 };
 
+export const UNDO_TOO_LATE = 'P0001';
+export const UNDO_MATCHED = 'P0002';
+
+// Free, and only ever the last swipe inside a short window. 0023 refuses one
+// that created a match, because the other person has already been told.
+export function useUndoSwipe() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (): Promise<string | null> => {
+      const { data, error } = await supabase.rpc('undo_last_swipe');
+
+      if (error) {
+        throw error;
+      }
+
+      return data;
+    },
+
+    // Refetch rather than pushing the card back on: the deck is ordered by last
+    // active and the returning profile does not necessarily belong on top.
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: discoveryKey }),
+  });
+}
+
 export function useSwipe() {
   const queryClient = useQueryClient();
   const { data: session } = useSession();

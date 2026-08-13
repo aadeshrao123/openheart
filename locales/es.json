@@ -250,7 +250,8 @@
     "interest_travel": "Viajar",
     "interest_volunteering": "Voluntariado",
     "interest_writing": "Escribir",
-    "interest_yoga": "Yoga"
+    "interest_yoga": "Yoga",
+    "verified": "Foto verificada"
   },
   "home": {
     "not_visible_title": "Todavía no apareces en las sugerencias de nadie",
@@ -296,7 +297,11 @@
     "distance_very_close": "Muy cerca",
     "open_profile": "Abrir el perfil de {{name}}",
     "filters": "Filtros",
-    "rate_limited": "Has deslizado mucho. Tómate un descanso corto y vuelve luego."
+    "rate_limited": "Has deslizado mucho. Tómate un descanso corto y vuelve luego.",
+    "undo": "Deshacer",
+    "undo_nothing": "Todavía no hay nada que deshacer.",
+    "undo_too_late": "Eso fue hace demasiado para deshacerlo.",
+    "undo_matched": "Ahí hubo conexión, así que no es solo tuyo para deshacer."
   },
   "matches": {
     "title": "Coincidencias",
