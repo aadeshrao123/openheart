@@ -1,6 +1,14 @@
-import { RefreshControl, ScrollView, View, type ViewProps } from 'react-native';
+import { ScrollView, View, type ViewProps } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
+import { Button } from './button';
 import { cn } from '@/lib/cn';
+
+// react-native-web's RefreshControl discards every prop including onRefresh and
+// renders an empty View, so web has no pull gesture and gets a button instead.
+//
+// Everything else is identical to screen.tsx. A change there that is not about
+// refreshing belongs here too.
 
 type Width = keyof typeof widths;
 
@@ -19,8 +27,6 @@ export type ScreenProps = ViewProps & {
   className?: string;
 };
 
-// className always styles the content, scrolling or not, so a screen can move
-// between the two without rewriting its layout classes.
 export function Screen({
   padded = true,
   scroll = false,
@@ -31,6 +37,8 @@ export function Screen({
   children,
   ...props
 }: ScreenProps) {
+  const { t } = useTranslation();
+
   const measure = cn('w-full self-center', widths[width], padded && 'px-6');
   const content = cn(measure, className);
 
@@ -43,22 +51,21 @@ export function Screen({
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="interactive"
           automaticallyAdjustKeyboardInsets
-          // Given no colours on purpose. tintColor and colors are JavaScript
-          // props, so setting them would put a value outside global.css, which
-          // is the same reason this project has no slider. The platform default
-          // spinner is the honest trade.
-          //
-          // Native only, and not by choice: react-native-web's RefreshControl
-          // discards every prop including onRefresh and renders a bare View, so
-          // there is no pull gesture on web at all. screen.web.tsx renders a
-          // button from the same onRefresh instead.
-          refreshControl={
-            onRefresh ? (
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            ) : undefined
-          }
         >
-          <View className={cn('grow', content)}>{children}</View>
+          <View className={cn('grow', content)}>
+            {onRefresh ? (
+              <Button
+                variant="ghost"
+                size="sm"
+                label={t('common.refresh')}
+                loading={refreshing}
+                className="self-end"
+                onPress={onRefresh}
+              />
+            ) : null}
+
+            {children}
+          </View>
         </ScrollView>
       </SafeAreaView>
     );
