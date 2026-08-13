@@ -1,0 +1,15 @@
+{
+  "rules": [
+    {
+      "allowed": {
+        "origins": [
+          "https://openheartapp.org",
+          "https://www.openheartapp.org"
+        ],
+        "methods": ["PUT"],
+        "headers": ["content-type"]
+      },
+      "maxAgeSeconds": 3600
+    }
+  ]
+}

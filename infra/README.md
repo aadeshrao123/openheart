@@ -13,12 +13,14 @@ more than one account, and it will not guess.
 | Bucket | Purpose |
 |---|---|
 | `openheart-photos-dev` | Local development. Never holds a real person's photo. |
+| `openheart-photos` | Production. `WEUR`, to sit near the Frankfurt database. |
 
-Production gets its own bucket, created when the launch city is known: the
-location hint is fixed at creation and cannot be changed afterwards.
+The location hint is fixed at creation and cannot be changed afterwards, which
+is why production waited for the database region to be decided.
 
 ```bash
 wrangler r2 bucket create openheart-photos-dev --location weur
+wrangler r2 bucket create openheart-photos --location weur
 ```
 
 Public access stays off. It is off by default, and the moderation design depends
@@ -44,7 +46,24 @@ production domain has to be listed.
 ```bash
 wrangler r2 bucket cors set openheart-photos-dev --file infra/r2-cors.json
 wrangler r2 bucket cors list openheart-photos-dev
+
+wrangler r2 bucket cors set openheart-photos --file infra/r2-cors-prod.json
+wrangler r2 bucket cors list openheart-photos
 ```
+
+The two files differ deliberately: dev allows the localhost ports, production
+allows only `https://openheartapp.org`. Neither lists the other's origins.
+
+The production S3 token is the one thing here made in the dashboard, because
+Wrangler has no command to mint one. R2 -> API -> Manage API Tokens, **Object
+Read & Write**, scoped to `openheart-photos` alone, TTL forever. Object scoped
+rather than admin, so it cannot create, delete or reconfigure a bucket.
+
+Verified against the real bucket rather than read off the policy: PUT returned
+200, GET came back byte-identical, and `purge-deleted-media` reported
+`{"purged":1,"failed":0,"remaining":0}`. That last one is the reason to check.
+"Object Read & Write" reads like it might not include DELETE, and the purge is
+useless without it.
 
 Note the schema here is Wrangler's (`rules[].allowed.origins`), which is not the
 same shape the dashboard shows for the same policy.
@@ -65,18 +84,40 @@ aws iam put-user-policy --user-name openheart-moderation \
 aws iam create-access-key --user-name openheart-moderation
 ```
 
+Production has its own identity, same policy, so a leaked development key
+cannot be used against production and either can be revoked alone:
+
+```bash
+aws iam create-user --user-name openheart-moderation-prod \
+  --tags Key=project,Value=openheart Key=env,Value=production
+aws iam put-user-policy --user-name openheart-moderation-prod \
+  --policy-name openheart-rekognition \
+  --policy-document file://infra/aws-moderation-policy.json
+aws iam create-access-key --user-name openheart-moderation-prod
+```
+
 The policy allows three actions and nothing else. `DetectModerationLabels`
 scans every uploaded photo; `DetectFaces` and `CompareFaces` are the two halves
 of photo verification. `Resource` is `*` because Rekognition supports no
 resource-level permission for any of them, so the action names are the whole
 constraint.
 
-Verified with the user's own key rather than by reading the policy back:
+Verified with each key rather than by reading the policy back.
+
+Development:
 
 ```
 detect-faces      -> []                          authorized, no face in frame
 compare-faces     -> InvalidParameterException    authorized, no face to compare
 list-collections  -> AccessDeniedException        still denied
+```
+
+Production, checked the same way and denied all three:
+
+```
+list-collections  -> AccessDeniedException
+s3 ls             -> AccessDenied
+iam list-users    -> AccessDenied
 ```
 
 An InvalidParameterException is the useful answer there. It means the call was
