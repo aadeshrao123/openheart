@@ -19,7 +19,18 @@ import appJson from '@/app.json';
 //
 // Read from app.json so the name and description live in exactly one place.
 // This runs in Node during export and is not part of the client bundle.
-const { description, themeColor, lang } = appJson.expo.web;
+const { name, description, themeColor, lang } = appJson.expo.web;
+
+// One document serves every route, so these describe the site rather than the
+// page. That is the right trade here: the landing page is the only route worth
+// sharing, and every other exported route is an empty application shell that
+// robots.txt already asks crawlers to skip.
+//
+// og:image is deliberately absent. A 1200x630 card does not exist yet, and
+// pointing this at the favicon produces a stretched 48px square in every
+// preview, which looks worse than the no-image layout the platforms fall back
+// to. It is a real gap and it is listed as one.
+const SITE_URL = 'https://openheartapp.org';
 
 // Files under app/ are the one place this codebase uses a default export.
 export default function Root({ children }: PropsWithChildren) {
@@ -37,6 +48,13 @@ export default function Root({ children }: PropsWithChildren) {
             user sees after the bundle loads goes through i18n as normal. */}
         <meta name="description" content={description} />
         <meta name="theme-color" content={themeColor} />
+
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content={name} />
+        <meta property="og:title" content={name} />
+        <meta property="og:description" content={description} />
+        <meta property="og:url" content={SITE_URL} />
+        <meta name="twitter:card" content="summary" />
 
         <ScrollViewStyleReset />
 

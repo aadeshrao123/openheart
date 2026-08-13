@@ -1,0 +1,21 @@
+# OpenHeart
+
+> OpenHeart gives every feature to every person. It is funded by donations, so there is nothing to unlock, no tier above yours, and nobody deciding who gets shown based on who paid.
+
+Free forever, open source. Source code, including every database policy described on the
+site, is public under the AGPL-3.0.
+
+## Pages
+
+- [OpenHeart](https://openheartapp.org/): Dating without a price on being seen. A dating app makes money by making the free version worse. That business model needs you to keep looking.
+- [Privacy Policy](https://openheartapp.org/privacy): What is collected, what is not, and why location is rounded before it is stored.
+- [Terms of Service](https://openheartapp.org/terms): The rules of use, the age requirement, and what gets an account suspended.
+- [Deleting your account](https://openheartapp.org/account-deletion): How to delete an account from the app or by email, and what survives deletion.
+
+## Source
+
+- [Repository](https://github.com/aadeshrao123/openheart): The whole application, AGPL-3.0.
+
+## Optional
+
+- [Full text](https://openheartapp.org/llms-full.txt): Everything above as one plain text file.

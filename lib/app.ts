@@ -11,8 +11,16 @@ export const APP_NAME = Constants.expoConfig?.name ?? 'OpenHeart';
 // between ten language files.
 export const SUPPORT_EMAIL = 'support@openheartapp.org';
 
+// The licence is AGPLv3, so this is not a courtesy link: it is how anybody
+// checks that what the landing page claims is what the code does.
+export const REPOSITORY_URL = 'https://github.com/aadeshrao123/openheart';
+
 // Tracked in docs/legal/, so the site and the repository cannot disagree.
 // Untranslated on purpose: a machine-drafted legal document reads as
 // authoritative and is not.
 export const PRIVACY_POLICY_URL = 'https://openheartapp.org/privacy';
 export const TERMS_URL = 'https://openheartapp.org/terms';
+
+// Google Play requires a deletion route reachable from a browser by somebody
+// who has already uninstalled the app, which the in-app Settings flow is not.
+export const DELETION_URL = 'https://openheartapp.org/account-deletion';

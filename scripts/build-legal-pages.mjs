@@ -19,26 +19,46 @@ const OUT = path.join(ROOT, 'public');
 
 const INTERNAL_SECTION = /\n## Open items[\s\S]*$/;
 
-// The same values as global.css, because a legal page that does not look like
-// the app it belongs to reads as somebody else's page.
+const SITE = 'https://openheartapp.org';
+const REPOSITORY = 'https://github.com/aadeshrao123/openheart';
+const CONTACT = 'support@openheartapp.org';
+
+// Read out of global.css rather than copied, because a legal page that does not
+// look like the app it belongs to reads as somebody else's page, and these were
+// copied once and then sat one palette behind it. Comments are stripped first
+// for the same reason check-contrast.mjs strips them: global.css explains the
+// dark block in prose, and an unstripped file matches ".dark:root" inside that
+// comment for both themes.
+const CSS = readFileSync(path.join(ROOT, 'global.css'), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '');
+
+const USED_TOKENS = ['bg', 'surface', 'border', 'fg', 'fg-muted', 'brand'];
+
+function palette(pattern) {
+  const block = CSS.match(pattern);
+
+  if (!block) {
+    throw new Error(`global.css: no rule matched ${pattern}`);
+  }
+
+  return USED_TOKENS.map((name) => {
+    const declared = block[1].match(new RegExp(`--${name}:\\s*([0-9]+ [0-9]+ [0-9]+)\\s*;`));
+
+    if (!declared) {
+      throw new Error(`global.css: no --${name} in ${pattern}`);
+    }
+
+    return `  --${name}: ${declared[1]};`;
+  }).join('\n');
+}
+
 const STYLE = `
 :root {
-  --bg: 252 250 247;
-  --surface: 246 243 238;
-  --border: 226 220 211;
-  --fg: 28 25 23;
-  --fg-muted: 106 99 92;
-  --brand: 166 58 76;
+${palette(/(?<![\w.-]):root\s*\{([^}]*)\}/)}
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: 22 20 19;
-    --surface: 31 28 27;
-    --border: 60 54 51;
-    --fg: 244 240 235;
-    --fg-muted: 168 158 150;
-    --brand: 224 132 142;
+${palette(/\.dark:root\s*\{([^}]*)\}/)}
   }
 }
 
@@ -120,15 +140,37 @@ const NOTICE = `
 `;
 
 const PAGES = [
-  { source: 'privacy-policy.md', out: 'privacy.html', title: 'Privacy Policy' },
-  { source: 'terms-of-service.md', out: 'terms.html', title: 'Terms of Service' },
+  {
+    source: 'privacy-policy.md',
+    out: 'privacy.html',
+    title: 'Privacy Policy',
+    summary: 'What is collected, what is not, and why location is rounded before it is stored.',
+  },
+  {
+    source: 'terms-of-service.md',
+    out: 'terms.html',
+    title: 'Terms of Service',
+    summary: 'The rules of use, the age requirement, and what gets an account suspended.',
+  },
+  {
+    source: 'account-deletion.md',
+    out: 'account-deletion.html',
+    title: 'Deleting your account',
+    summary: 'How to delete an account from the app or by email, and what survives deletion.',
+  },
 ];
 
 mkdirSync(OUT, { recursive: true });
 
+// Kept so llms-full.txt below serves the same text the HTML does, stripped of
+// the internal section once rather than twice.
+const publishedMarkdown = new Map();
+
 for (const page of PAGES) {
   const markdown = readFileSync(path.join(ROOT, 'docs', 'legal', page.source), 'utf8');
   const published = markdown.replace(INTERNAL_SECTION, '\n');
+
+  publishedMarkdown.set(page.source, published);
 
   if (published.includes('## Open items')) {
     throw new Error(`${page.source}: internal section survived the strip`);
@@ -151,8 +193,8 @@ ${NOTICE}
 ${body}
 <footer>
   <a href="/">OpenHeart</a> &middot;
-  <a href="mailto:support@openheartapp.org">support@openheartapp.org</a> &middot;
-  <a href="https://github.com/aadeshrao123/openheart">Source</a>
+  <a href="mailto:${CONTACT}">${CONTACT}</a> &middot;
+  <a href="${REPOSITORY}">Source</a>
 </footer>
 </main>
 </body>
@@ -162,3 +204,142 @@ ${body}
   writeFileSync(path.join(OUT, page.out), html, 'utf8');
   console.log(`${page.out}: ${(html.length / 1024).toFixed(1)}KB`);
 }
+
+// The sitemap is written here rather than by hand because this file already
+// knows every public URL. Cloudflare Pages serves foo.html at /foo, so the
+// extension is dropped. No lastmod: a build stamp would change on every deploy
+// whether or not the page did, which is worth less than nothing to a crawler.
+//
+// The landing page is listed first and is the only entry not generated above.
+// Every other route in the export needs a session and is disallowed in
+// robots.txt, so nothing else belongs here.
+
+const urls = ['/', ...PAGES.map((page) => `/${page.out.replace(/\.html$/, '')}`)];
+
+const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls.map((url) => `  <url><loc>${SITE}${url}</loc></url>`).join('\n')}
+</urlset>
+`;
+
+writeFileSync(path.join(OUT, 'sitemap.xml'), sitemap, 'utf8');
+console.log(`sitemap.xml: ${urls.length} URLs`);
+
+// llms.txt, per llmstxt.org: an index for a model reading the site, and
+// llms-full.txt with the text itself so it never has to render the app to find
+// out what this is. Both are generated, and the landing copy is read from the
+// English bundle the app renders, so the page and the file cannot disagree.
+//
+// This is worth more here than it usually is. The site is a single JavaScript
+// application, and a model that does not execute it sees the pre-rendered
+// markup and nothing else. Plain text costs nothing and removes the question.
+const APP_NAME = 'OpenHeart';
+
+const en = JSON.parse(readFileSync(path.join(ROOT, 'locales', 'en.json'), 'utf8'));
+
+const copy = Object.fromEntries(
+  Object.entries(en.landing).map(([key, value]) => [
+    key,
+    value.replace(/\{\{appName\}\}/g, APP_NAME),
+  ]),
+);
+
+const COMPARED = [
+  'feature_likes',
+  'feature_reach',
+  'feature_receipts',
+  'feature_filters',
+  'feature_ads',
+];
+
+const PRINCIPLES = ['money', 'safety', 'data'];
+const STEPS = ['verify', 'browse', 'talk'];
+const SAFEGUARDS = ['safety_scanning', 'safety_blocking', 'safety_queue', 'safety_location'];
+
+const section = (title, body) => `### ${title}\n\n${body}`;
+
+const pageLinks = PAGES.map((page) => {
+  const url = `${SITE}/${page.out.replace(/\.html$/, '')}`;
+
+  return `- [${page.title}](${url}): ${page.summary}`;
+}).join('\n');
+
+const principleSections = PRINCIPLES.map((name) =>
+  section(copy[`principle_${name}_title`], copy[`principle_${name}_body`]),
+).join('\n\n');
+
+const stepSections = STEPS.map((name) =>
+  section(copy[`step_${name}_title`], copy[`step_${name}_body`]),
+).join('\n\n');
+
+const legalText = PAGES.map(
+  (page) => `\n---\n\n${publishedMarkdown.get(page.source).trim()}`,
+).join('\n');
+
+const index = `# ${APP_NAME}
+
+> ${copy.subhead}
+
+${copy.eyebrow}. Source code, including every database policy described on the
+site, is public under the AGPL-3.0.
+
+## Pages
+
+- [${APP_NAME}](${SITE}/): ${copy.headline} ${copy.compare_body}
+${pageLinks}
+
+## Source
+
+- [Repository](${REPOSITORY}): The whole application, AGPL-3.0.
+
+## Optional
+
+- [Full text](${SITE}/llms-full.txt): Everything above as one plain text file.
+`;
+
+const full = `# ${APP_NAME}
+
+> ${copy.subhead}
+
+## ${copy.headline}
+
+${copy.eyebrow}.
+
+## ${copy.compare_title}
+
+${copy.compare_body}
+
+Each of these is charged for by a typical dating app and included here:
+
+${COMPARED.map((key) => `- ${copy[key]}`).join('\n')}
+
+## ${copy.principles_title}
+
+${copy.principles_body}
+
+${principleSections}
+
+## ${copy.steps_title}
+
+${stepSections}
+
+## ${copy.safety_title}
+
+${copy.safety_body}
+
+${SAFEGUARDS.map((key) => `- ${copy[key]}`).join('\n')}
+
+## ${copy.open_title}
+
+${copy.open_body}
+
+Repository: ${REPOSITORY}
+Contact: ${CONTACT}
+
+${legalText}
+`;
+
+writeFileSync(path.join(OUT, 'llms.txt'), index, 'utf8');
+writeFileSync(path.join(OUT, 'llms-full.txt'), full, 'utf8');
+console.log(`llms.txt: ${(index.length / 1024).toFixed(1)}KB`);
+console.log(`llms-full.txt: ${(full.length / 1024).toFixed(1)}KB`);

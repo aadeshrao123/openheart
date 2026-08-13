@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deleting your account - OpenHeart</title>
+<meta name="description" content="Deleting your account for OpenHeart, a free and open source dating app.">
+<style>
+:root {
+  --bg: 252 250 247;
+  --surface: 244 240 234;
+  --border: 219 211 200;
+  --fg: 28 25 23;
+  --fg-muted: 99 92 86;
+  --brand: 166 58 76;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+  --bg: 22 20 19;
+  --surface: 35 32 30;
+  --border: 76 68 64;
+  --fg: 248 245 241;
+  --fg-muted: 176 166 158;
+  --brand: 224 132 142;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 3rem 1.25rem 6rem;
+  background: rgb(var(--bg));
+  color: rgb(var(--fg));
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-size: 17px;
+  line-height: 1.65;
+}
+
+main { max-width: 42rem; margin: 0 auto; }
+
+a { color: rgb(var(--brand)); }
+
+h1 { font-size: 2rem; line-height: 1.2; margin: 0 0 1.5rem; }
+h2 { font-size: 1.35rem; margin: 2.75rem 0 0.75rem; }
+h3 { font-size: 1.1rem; margin: 2rem 0 0.5rem; }
+
+hr { border: 0; border-top: 1px solid rgb(var(--border)); margin: 2.5rem 0; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.25rem 0;
+  font-size: 0.95rem;
+  display: block;
+  overflow-x: auto;
+}
+
+th, td {
+  border: 1px solid rgb(var(--border));
+  padding: 0.5rem 0.7rem;
+  text-align: start;
+  vertical-align: top;
+}
+
+th { background: rgb(var(--surface)); }
+
+code {
+  background: rgb(var(--surface));
+  padding: 0.1rem 0.35rem;
+  border-radius: 0.25rem;
+  font-size: 0.9em;
+}
+
+.notice {
+  background: rgb(var(--surface));
+  border: 1px solid rgb(var(--border));
+  border-inline-start: 3px solid rgb(var(--brand));
+  padding: 1rem 1.25rem;
+  border-radius: 0.5rem;
+  margin-bottom: 2.5rem;
+  color: rgb(var(--fg-muted));
+  font-size: 0.95rem;
+}
+
+footer {
+  margin-top: 4rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgb(var(--border));
+  color: rgb(var(--fg-muted));
+  font-size: 0.9rem;
+}
+</style>
+</head>
+<body>
+<main>
+
+<div class="notice">
+  <strong>OpenHeart is not open to the public yet.</strong>
+  This document describes how the app will work when it launches. It has not
+  been reviewed by a lawyer, and it may change before anyone can sign up.
+</div>
+
+<h1>Deleting your account</h1>
+<p>Google Play requires a page like this one: a way to ask for your account to be
+deleted that works from a browser, without installing anything, and without
+asking anyone for permission.</p>
+<p>Last updated: 13 August 2026
+Applies to: OpenHeart, the app and openheartapp.org</p>
+<hr>
+<h2>The short version</h2>
+<ul>
+<li>Open the app, go to <strong>Settings</strong>, then <strong>Delete my account</strong>. It takes effect
+immediately and nobody has to approve it.</li>
+<li>If you cannot reach the app, write to <a href="mailto:support@openheartapp.org">support@openheartapp.org</a> from the email
+address on the account.</li>
+<li>Your name, photos, date of birth, bio and location are erased.</li>
+<li>Messages you already sent stay in the other person&#39;s conversation with your
+name removed, because those are also their messages.</li>
+<li>Safety records survive deletion. Deleting an account has never been a way to
+erase a report about it.</li>
+</ul>
+<h2>Doing it yourself, in the app</h2>
+<ol>
+<li>Sign in.</li>
+<li>Settings.</li>
+<li>Delete my account.</li>
+<li>Confirm.</li>
+</ol>
+<p>There is no waiting period, no retention window, and no offer to keep your
+account instead. The deletion runs in the database as a single operation and it
+cannot be undone.</p>
+<h2>Doing it by email</h2>
+<p>Write to <a href="mailto:support@openheartapp.org">support@openheartapp.org</a> from the address you signed in with. Say that
+you want the account deleted. We reply from a human, and the only thing we need
+is confirmation that the request comes from the account holder, which is what
+sending from that address establishes.</p>
+<p>Nothing else is required, and we will not ask for identification.</p>
+<h2>What is erased</h2>
+<p>Immediately, when you confirm:</p>
+<table>
+<thead>
+<tr>
+<th>Data</th>
+<th>What happens</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Display name</td>
+<td>Erased</td>
+</tr>
+<tr>
+<td>Date of birth</td>
+<td>Erased</td>
+</tr>
+<tr>
+<td>Bio</td>
+<td>Erased</td>
+</tr>
+<tr>
+<td>Gender and who you were looking for</td>
+<td>Erased</td>
+</tr>
+<tr>
+<td>Location</td>
+<td>Erased</td>
+</tr>
+<tr>
+<td>Photos</td>
+<td>Removed from the database and queued for deletion from storage</td>
+</tr>
+<tr>
+<td>Push notification tokens</td>
+<td>Deleted, so the device stops receiving anything</td>
+</tr>
+<tr>
+<td>Sign-in credential</td>
+<td>Deleted, so the email or provider login no longer works</td>
+</tr>
+<tr>
+<td>Open matches</td>
+<td>Closed, on both sides</td>
+</tr>
+</tbody></table>
+<h2>What is kept, and why</h2>
+<p>Deleting an account here is anonymisation rather than removal of the row. That
+is a deliberate decision, and these are the reasons.</p>
+<p><strong>Messages you sent.</strong> They stay in the conversation of the person you sent
+them to, with your name removed. They are that person&#39;s messages as much as
+yours, and letting one participant erase the other&#39;s history would be a
+harassment tool.</p>
+<p><strong>Reports and moderation records.</strong> If somebody reported you, that report
+survives. Deleting and re-registering is the standard way to evade a ban, and a
+safety record that a ban evader can erase is not a safety record.</p>
+<p><strong>A blank profile row.</strong> The row itself is kept so that the messages and reports
+above still have something to point at. It holds no personal data after
+deletion: the fields in the table above are empty or null, and a flag records
+that the account is deleted.</p>
+<p><strong>Suspension records.</strong> If the account was suspended, that stays too, for the
+same reason as reports.</p>
+<h2>How long the photo deletion takes</h2>
+<p>Photos are removed from the database the moment you confirm, so no one can see
+them again from that point. The image files themselves sit in a queue and are
+deleted from storage by a scheduled job. Expect them to be gone within seven
+days.</p>
+<h2>If you never had an account</h2>
+<p>Nothing to do. This page describes deleting an OpenHeart account, and if you
+never created one there is nothing about you in the database.</p>
+<h2>Questions</h2>
+<p><a href="mailto:support@openheartapp.org">support@openheartapp.org</a>, and the code that performs the deletion is
+<code>delete_my_account()</code> in the public repository, which anybody can read.</p>
+
+<footer>
+  <a href="/">OpenHeart</a> &middot;
+  <a href="mailto:support@openheartapp.org">support@openheartapp.org</a> &middot;
+  <a href="https://github.com/aadeshrao123/openheart">Source</a>
+</footer>
+</main>
+</body>
+</html>

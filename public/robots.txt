@@ -1,0 +1,30 @@
+# Everything public is open to every crawler, search and AI alike. There is no
+# allowlist here on purpose: an open source project funded by donations wants to
+# be read, quoted and indexed, and the whole argument for it lives on the
+# landing page.
+
+User-agent: *
+Allow: /
+
+# Signed-in routes. Each one exports as the same empty application shell, so a
+# crawler that follows them indexes a dozen identical blank pages and learns
+# nothing. Not a privacy control: no user data is reachable without a session,
+# and this file could not protect it if it were.
+Disallow: /home
+Disallow: /matches
+Disallow: /chat/
+Disallow: /match/
+Disallow: /candidate/
+Disallow: /settings
+Disallow: /filters
+Disallow: /blocked
+Disallow: /photos
+Disallow: /edit-profile
+Disallow: /preferences
+Disallow: /birthdate
+Disallow: /about-you
+Disallow: /verify
+Disallow: /moderation
+Disallow: /verification-reviews
+
+Sitemap: https://openheartapp.org/sitemap.xml
