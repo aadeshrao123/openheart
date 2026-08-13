@@ -3,7 +3,20 @@ import { supabase } from '@/lib/supabase';
 import { useSession } from '@/hooks/use-session';
 import type { Database } from '@/lib/database.types';
 
-export type Thread = Database['public']['Functions']['list_threads']['Returns'][number];
+type ThreadRow = Database['public']['Functions']['list_threads']['Returns'][number];
+
+// The generator types every column of a `returns table` as non-null. A thread
+// with no messages leaves the whole lateral join null, and a profile with no
+// approved photo has no key. A widening, so the rpc result needs no cast.
+export type Thread = Omit<
+  ThreadRow,
+  'last_at' | 'last_body' | 'last_sender_id' | 'other_photo_key'
+> & {
+  last_at: string | null;
+  last_body: string | null;
+  last_sender_id: string | null;
+  other_photo_key: string | null;
+};
 
 export const threadsKey = ['threads'] as const;
 
