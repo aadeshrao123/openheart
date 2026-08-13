@@ -12,16 +12,21 @@ Read the relevant file before writing code. These are binding, not advisory.
 
 | File | Covers |
 |---|---|
-| `.claude/rules/coding-style.md` | formatting, comments, naming, no em dashes, ASCII only |
-| `.claude/rules/typescript-react.md` | TS strictness, component tiers, styling tokens, data layer |
-| `.claude/rules/database.md` | migrations, RLS policy form, security definer, invariants |
-| `.claude/rules/localization.md` | translation keys, plurals, RTL layout, Intl formatting |
-| `.claude/rules/client-compatibility.md` | schema as API, version gate, deletion, media |
-| `.claude/rules/verification.md` | no guessing: verify versions and APIs against primary sources |
+| `docs/rules/coding-style.md` | formatting, comments, naming, no em dashes, ASCII only |
+| `docs/rules/typescript-react.md` | TS strictness, component tiers, styling tokens, data layer |
+| `docs/rules/database.md` | migrations, RLS policy form, security definer, invariants |
+| `docs/rules/localization.md` | translation keys, plurals, RTL layout, Intl formatting |
+| `docs/rules/client-compatibility.md` | schema as API, version gate, deletion, media |
+| `docs/rules/verification.md` | no guessing: verify versions and APIs against primary sources |
+| `docs/rules/git.md` | commit messages, what never gets pushed, history rewriting |
 
-`.claude/` is gitignored on purpose. Contributors bring their own tooling and
-their own agent configuration. Standards that bind everyone live in this file
-and in `docs/`, which are tracked.
+These lived in `.claude/` until they did not, which was a bug: `.claude/` is
+gitignored, so a fresh clone got this table insisting the rules were binding and
+none of the files it named. Tooling and agent configuration still belong there
+and still are not tracked. Anything that binds every contributor is in `docs/`.
+
+`docs/README.md` is the index, and also covers the legal drafts and the prepared
+store privacy answers.
 
 ---
 
@@ -225,7 +230,7 @@ Adding a language is two steps: a new JSON in `locales/`, and two lines in
 `lib/i18n.ts`. If it ever requires editing a component, that component has a
 hardcoded string.
 
-Full rules in `.claude/rules/localization.md`.
+Full rules in `docs/rules/localization.md`.
 
 ## Shipped clients never die
 
@@ -267,7 +272,7 @@ Signed URL from an Edge Function, private quarantine prefix, scan, then
 later" means a full backfill and key rotation to fix, which is why it cannot be
 deferred.
 
-Full rules in `.claude/rules/client-compatibility.md`.
+Full rules in `docs/rules/client-compatibility.md`.
 
 ## Blocking has to reach every table
 
