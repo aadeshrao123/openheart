@@ -12,6 +12,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AppErrorView } from '@/components/app-error-view';
 import { VersionGate } from '@/components/version-gate';
 import { restoreLanguagePreference } from '@/hooks/use-language';
+import { restoreSoundPreference } from '@/hooks/use-sound-preference';
 import { useAuthSync } from '@/hooks/use-session';
 import { useSystemTheme } from '@/hooks/use-system-theme';
 import { APP_NAME } from '@/lib/app';
@@ -73,6 +74,7 @@ function RootNavigator() {
   // override can only be applied afterwards.
   useEffect(() => {
     void restoreLanguagePreference();
+    void restoreSoundPreference();
   }, []);
 
   return (
