@@ -4,7 +4,7 @@
 bottom need a legal answer first.
 
 Last updated: 12 August 2026
-Applies to: OpenHeart, the app and openheart.app
+Applies to: OpenHeart, the app and openheartapp.org
 
 ---
 
@@ -18,7 +18,7 @@ not a launch promotion, it is the rule the project is built around: a feature
 that exists to extract money from a lonely person does not ship.
 
 The software is open source under the AGPL-3.0. These terms cover your use of
-the service we run at openheart.app. They do not restrict your rights under that
+the service we run at openheartapp.org. They do not restrict your rights under that
 licence to the source code itself, which are set out in the licence and win over
 anything here if the two ever disagree.
 
@@ -32,7 +32,7 @@ and if we find out that you are, the account goes.
 - One person, one account. Do not create an account for anyone else.
 - Use your own photos, of yourself.
 - Your date of birth is set once at signup and cannot be changed afterwards. If
-  you entered it wrongly, write to support@openheart.app.
+  you entered it wrongly, write to support@openheartapp.org.
 - You are responsible for keeping access to the email address you sign in with,
   because that address is the only way in.
 
@@ -123,7 +123,7 @@ in the git repository.
 
 ## Contact
 
-support@openheart.app
+support@openheartapp.org
 
 ---
 

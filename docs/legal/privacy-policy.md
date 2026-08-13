@@ -6,7 +6,7 @@ written from the code rather than from a template, and every claim in it is one
 you can check against this repository.
 
 Last updated: 12 August 2026
-Applies to: OpenHeart, the app and openheart.app
+Applies to: OpenHeart, the app and openheartapp.org
 
 ---
 
@@ -30,7 +30,7 @@ code, including every database policy described here, is public under the
 AGPL-3.0 at https://github.com/aadeshrao123/openheart.
 
 For anything in this policy, including a request about your data, write to
-support@openheart.app. A person reads every message.
+support@openheartapp.org. A person reads every message.
 
 If you are in the UK or EU, this is where the data controller's registered
 name and address go. That is one of the items still to be filled in.
@@ -206,7 +206,7 @@ California, you have the right to know, delete, correct, and not be
 discriminated against for asking. We do not sell or share personal information
 as those terms are defined by the CCPA.
 
-Write to support@openheart.app. We will answer within 30 days.
+Write to support@openheartapp.org. We will answer within 30 days.
 
 The legal grounds we rely on are: performing our contract with you, for running
 the service; your consent, for location, camera and notifications; our
@@ -218,7 +218,7 @@ material.
 
 The app is 18+. The age gate runs before a profile is created and the date of
 birth cannot be edited afterwards. If you believe a minor is using the app,
-report the profile in the app or write to support@openheart.app and we will act
+report the profile in the app or write to support@openheartapp.org and we will act
 on it as a priority.
 
 ## Changes
