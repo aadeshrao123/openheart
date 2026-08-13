@@ -5,7 +5,7 @@
 -- proved none of it.
 
 begin;
-select plan(9);
+select plan(12);
 
 insert into auth.users (id, instance_id, aud, role, email) values
   ('aaaa0000-0000-0000-0000-000000000001',
@@ -111,6 +111,33 @@ select ok(
   (select display_name = '' and deleted_at is not null and not is_active
      from profiles where id = 'aaaa0000-0000-0000-0000-000000000001'),
   'the profile is anonymized, flagged deleted, and undiscoverable'
+);
+
+-- The suspension above already survived. The birthdate did not.
+select is(
+  (select birthdate from profiles where id = 'aaaa0000-0000-0000-0000-000000000001'),
+  null,
+  'the date of birth is erased along with the rest of the personal data'
+);
+
+-- The trigger gets there before the check constraint, so P0001 rather than
+-- 23514. Run as postgres, the only role that could reach either.
+select throws_ok(
+  $$ update profiles set birthdate = null
+      where id = 'bbbb0000-0000-0000-0000-000000000002' $$,
+  'P0001',
+  null,
+  'a profile that is not deleted still cannot drop its birthdate'
+);
+
+-- The trigger exit runs downward only. Otherwise the age gate is defeated by
+-- leaving and coming back rather than by editing.
+select throws_ok(
+  $$ update profiles set birthdate = '1990-01-01'
+      where id = 'aaaa0000-0000-0000-0000-000000000001' $$,
+  'P0001',
+  null,
+  'a tombstone cannot acquire a fresh birthdate'
 );
 
 select * from finish();

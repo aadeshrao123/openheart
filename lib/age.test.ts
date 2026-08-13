@@ -79,6 +79,12 @@ describe('fromDateColumn', () => {
     expect(fromDateColumn('not a date')).toBeNull();
     expect(fromDateColumn('1995-03-04T00:00:00Z')).toBeNull();
   });
+
+  // 0018 clears the column when an account is deleted, so null is now a value
+  // the column really holds rather than a shape that cannot occur.
+  it('treats a cleared column as no date', () => {
+    expect(fromDateColumn(null)).toBeNull();
+  });
 });
 
 describe('toDateColumn', () => {

@@ -36,8 +36,13 @@ export function toBirthdate(day: number, month: number, year: number): Date | nu
 }
 
 // new Date('1995-03-04') parses as UTC midnight, which is the previous day west
-// of Greenwich and makes the age a year wrong around the birthday.
-export function fromDateColumn(value: string): Date | null {
+// of Greenwich and makes the age a year wrong around the birthday. Nullable
+// because 0018 clears the column on deletion.
+export function fromDateColumn(value: string | null): Date | null {
+  if (value === null) {
+    return null;
+  }
+
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
 
   if (!match) {

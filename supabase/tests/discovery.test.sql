@@ -84,7 +84,7 @@ select is(
 -- is_active false and deleted_at, and both are checked independently.
 reset role;
 update profiles
-   set is_active = false, display_name = '', deleted_at = now()
+   set is_active = false, display_name = '', birthdate = null, deleted_at = now()
  where id = 'cccc0000-0000-4000-8000-000000000002';
 
 set local role authenticated;
