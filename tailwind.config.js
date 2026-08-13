@@ -76,6 +76,10 @@ module.exports = {
       maxWidth: {
         content: '560px',
         deck: '460px',
+        // The marketing page only. Every screen behind the sign-in wall stays
+        // at content width, because a profile read across 1080px is unreadable.
+        page: '1080px',
+        prose: '680px',
         // A bubble never reaches the far edge, so the two sides of a
         // conversation stay visually distinct without needing a tail.
         bubble: '78%',

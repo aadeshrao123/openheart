@@ -22,6 +22,9 @@ const fontFamily = {
 };
 
 const fontSize = {
+  // The landing page headline on a wide window, and nowhere else. Display is
+  // what it falls back to below that breakpoint.
+  hero: ['56px', { lineHeight: '60px', letterSpacing: '-1.6px' }],
   display: ['40px', { lineHeight: '44px', letterSpacing: '-1px' }],
   title: ['27px', { lineHeight: '32px', letterSpacing: '-0.5px' }],
   heading: ['19px', { lineHeight: '26px', letterSpacing: '-0.2px' }],

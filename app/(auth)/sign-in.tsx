@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Button, Input, Rail, Screen, Text } from '@/components/ui';
+import { BrandMark, Button, Input, Logo, Rail, Screen, Text } from '@/components/ui';
 import { useRequestEmailCode, useSignInWithProvider } from '@/hooks/use-auth';
 import { authErrorKey, providerErrorKey } from '@/lib/auth-errors';
 import { OAUTH_PROVIDERS } from '@/lib/auth-providers';
@@ -28,17 +28,54 @@ export default function SignInScreen() {
   };
 
   return (
-    <Screen scroll className="justify-center gap-12 py-16">
-      <View className="gap-5">
-        <View className="h-px w-12 bg-brand" />
+    <Screen scroll className="justify-center gap-10 py-16">
+      <View className="gap-4">
+        <Logo size={34} />
 
-        <View className="gap-3">
+        <View className="gap-2">
           <Text variant="display">{APP_NAME}</Text>
           <Text variant="quote" tone="muted">
             {t('welcome.tagline')}
           </Text>
         </View>
       </View>
+
+      {/* Still guarded, because the list is empty until a provider is both
+          configured in Supabase and added to it, and a button that opens a
+          browser onto an error is worse than no button. */}
+      {OAUTH_PROVIDERS.length > 0 ? (
+        <View className="gap-3">
+          {OAUTH_PROVIDERS.map((provider) => (
+            <Button
+              key={provider.id}
+              variant="secondary"
+              label={t(provider.labelKey)}
+              leading={<BrandMark name={provider.mark} />}
+              loading={signInWithProvider.isPending}
+              onPress={() => signInWithProvider.mutate(provider.id)}
+            />
+          ))}
+
+          {/* Nothing rendered when somebody simply closed the browser. Without
+              this the whole path failed silently, because only the email form
+              showed its error. */}
+          {signInWithProvider.isError && providerErrorKey(signInWithProvider.error) ? (
+            <Text variant="caption" tone="danger">
+              {t(providerErrorKey(signInWithProvider.error) ?? 'common.error_generic')}
+            </Text>
+          ) : null}
+
+          <View className="flex-row items-center gap-4 pt-3">
+            <View className="h-px flex-1 bg-border" />
+
+            <Text variant="overline" tone="subtle">
+              {t('auth.or')}
+            </Text>
+
+            <View className="h-px flex-1 bg-border" />
+          </View>
+        </View>
+      ) : null}
 
       <View className="gap-4">
         <Input
@@ -73,33 +110,7 @@ export default function SignInScreen() {
         </Text>
       </View>
 
-      {/* Still guarded, because the list is empty until a provider is both
-          configured in Supabase and added to it, and a button that opens a
-          browser onto an error is worse than no button. */}
-      {OAUTH_PROVIDERS.length > 0 ? (
-        <View className="gap-3">
-          {OAUTH_PROVIDERS.map((provider) => (
-            <Button
-              key={provider.id}
-              variant="secondary"
-              label={t(provider.labelKey)}
-              loading={signInWithProvider.isPending}
-              onPress={() => signInWithProvider.mutate(provider.id)}
-            />
-          ))}
-
-          {/* Nothing rendered when somebody simply closed the browser. Without
-              this the whole path failed silently, because only the email form
-              showed its error. */}
-          {signInWithProvider.isError && providerErrorKey(signInWithProvider.error) ? (
-            <Text variant="caption" tone="danger">
-              {t(providerErrorKey(signInWithProvider.error) ?? 'common.error_generic')}
-            </Text>
-          ) : null}
-        </View>
-      ) : null}
-
-      <Rail tone="accent" className="gap-5">
+      <Rail tone="accent" className="gap-4">
         <Text variant="overline" tone="accent">
           {t('welcome.promise_title')}
         </Text>

@@ -11,21 +11,27 @@
   block when darkMode is "class". Anything else compiles on web and is silently
   ignored on native.
 
-  The palette is deliberately warm and low-contrast rather than the bright,
-  saturated look every other dating app uses. That look belongs to products
-  designed to feel like a slot machine, and this one is funded by donations.
+  The palette is deliberately warm and unsaturated rather than the bright look
+  every other dating app uses. That look belongs to products designed to feel
+  like a slot machine, and this one is funded by donations.
+
+  Unsaturated is not the same as washed out, which is what it drifted into: the
+  three neutral surfaces sat within nine levels of each other, so a raised card
+  on a screen background was a rectangle with no edge, and the hairline between
+  them was invisible at any brightness below full. Separation is what makes a
+  restrained palette read as considered instead of unfinished.
 */
 
 @layer base {
   :root {
     --bg: 252 250 247;
-    --surface: 246 243 238;
+    --surface: 244 240 234;
     --surface-raised: 255 254 252;
-    --border: 226 220 211;
+    --border: 219 211 200;
 
     --fg: 28 25 23;
-    --fg-muted: 106 99 92;
-    --fg-subtle: 117 110 104;
+    --fg-muted: 99 92 86;
+    --fg-subtle: 112 105 99;
     --fg-inverted: 252 250 247;
 
     --brand: 166 58 76;
@@ -59,13 +65,13 @@
 
   .dark:root {
     --bg: 22 20 19;
-    --surface: 31 28 27;
-    --surface-raised: 41 37 35;
-    --border: 60 54 51;
+    --surface: 35 32 30;
+    --surface-raised: 48 43 41;
+    --border: 76 68 64;
 
-    --fg: 244 240 235;
-    --fg-muted: 168 158 150;
-    --fg-subtle: 146 139 134;
+    --fg: 248 245 241;
+    --fg-muted: 176 166 158;
+    --fg-subtle: 158 150 144;
     --fg-inverted: 22 20 19;
 
     --brand: 224 132 142;

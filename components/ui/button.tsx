@@ -1,26 +1,36 @@
-import { ActivityIndicator, Pressable, type PressableProps } from 'react-native';
+import type { ReactNode } from 'react';
+import { ActivityIndicator, Pressable, View, type PressableProps } from 'react-native';
 import { Text } from './text';
 import { cn } from '@/lib/cn';
 
 type Variant = keyof typeof variants;
 type Size = keyof typeof sizes;
 
+// Each variant carries its own disabled appearance rather than sharing an
+// opacity. A brand fill at 40% over a dark background is a muddy rectangle with
+// an unreadable label, which reads as a broken control rather than an
+// unavailable one, and that was the first thing anyone saw on the sign-in
+// screen because the send button starts empty and therefore starts disabled.
 const variants = {
   primary: {
     container: 'bg-brand active:bg-brand-pressed',
     tone: 'inverted',
+    disabled: { container: 'bg-surface border border-border', tone: 'subtle' },
   },
   secondary: {
     container: 'bg-surface-raised border border-border active:bg-surface',
     tone: 'default',
+    disabled: { container: 'bg-surface border border-border', tone: 'subtle' },
   },
   ghost: {
     container: 'bg-transparent active:bg-surface',
     tone: 'muted',
+    disabled: { container: 'bg-transparent', tone: 'subtle' },
   },
   danger: {
     container: 'bg-danger-subtle active:opacity-80',
     tone: 'danger',
+    disabled: { container: 'bg-surface border border-border', tone: 'subtle' },
   },
 } as const;
 
@@ -37,6 +47,9 @@ export type ButtonProps = Omit<PressableProps, 'children'> & {
   variant?: Variant;
   size?: Size;
   loading?: boolean;
+  // A mark drawn before the label, for the provider buttons. Decorative: the
+  // label already says which provider it is, so it carries no separate name.
+  leading?: ReactNode;
   className?: string;
 };
 
@@ -45,27 +58,31 @@ export function Button({
   variant = 'primary',
   size = 'md',
   loading = false,
+  leading,
   disabled,
   className,
   ...props
 }: ButtonProps) {
-  const appearance = variants[variant];
+  const base = variants[variant];
   const dimensions = sizes[size];
-  const isDisabled = disabled === true || loading;
+
+  // Only an explicit disabled takes the disabled appearance. A button that
+  // greys out the moment it is pressed looks like it refused the press.
+  const inert = disabled === true;
+  const appearance = inert ? base.disabled : base;
 
   return (
     <Pressable
       accessibilityRole="button"
       // aria-*, not accessibilityState: react-native-web reads only these and
       // drops the object form, so busy never reached a screen reader on web.
-      aria-disabled={isDisabled}
+      aria-disabled={inert || loading}
       aria-busy={loading}
-      disabled={isDisabled}
+      disabled={inert || loading}
       className={cn(
-        'flex-row items-center justify-center rounded-control',
+        'flex-row items-center justify-center gap-3 rounded-control',
         appearance.container,
         dimensions.container,
-        isDisabled && 'opacity-40',
         className,
       )}
       {...props}
@@ -73,9 +90,13 @@ export function Button({
       {loading ? (
         <ActivityIndicator />
       ) : (
-        <Text variant={dimensions.text} tone={appearance.tone} font="strong">
-          {label}
-        </Text>
+        <>
+          {leading ? <View aria-hidden>{leading}</View> : null}
+
+          <Text variant={dimensions.text} tone={appearance.tone} font="strong">
+            {label}
+          </Text>
+        </>
       )}
     </Pressable>
   );

@@ -1,10 +1,12 @@
 export { Avatar, type AvatarProps } from './avatar';
+export { BrandMark, type BrandMarkProps, type BrandName } from './brand-mark';
 export { Button, type ButtonProps } from './button';
 export { Card, type CardProps } from './card';
 export { Chip, type ChipProps } from './chip';
 export { Icon, type IconProps } from './icon';
 export { Input, type InputProps } from './input';
 export { ListRow, type ListRowProps } from './list-row';
+export { Logo, type LogoProps } from './logo';
 export { Rail, type RailProps } from './rail';
 export { Screen, type ScreenProps } from './screen';
 export { Skeleton, type SkeletonProps } from './skeleton';
