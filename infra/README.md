@@ -162,10 +162,14 @@ node scripts/build-web.mjs
 wrangler pages deploy dist --project-name openheart --branch main
 ```
 
-Deploys run from CI rather than a laptop. The `deploy` job in
-`.github/workflows/ci.yml` needs all four other jobs, so a red test never
-reaches the domain, and is restricted to pushes on `main` so a pull request
-from a fork cannot deploy unreviewed code with the production keys.
+Deploys run from CI rather than a laptop, and only when somebody asks:
+Actions -> CI -> Run workflow, on `main`. The `deploy` job in
+`.github/workflows/ci.yml` is `workflow_dispatch` only.
+
+Not on push, deliberately. Merging and publishing are different decisions, and
+a green suite is not the same claim as "safe for the people using it". It still
+needs all four other jobs, so pressing the button on a broken commit deploys
+nothing, and a pull request from a fork can never reach the domain.
 
 It needs five GitHub secrets:
 

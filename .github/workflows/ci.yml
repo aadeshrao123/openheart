@@ -5,6 +5,10 @@ on:
   push:
     branches: [main]
 
+  # Deploying is a decision, not a consequence of merging. The tests run on
+  # every push; the site changes when somebody asks for it. See the deploy job.
+  workflow_dispatch:
+
 permissions:
   contents: read
 
@@ -208,11 +212,17 @@ jobs:
     name: Deploy the web build
     runs-on: ubuntu-latest
 
-    # Every other job, so a red test never reaches the domain. Pushes only:
-    # a pull request from a fork would otherwise deploy unreviewed code with
-    # the production keys.
+    # Manual only. Actions -> CI -> Run workflow, on main.
+    #
+    # Not on push, deliberately. Merging and publishing are different decisions,
+    # and a green test suite is not the same claim as "this is safe for the
+    # people using it". There is no alerting here yet and nobody else reviewing,
+    # so the gap between the two is a person choosing.
+    #
+    # It still needs every other job, so pressing the button on a broken commit
+    # deploys nothing.
     needs: [style, app, functions, database]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
 
     steps:
       - uses: actions/checkout@v7
