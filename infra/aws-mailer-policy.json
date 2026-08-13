@@ -1,0 +1,19 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "SendSignInCodesOnly",
+      "Effect": "Allow",
+      "Action": "ses:SendRawEmail",
+      "Resource": [
+        "arn:aws:ses:eu-central-1:*:identity/send.openheartapp.org",
+        "arn:aws:ses:eu-central-1:*:configuration-set/openheart-transactional"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "ses:FromAddress": "no-reply@send.openheartapp.org"
+        }
+      }
+    }
+  ]
+}

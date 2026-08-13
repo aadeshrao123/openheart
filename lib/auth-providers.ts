@@ -20,8 +20,12 @@ export type OAuthProvider = {
 //
 // in the same change that first uploads a build to App Store Connect.
 //
-// And never merge accounts on a matching email: Hide My Email relay addresses
-// mean one person can present two, and two people can share one.
+// Supabase links a new provider identity onto an existing user when the email
+// matches and that email is already verified, so signing in with Google after
+// signing in by code lands on the same account rather than a second one. It
+// refuses to link to an unverified email, which is the pre-account-takeover
+// case. Never write merging by email string on top of that: Apple's Hide My
+// Email gives one person a different relay address per app.
 export const OAUTH_PROVIDERS: readonly OAuthProvider[] = [
   { id: 'google', labelKey: 'auth.continue_with_google', mark: 'google' },
   { id: 'twitter', labelKey: 'auth.continue_with_x', mark: 'x' },

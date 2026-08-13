@@ -33,13 +33,14 @@ jobs:
             # scripts/build-legal-pages.mjs from docs/legal/, which is itself
             # held to the limit. locales/*.json is exempt for a different
             # reason: a translation string cannot be wrapped without changing
-            # its value.
+            # its value, and the same is true of a DKIM record in a zone file.
             matches=$(LC_ALL=C git grep -nI "$pattern" \
               -- ':!supabase/config.toml' \
                  ':!locales/*.json' \
                  ':!package-lock.json' \
                  ':!nativewind-env.d.ts' \
                  ':!public/*' \
+                 ':!infra/ses-dns.zone' \
                  "$@") || grep_status=$?
 
             # git grep exits 1 for "nothing matched" and 2 or more for a real

@@ -151,6 +151,89 @@ AWS states plainly that these APIs "don't detect whether an image includes
 illegal content, such as CSAM". That is why `createModerationProvider` requires
 a second provider and fails closed without it.
 
+## Email, Amazon SES
+
+Sign-in is an emailed six digit code, so email is the entire front door.
+Supabase's built-in sender is rate limited to a handful an hour and is not for
+production.
+
+`eu-central-1`, not `ap-south-1` where Rekognition runs. The messages carry a
+user's email address, and the database that already holds it is in Frankfurt.
+
+**Sending is from `send.openheartapp.org`, never the root.** A domain may
+publish exactly one SPF record. The root belongs to Google Workspace, and a
+second SPF for SES would not merge with a Workspace one, it would make SPF fail
+with a permanent error and take human mail down with it. A subdomain also keeps
+reputation separate, which matters when the mail goes to people who have not
+opted in to anything yet.
+
+```bash
+aws sesv2 create-email-identity --region eu-central-1 \
+  --email-identity send.openheartapp.org \
+  --dkim-signing-attributes NextSigningKeyLength=RSA_2048_BIT
+
+aws sesv2 put-email-identity-mail-from-attributes --region eu-central-1 \
+  --email-identity send.openheartapp.org \
+  --mail-from-domain bounce.send.openheartapp.org \
+  --behavior-on-mx-failure USE_DEFAULT_VALUE
+```
+
+The MAIL FROM subdomain exists for SPF alignment: without it the envelope
+sender is an amazonses.com address and the domain in the From header is not the
+domain SPF was checked against.
+
+`ses-dns.zone` is generated from the identity and imported into Cloudflare
+whole. Regenerate it rather than editing it, and note that DKIM tokens change
+if the identity is ever recreated.
+
+The sender is a scoped IAM user, same pattern as the moderation ones:
+
+```bash
+aws iam create-user --user-name openheart-mailer \
+  --tags Key=project,Value=openheart Key=env,Value=production
+aws iam put-user-policy --user-name openheart-mailer \
+  --policy-name openheart-ses-send \
+  --policy-document file://infra/aws-mailer-policy.json
+aws iam create-access-key --user-name openheart-mailer
+```
+
+The policy allows one action on one identity from one address, so a leaked key
+cannot send as anything else.
+
+**An SMTP password is not the secret access key.** It is derived from it with
+five chained HMACs, documented under SES SMTP credentials, and there is no API
+that returns one. `scripts/ses-smtp-password.mjs` does the derivation and writes
+to a gitignored file so the value never reaches a terminal.
+
+Production access granted: 50,000 a day, 14 a second, against the 200 a day the
+launch needs. Account-level suppression is on for BOUNCE and COMPLAINT, so an
+address that hard bounces is not retried and cannot keep damaging the rate.
+
+```bash
+aws sesv2 create-configuration-set --region eu-central-1 \
+  --configuration-set-name openheart-transactional \
+  --reputation-options ReputationMetricsEnabled=true \
+  --suppression-options SuppressedReasons=BOUNCE,COMPLAINT \
+  --delivery-options TlsPolicy=REQUIRE
+
+aws sesv2 put-email-identity-configuration-set-attributes --region eu-central-1 \
+  --email-identity send.openheartapp.org \
+  --configuration-set-name openheart-transactional
+```
+
+Not bought, and not by accident: Virtual Deliverability Manager charges per
+message, and a dedicated IP is about 25 dollars a month and is worse than a
+shared one below roughly 100k sends a month, because there is no volume to build
+a reputation with.
+
+Verified by sending rather than by reading the console. SMTP auth returned 235,
+the message was accepted, and CloudWatch recorded Send 1, Delivery 1, Bounce 0,
+Complaint 0, Reject 0.
+
+The two numbers that matter afterwards are on SES, Reputation metrics: bounce
+under 5 percent and complaint under 0.1 percent. Complaint is the one that
+suspends an account.
+
 ## Pages
 
 The web build. `openheart`, production branch `main`, reachable at
