@@ -30,9 +30,12 @@ export type Pose = {
 // turned right: the challenge still passes, still looks like it works, and
 // stops being a liveness signal at all.
 //
-// scripts/calibrate-pose.mjs sends one selfie and prints what came back. Turn
-// your head to your own left, run it, and if Yaw is negative this is correct.
-export const YAW_IS_POSITIVE_TURNING_RIGHT = true;
+// Settled by a real capture. An unmirrored photo of a head turned to its own
+// left measured Yaw +65.2, so positive yaw is a left turn. Mirroring is what
+// makes this easy to get wrong: the same pose through a mirrored selfie
+// measured -54.9 and argued for the opposite value. CameraView mirror defaults
+// to false and verify.tsx does not set it, so captures match the photo used.
+export const YAW_IS_POSITIVE_TURNING_RIGHT = false;
 
 // Deliberately wide. The instruction is "turn your head", not "hold 30 degrees",
 // and a band that demands precision fails real people holding a phone one
