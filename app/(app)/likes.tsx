@@ -2,7 +2,7 @@ import { View } from 'react-native';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Avatar, Button, Card, Screen, Skeleton, Text } from '@/components/ui';
+import { Avatar, Button, Card, EmptyState, Screen, Skeleton, Text } from '@/components/ui';
 import { LoadFailed } from '@/components/load-failed';
 import { useLikesReceived } from '@/hooks/use-discovery';
 import { formatRelativeTime } from '@/lib/format';
@@ -43,13 +43,15 @@ export default function LikesScreen() {
 
   return (
     <Screen scroll className="gap-6 py-6" refreshing={isFetching} onRefresh={() => void refetch()}>
-      <View className="gap-2">
-        <Text variant="title">{t('likes.title')}</Text>
+      {likes.length === 0 ? (
+        <EmptyState icon="heart" title={t('likes.title')} body={t('likes.empty')} />
+      ) : (
+        <View className="gap-2">
+          <Text variant="title">{t('likes.title')}</Text>
 
-        <Text tone="muted">
-          {likes.length === 0 ? t('likes.empty') : t('likes.body', { count: likes.length })}
-        </Text>
-      </View>
+          <Text tone="muted">{t('likes.body', { count: likes.length })}</Text>
+        </View>
+      )}
 
       {likes.map((like) => (
         <Card key={like.swiper_id} className="gap-4">

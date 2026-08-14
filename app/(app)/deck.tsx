@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { Button, IconButton, Screen, Skeleton, Text } from '@/components/ui';
+import { Button, EmptyState, IconButton, Screen, Skeleton, Text } from '@/components/ui';
 import { LoadFailed } from '@/components/load-failed';
 import { MatchCelebration } from '@/components/match-celebration';
 import { SwipeDeck, type SwipeDeckHandle } from '@/components/swipe-deck';
@@ -77,14 +77,13 @@ function EmptyDeck({ onAdjust, onRetry }: EmptyDeckProps) {
   const { t } = useTranslation();
 
   return (
-    <View className="flex-1 justify-center gap-6">
-      <View className="gap-2">
-        <Text variant="title">{t('deck.empty_title')}</Text>
-        <Text tone="muted">{t('deck.empty_body')}</Text>
-      </View>
-
-      <Button label={t('deck.widen_search')} onPress={onAdjust} />
-      <Button variant="ghost" label={t('common.retry')} onPress={onRetry} />
+    <View className="flex-1 justify-center">
+      {/* A pin rather than a heart: running out of people nearby is a question
+          about distance, and widening the search is the answer offered. */}
+      <EmptyState icon="pin" title={t('deck.empty_title')} body={t('deck.empty_body')}>
+        <Button label={t('deck.widen_search')} onPress={onAdjust} />
+        <Button variant="ghost" label={t('common.retry')} onPress={onRetry} />
+      </EmptyState>
     </View>
   );
 }

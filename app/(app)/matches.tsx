@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Button, Card, Screen, Skeleton, Text } from '@/components/ui';
+import { Button, Card, EmptyState, Screen, Skeleton, Text } from '@/components/ui';
 import { LoadFailed } from '@/components/load-failed';
 import { ThreadRow } from '@/components/thread-row';
 import { useThreads } from '@/hooks/use-threads';
@@ -109,10 +109,10 @@ export default function MatchesScreen() {
 
   if (threads.length === 0) {
     return (
-      <Screen className="justify-center gap-5">
-        <Text variant="title">{t('matches.title')}</Text>
-        <Text tone="muted">{t('matches.empty')}</Text>
-        <Button label={t('home.browse')} onPress={() => router.push('/deck')} />
+      <Screen className="justify-center">
+        <EmptyState icon="heart" title={t('matches.title')} body={t('matches.empty')}>
+          <Button label={t('home.browse')} onPress={() => router.push('/deck')} />
+        </EmptyState>
       </Screen>
     );
   }

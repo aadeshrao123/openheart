@@ -3,6 +3,7 @@ export { BrandMark, type BrandMarkProps, type BrandName } from './brand-mark';
 export { Button, type ButtonProps } from './button';
 export { Card, type CardProps } from './card';
 export { Chip, type ChipProps } from './chip';
+export { EmptyState, type EmptyStateProps } from './empty-state';
 export { Icon, type IconProps } from './icon';
 export { IconButton, type IconButtonProps } from './icon-button';
 export { Input, type InputProps } from './input';

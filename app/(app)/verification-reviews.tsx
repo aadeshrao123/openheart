@@ -1,7 +1,7 @@
 import { View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Button, Card, Screen, Skeleton, Text } from '@/components/ui';
+import { Button, Card, EmptyState, Screen, Skeleton, Text } from '@/components/ui';
 import { LoadFailed } from '@/components/load-failed';
 import { VerificationReviewCard } from '@/components/verification-review-card';
 import { useIsModerator } from '@/hooks/use-moderation';
@@ -86,11 +86,7 @@ export default function VerificationReviewsScreen() {
 
       {isPending ? <ReviewQueueSkeleton /> : null}
 
-      {isEmpty ? (
-        <Card elevation="flat">
-          <Text tone="muted">{t('review.empty')}</Text>
-        </Card>
-      ) : null}
+      {isEmpty ? <EmptyState icon="check" body={t('review.empty')} /> : null}
 
       {rows.map((review) => (
         <VerificationReviewCard key={review.id} review={review} />

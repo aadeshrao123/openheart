@@ -1,7 +1,7 @@
 import { View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Avatar, Button, Card, Screen, Skeleton, Text } from '@/components/ui';
+import { Avatar, Button, EmptyState, Screen, Skeleton, Text } from '@/components/ui';
 import { LoadFailed } from '@/components/load-failed';
 import { useBlocks, useUnblock } from '@/hooks/use-safety';
 
@@ -84,9 +84,7 @@ export default function BlockedScreen() {
       <BlockedHeader />
 
       {blocks.length === 0 ? (
-        <Card elevation="flat">
-          <Text tone="muted">{t('safety.blocked_empty')}</Text>
-        </Card>
+        <EmptyState icon="shield" body={t('safety.blocked_empty')} />
       ) : (
         <View className="gap-6">
           {blocks.map((block) => {

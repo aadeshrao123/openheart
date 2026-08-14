@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Button, Card, Chip, Screen, Skeleton, Text } from '@/components/ui';
+import { Button, Card, Chip, EmptyState, Screen, Skeleton, Text } from '@/components/ui';
 import { LoadFailed } from '@/components/load-failed';
 import { ReportCard } from '@/components/report-card';
 import { useIsModerator, useReports } from '@/hooks/use-moderation';
@@ -111,11 +111,9 @@ export default function ModerationScreen() {
 
       {isPending ? <ReportQueueSkeleton /> : null}
 
-      {isEmpty ? (
-        <Card elevation="flat">
-          <Text tone="muted">{t('moderation.empty')}</Text>
-        </Card>
-      ) : null}
+      {/* A tick, not a heart. An empty moderation queue is good news and should
+          look like it rather than like a screen that failed to load. */}
+      {isEmpty ? <EmptyState icon="check" body={t('moderation.empty')} /> : null}
 
       {rows.map((report) => (
         <ReportCard key={report.id} report={report} />
