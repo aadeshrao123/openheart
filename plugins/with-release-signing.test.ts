@@ -4,6 +4,13 @@ import { addReleaseSigning } from './with-release-signing';
 // The exact shape prebuild produced, trimmed to the two blocks the plugin
 // rewrites. Copied from a generated android/app/build.gradle rather than typed
 // from memory, because a near-miss here would pass while the real file failed.
+// Split only so the source line stays inside the column limit. The string it
+// builds is still byte for byte what prebuild generates, which is the point of
+// the fixture.
+const SHRINK_LINE =
+  "            def enableShrinkResources = findProperty(" +
+  "'android.enableShrinkResourcesInReleaseBuilds') ?: 'false'";
+
 const TEMPLATE = `android {
     signingConfigs {
         debug {
@@ -21,7 +28,7 @@ const TEMPLATE = `android {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
             signingConfig signingConfigs.debug
-            def enableShrinkResources = findProperty('android.enableShrinkResourcesInReleaseBuilds') ?: 'false'
+${SHRINK_LINE}
         }
     }
 }`;
