@@ -90,7 +90,16 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FEFCFD"
       },
-      "package": "org.openheartapp"
+      "package": "org.openheartapp",
+      "permissions": [
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.CAMERA",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
+      ],
+      "blockedPermissions": [
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.SYSTEM_ALERT_WINDOW"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -160,8 +169,10 @@
     },
     "extra": {
       "eas": {
-        "projectId": "af949e00-8519-4f24-8d8b-3c5380d318b6"
-      }
-    }
+        "projectId": "4702a8ee-a82d-4c6d-aa78-f05639309ffd"
+      },
+      "router": {}
+    },
+    "owner": "aadeshrao"
   }
 }
