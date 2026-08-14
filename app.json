@@ -91,7 +91,7 @@
         "backgroundColor": "#FEFCFD"
       },
       "package": "org.openheartapp",
-      "versionCode": 2,
+      "versionCode": 3,
       "permissions": [
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.CAMERA",

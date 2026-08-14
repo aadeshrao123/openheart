@@ -172,6 +172,10 @@ enabled = true
 #                  openheart://auth/callback
 #                  http://localhost:8081/auth/callback
 #
+# The native entry has two slashes, and lib/oauth.ts builds it that way on
+# purpose. expo-linking's createURL emits three when handed a leading slash,
+# and Supabase compares these as exact strings.
+#
 # When a redirect is not on that list Supabase silently falls back to Site URL,
 # which defaults to http://localhost:3000. That is the whole reason signing in
 # with Google lands on a dead localhost page rather than an error.
