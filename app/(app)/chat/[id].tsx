@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { FlatList, KeyboardAvoidingView, Platform, View } from 'react-native';
 import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
-import { Screen, Skeleton, Text } from '@/components/ui';
+import { EmptyState, Screen, Skeleton, Text } from '@/components/ui';
 import { ChatHeader } from '@/components/chat-header';
 import { LoadFailed } from '@/components/load-failed';
 import { MessageActions } from '@/components/message-actions';
@@ -209,13 +209,15 @@ export default function ChatScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         {items.length === 0 ? (
-          <View className="flex-1 items-center justify-center gap-3 px-4">
-            <Text variant="quote" tone="muted" className="text-center">
-              {t('chat.say_hello_title', { name })}
-            </Text>
-            <Text variant="caption" tone="subtle" className="text-center">
-              {t('chat.say_hello_body')}
-            </Text>
+          // The screen somebody lands on straight after matching, so it gets
+          // the same treatment as every other empty state rather than being
+          // two lines of grey text on nothing.
+          <View className="flex-1 justify-center">
+            <EmptyState
+              icon="chat"
+              title={t('chat.say_hello_title', { name })}
+              body={t('chat.say_hello_body')}
+            />
           </View>
         ) : (
           <FlatList
