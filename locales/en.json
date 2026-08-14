@@ -385,7 +385,8 @@
     "count_other": "{{count}} matches",
     "celebrate_title": "It is a match",
     "keep_swiping": "Keep swiping",
-    "privacy_note": "Only the two of you can read a conversation. Nobody at OpenHeart can, and there is no advertiser to sell it to."
+    "privacy_note": "Only the two of you can read a conversation. Nobody at OpenHeart can, and there is no advertiser to sell it to.",
+    "send_message": "Send a message"
   },
   "chat": {
     "placeholder": "Write a message",

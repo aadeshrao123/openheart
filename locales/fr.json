@@ -387,7 +387,8 @@
     "count_other": "{{count}} matchs",
     "celebrate_title": "C'est un match",
     "keep_swiping": "Continuer d'explorer",
-    "privacy_note": "Vous seuls pouvez lire votre conversation. Personne chez OpenHeart ne le peut, et il n'y a aucun annonceur à qui la vendre."
+    "privacy_note": "Vous seuls pouvez lire votre conversation. Personne chez OpenHeart ne le peut, et il n'y a aucun annonceur à qui la vendre.",
+    "send_message": "Envoyer un message"
   },
   "chat": {
     "placeholder": "Écris un message",

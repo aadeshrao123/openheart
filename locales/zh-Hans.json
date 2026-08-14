@@ -383,7 +383,8 @@
     "count_other": "{{count}} 个配对",
     "celebrate_title": "配对成功",
     "keep_swiping": "接着浏览",
-    "privacy_note": "对话只有你们两个人能读到。OpenHeart 的任何人都读不到，我们也没有广告商，不存在把它卖出去的可能。"
+    "privacy_note": "对话只有你们两个人能读到。OpenHeart 的任何人都读不到，我们也没有广告商，不存在把它卖出去的可能。",
+    "send_message": "发消息"
   },
   "chat": {
     "placeholder": "写一条消息",

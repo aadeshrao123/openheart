@@ -89,6 +89,9 @@ type SwipeInput = {
 
 export type SwipeResult = {
   matchedName: string | null;
+  // The conversation the match opened, so the celebration can offer to open it
+  // rather than only announcing that it happened.
+  matchId: string | null;
 };
 
 export const likesKey = ['likes', 'received'] as const;
@@ -176,7 +179,7 @@ export function useSwipe() {
       }
 
       if (direction !== 'like') {
-        return { matchedName: null };
+        return { matchedName: null, matchId: null };
       }
 
       // Asked afterwards, never computed. matches is readable only by its two
@@ -196,7 +199,7 @@ export function useSwipe() {
       }
 
       if (!match) {
-        return { matchedName: null };
+        return { matchedName: null, matchId: null };
       }
 
       const { data: profile } = await supabase
@@ -205,7 +208,7 @@ export function useSwipe() {
         .eq('id', targetId)
         .maybeSingle();
 
-      return { matchedName: profile?.display_name ?? null };
+      return { matchedName: profile?.display_name ?? null, matchId: match.id };
     },
 
     // Removed from the cache before the request is sent. Waiting for the round

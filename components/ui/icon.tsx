@@ -42,6 +42,9 @@ const sizes = {
   sm: 14,
   md: 18,
   lg: 24,
+  // Display only. Nothing at this size is a control, so it is not bound by the
+  // 44px touch floor the way the others implicitly are.
+  xl: 56,
 } as const;
 
 export type IconProps = {

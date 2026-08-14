@@ -383,7 +383,8 @@
     "count_other": "{{count}} kecocokan",
     "celebrate_title": "Kalian cocok",
     "keep_swiping": "Terus geser",
-    "privacy_note": "Hanya kalian berdua yang bisa membaca percakapan. Tidak seorang pun di OpenHeart bisa membacanya, dan tidak ada pengiklan yang bisa membelinya."
+    "privacy_note": "Hanya kalian berdua yang bisa membaca percakapan. Tidak seorang pun di OpenHeart bisa membacanya, dan tidak ada pengiklan yang bisa membelinya.",
+    "send_message": "Kirim pesan"
   },
   "chat": {
     "placeholder": "Tulis pesan",

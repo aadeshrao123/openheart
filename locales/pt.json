@@ -387,7 +387,8 @@
     "count_other": "{{count}} conexões",
     "celebrate_title": "Vocês se conectaram",
     "keep_swiping": "Continuar deslizando",
-    "privacy_note": "Só vocês podem ler a conversa. Ninguém do OpenHeart consegue ler, e não existe anunciante para quem vendê-la."
+    "privacy_note": "Só vocês podem ler a conversa. Ninguém do OpenHeart consegue ler, e não existe anunciante para quem vendê-la.",
+    "send_message": "Enviar uma mensagem"
   },
   "chat": {
     "placeholder": "Escreva uma mensagem",

@@ -27,6 +27,7 @@ import {
 type Celebration = {
   id: string;
   name: string;
+  matchId: string | null;
 };
 
 // The card, the name, distance and bio lines inside it, and the two buttons:
@@ -130,7 +131,7 @@ export default function DeckScreen() {
     swipe.mutate(
       { targetId: candidate.id, direction },
       {
-        onSuccess: ({ matchedName }) => {
+        onSuccess: ({ matchedName, matchId }) => {
           setNotice(null);
 
           if (matchedName !== null) {
@@ -138,7 +139,10 @@ export default function DeckScreen() {
             // swipe the way the buttons do, so two replies can arrive one
             // after the other, and the second used to overwrite the first:
             // a match nobody was ever told about.
-            setCelebrations((queue) => [...queue, { id: candidate.id, name: matchedName }]);
+            setCelebrations((queue) => [
+              ...queue,
+              { id: candidate.id, name: matchedName, matchId },
+            ]);
           }
         },
 
@@ -283,6 +287,11 @@ export default function DeckScreen() {
         <MatchCelebration
           key={celebration.id}
           name={celebration.name}
+          matchId={celebration.matchId}
+          onOpenChat={(matchId) => {
+            setCelebrations((queue) => queue.slice(1));
+            router.push({ pathname: '/chat/[id]', params: { id: matchId } });
+          }}
           // Dismissing shows the next queued match rather than the deck, and
           // nothing here waits on an animation to run.
           onDismiss={() => setCelebrations((queue) => queue.slice(1))}

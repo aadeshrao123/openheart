@@ -42,7 +42,7 @@ export default function CandidateScreen() {
   const swipe = useSwipe();
 
   const [safetyOpen, setSafetyOpen] = useState(false);
-  const [matched, setMatched] = useState<string | null>(null);
+  const [matched, setMatched] = useState<{ name: string; matchId: string | null } | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
 
   const candidate = deck?.find((entry) => entry.id === id);
@@ -73,8 +73,8 @@ export default function CandidateScreen() {
         comment: target.comment ?? null,
       },
       {
-        onSuccess: ({ matchedName }) =>
-          matchedName === null ? leave() : setMatched(matchedName),
+        onSuccess: ({ matchedName, matchId }) =>
+          matchedName === null ? leave() : setMatched({ name: matchedName, matchId }),
 
         onError: (error) =>
           setNotice(
@@ -121,7 +121,12 @@ export default function CandidateScreen() {
 
       {matched !== null ? (
         <MatchCelebration
-          name={matched}
+          name={matched.name}
+          matchId={matched.matchId}
+          onOpenChat={(matchId) => {
+            setMatched(null);
+            router.replace({ pathname: '/chat/[id]', params: { id: matchId } });
+          }}
           onDismiss={() => {
             setMatched(null);
             leave();
