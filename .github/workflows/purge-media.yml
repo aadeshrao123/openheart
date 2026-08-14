@@ -1,0 +1,64 @@
+name: Purge deleted media
+
+# Drains the deleted_media queue out of R2. Nothing else runs it, so without
+# this workflow every rejected photo and every deleted account's photos stay in
+# the bucket indefinitely, which is a storage bill and, for a photo rejected by
+# the adult or CSAM scan, a liability.
+#
+# Daily rather than hourly. The queue is drained in batches and the function is
+# safe to run against an empty queue, so the only cost of a later run is that
+# keys sit a few hours longer.
+on:
+  schedule:
+    - cron: '17 3 * * *'
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  purge:
+    name: Drain the deleted media queue
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Call the Edge Function
+        env:
+          SUPABASE_URL: ${{ secrets.EXPO_PUBLIC_SUPABASE_URL }}
+          ANON_KEY: ${{ secrets.EXPO_PUBLIC_SUPABASE_ANON_KEY }}
+          PURGE_TOKEN: ${{ secrets.PURGE_TOKEN }}
+        run: |
+          if [ -z "$PURGE_TOKEN" ]; then
+            echo "PURGE_TOKEN is not set as a repository secret."
+            echo "It is the same value as the PURGE_TOKEN function secret in Supabase."
+            exit 1
+          fi
+
+          # Both headers, and the reason is not obvious. X-Purge-Token is what
+          # the function itself checks. Authorization is what the Edge Function
+          # gateway demands before the function is reached at all, which
+          # `supabase functions serve` does not enforce, so this call worked
+          # locally and returned UNAUTHORIZED_NO_AUTH_HEADER in production.
+          status=$(curl -sS -o response.json -w '%{http_code}' -X POST \
+            "$SUPABASE_URL/functions/v1/purge-deleted-media" \
+            -H "Authorization: Bearer $ANON_KEY" \
+            -H "X-Purge-Token: $PURGE_TOKEN")
+
+          echo "HTTP $status"
+          cat response.json
+          echo
+
+          if [ "$status" != "200" ]; then
+            exit 1
+          fi
+
+          # A failed delete leaves the key queued for the next run rather than
+          # losing it, so a non-zero count is worth seeing in the log but is not
+          # a reason to fail the job and page somebody.
+          node -e '
+            const result = require("./response.json");
+            console.log(
+              `purged ${result.purged}, failed ${result.failed}, remaining ${result.remaining}`
+            );
+          '
