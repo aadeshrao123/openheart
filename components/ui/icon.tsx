@@ -33,6 +33,20 @@ const shapes = {
     'M12 21 C12 21 4 15.5 4 9.5 C4 6.5 6.2 4.5 8.8 4.5 C10.4 4.5 11.5 5.4 12 6.2 ' +
       'C12.5 5.4 13.6 4.5 15.2 4.5 C17.8 4.5 20 6.5 20 9.5 C20 15.5 12 21 12 21 Z',
   ],
+  // Two cards, one behind the other, which is what the deck is.
+  cards: [
+    'M10 5.5 L18.5 5.5 A1.5 1.5 0 0 1 20 7 L20 17 A1.5 1.5 0 0 1 18.5 18.5 ' +
+      'L10 18.5 A1.5 1.5 0 0 1 8.5 17 L8.5 7 A1.5 1.5 0 0 1 10 5.5 Z',
+    'M5.5 8 A1.5 1.5 0 0 0 4 9.5 L4 14.5 A1.5 1.5 0 0 0 5.5 16',
+  ],
+  chat: [
+    'M4.5 5.5 L19.5 5.5 A2 2 0 0 1 21.5 7.5 L21.5 14.5 A2 2 0 0 1 19.5 16.5 ' +
+      'L12 16.5 L7.5 20 L7.5 16.5 L4.5 16.5 A2 2 0 0 1 2.5 14.5 L2.5 7.5 A2 2 0 0 1 4.5 5.5 Z',
+  ],
+  person: [
+    'M9 8 A3 3 0 1 0 15 8 A3 3 0 1 0 9 8 Z',
+    'M5 20 C5 16.4 8.1 14 12 14 C15.9 14 19 16.4 19 20',
+  ],
   pin: [
     'M12 21.5 C12 21.5 19 15.2 19 9.8 A7 7 0 0 0 5 9.8 C5 15.2 12 21.5 12 21.5 Z',
     'M9.6 9.6 A2.4 2.4 0 1 0 14.4 9.6 A2.4 2.4 0 1 0 9.6 9.6 Z',
@@ -40,7 +54,15 @@ const shapes = {
 } as const;
 
 // A tick and a cross are symbols, not directions, so they must not mirror.
-const DIRECTIONAL: ReadonlySet<IconName> = new Set(['send', 'chevron', 'chevron_end']);
+// The chat tail and the card behind the deck both sit on one side, so both
+// mirror. A tick, a cross and a face do not.
+const DIRECTIONAL: ReadonlySet<IconName> = new Set([
+  'send',
+  'chevron',
+  'chevron_end',
+  'chat',
+  'cards',
+]);
 
 const sizes = {
   sm: 14,

@@ -587,5 +587,11 @@
     "liked_prompt": "Menyukai jawabanmu untuk: {{prompt}}",
     "liked_photo": "Foto yang disukai",
     "open_profile": "Lihat profilnya"
+  },
+  "tabs": {
+    "browse": "Jelajah",
+    "likes": "Suka",
+    "messages": "Pesan",
+    "profile": "Profil"
   }
 }

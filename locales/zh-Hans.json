@@ -587,5 +587,11 @@
     "liked_prompt": "喜欢你对这个问题的回答：{{prompt}}",
     "liked_photo": "他们喜欢的照片",
     "open_profile": "查看资料"
+  },
+  "tabs": {
+    "browse": "浏览",
+    "likes": "喜欢",
+    "messages": "消息",
+    "profile": "我的"
   }
 }

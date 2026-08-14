@@ -601,5 +601,11 @@
     "liked_prompt": "Le gustó tu respuesta a: {{prompt}}",
     "liked_photo": "La foto que le gustó",
     "open_profile": "Ver su perfil"
+  },
+  "tabs": {
+    "browse": "Explorar",
+    "likes": "Me gusta",
+    "messages": "Mensajes",
+    "profile": "Perfil"
   }
 }

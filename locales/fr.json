@@ -601,5 +601,11 @@
     "liked_prompt": "A aimé votre réponse à : {{prompt}}",
     "liked_photo": "La photo aimée",
     "open_profile": "Voir le profil"
+  },
+  "tabs": {
+    "browse": "Parcourir",
+    "likes": "J'aime",
+    "messages": "Messages",
+    "profile": "Profil"
   }
 }

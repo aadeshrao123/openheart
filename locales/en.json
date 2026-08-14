@@ -594,5 +594,11 @@
     "liked_prompt": "They liked your answer to: {{prompt}}",
     "liked_photo": "The photo they liked",
     "open_profile": "See their profile"
+  },
+  "tabs": {
+    "browse": "Browse",
+    "likes": "Likes",
+    "messages": "Messages",
+    "profile": "Profile"
   }
 }

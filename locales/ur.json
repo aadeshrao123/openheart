@@ -594,5 +594,11 @@
     "liked_prompt": "آپ کے اس جواب کو پسند کیا: {{prompt}}",
     "liked_photo": "جو تصویر پسند آئی",
     "open_profile": "پروفائل دیکھیں"
+  },
+  "tabs": {
+    "browse": "دیکھیں",
+    "likes": "پسند",
+    "messages": "پیغامات",
+    "profile": "پروفائل"
   }
 }

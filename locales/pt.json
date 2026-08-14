@@ -601,5 +601,11 @@
     "liked_prompt": "Curtiu sua resposta para: {{prompt}}",
     "liked_photo": "A foto que curtiram",
     "open_profile": "Ver o perfil"
+  },
+  "tabs": {
+    "browse": "Explorar",
+    "likes": "Curtidas",
+    "messages": "Mensagens",
+    "profile": "Perfil"
   }
 }

@@ -622,5 +622,11 @@
     "liked_prompt": "أعجبته إجابتك على: {{prompt}}",
     "liked_photo": "الصورة التي أعجبته",
     "open_profile": "عرض ملفهم"
+  },
+  "tabs": {
+    "browse": "تصفح",
+    "likes": "إعجابات",
+    "messages": "الرسائل",
+    "profile": "الملف"
   }
 }

@@ -112,20 +112,8 @@ export default function HomeScreen() {
         </Card>
       ) : null}
 
-      {/* The two things somebody opened the app to do, separated from the four
-          they came to do once. Six identical rows made finding a conversation
-          exactly as much work as changing a setting. */}
-      <View className="gap-3">
-        <Button size="lg" label={t('home.browse')} onPress={() => router.push('/deck')} />
-
-        <Button
-          size="lg"
-          variant="secondary"
-          label={t('home.messages')}
-          onPress={() => router.push('/matches')}
-        />
-      </View>
-
+      {/* Browsing and messages are tabs now, so they are not repeated here.
+          What is left is the set of things somebody does once. */}
       <View className="gap-1">
         {!profile.photo_verified ? (
           <ListRow label={t('home.verify')} onPress={() => router.push('/verify')} />
@@ -134,6 +122,7 @@ export default function HomeScreen() {
         <ListRow label={t('home.edit_profile')} onPress={() => router.push('/edit-profile')} />
         <ListRow label={t('profile.photos')} onPress={() => router.push('/photos')} />
         <ListRow label={t('settings.title')} onPress={() => router.push('/settings')} />
+        <ListRow label={t('safety.blocked_title')} onPress={() => router.push('/blocked')} />
       </View>
 
       <Card elevation="flat" className="gap-2">
