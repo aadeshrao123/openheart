@@ -67,3 +67,11 @@ Thumbs.db
 npm-debug.*
 yarn-debug.*
 yarn-error.*
+
+# The Google Play service account key, which eas.json points at by name. Play
+# will not issue a second one for the same account, so a leak means revoking
+# and re-inviting the account rather than rotating a string. Checked with
+# git check-ignore against this exact path before the file was ever created,
+# which is the check .env.production needed and did not get.
+play-service-account.json
+*-service-account.json

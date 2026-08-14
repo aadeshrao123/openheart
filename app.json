@@ -88,7 +88,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FCFAF7"
+        "backgroundColor": "#FEFCFD"
       },
       "package": "org.openheartapp"
     },
@@ -99,7 +99,7 @@
       "shortName": "OpenHeart",
       "description": "Dating that is actually free. No paywalls, no boosts, no charge to be seen.",
       "themeColor": "#FEFCFD",
-      "backgroundColor": "#FCFAF7",
+      "backgroundColor": "#FEFCFD",
       "lang": "en",
       "favicon": "./assets/favicon.png"
     },
@@ -126,10 +126,10 @@
           "image": "./assets/splash-icon.png",
           "imageWidth": 180,
           "resizeMode": "contain",
-          "backgroundColor": "#FCFAF7",
+          "backgroundColor": "#FEFCFD",
           "dark": {
             "image": "./assets/splash-icon-dark.png",
-            "backgroundColor": "#161413"
+            "backgroundColor": "#0A090C"
           }
         }
       ],

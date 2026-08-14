@@ -203,18 +203,46 @@ for (const [theme, tokens] of Object.entries(themes)) {
   }
 }
 
-// The browser paints themeColor around the page before any CSS loads, so it is
-// the one colour that cannot live in global.css. Asserted rather than commented,
-// because it had already drifted a shade behind --bg.
+// Five colours cannot live in global.css, because a platform paints each of
+// them before any CSS or any JavaScript exists: the browser paints themeColor
+// around the page, and Android paints the splash and the launcher icon
+// background while the bundle is still loading.
+//
+// Every one of them had drifted. themeColor was caught when this check was
+// first written; the other four were found later, still on a palette two
+// revisions old. So the check covers all of them rather than the one that
+// happened to be noticed.
 const appJson = JSON.parse(readFileSync(path.join(ROOT, 'app.json'), 'utf8'));
-const themeColor = appJson.expo.web.themeColor;
-const hex = themes.light.bg.map((channel) => channel.toString(16).padStart(2, '0'));
-const expected = `#${hex.join('')}`;
 
-const drifted = themeColor.toLowerCase() !== expected;
+const hex = (rgb) => `#${rgb.map((channel) => channel.toString(16).padStart(2, '0')).join('')}`;
 
-if (drifted) {
-  process.stdout.write(`FAIL  app.json themeColor is ${themeColor}, --bg is ${expected}\n`);
+const splash = appJson.expo.plugins.find(
+  (plugin) => Array.isArray(plugin) && plugin[0] === 'expo-splash-screen',
+)?.[1];
+
+const PLATFORM_COLOURS = [
+  { where: 'web.themeColor', value: appJson.expo.web.themeColor, theme: 'light' },
+  { where: 'web.backgroundColor', value: appJson.expo.web.backgroundColor, theme: 'light' },
+  {
+    where: 'android.adaptiveIcon.backgroundColor',
+    value: appJson.expo.android.adaptiveIcon.backgroundColor,
+    theme: 'light',
+  },
+  { where: 'splash.backgroundColor', value: splash?.backgroundColor, theme: 'light' },
+  { where: 'splash.dark.backgroundColor', value: splash?.dark?.backgroundColor, theme: 'dark' },
+];
+
+let drifted = 0;
+
+for (const colour of PLATFORM_COLOURS) {
+  const expected = hex(themes[colour.theme].bg);
+
+  if (colour.value?.toLowerCase() !== expected) {
+    drifted += 1;
+    process.stdout.write(
+      `FAIL  app.json ${colour.where} is ${colour.value}, ${colour.theme} --bg is ${expected}\n`,
+    );
+  }
 }
 
 const checked = PAIRS.length * 2;
@@ -223,9 +251,13 @@ if (failures > 0) {
   process.stdout.write(`\n${failures} of ${checked} pairs below the WCAG 2.2 minimum.\n`);
 }
 
-if (failures > 0 || drifted) {
+if (failures > 0 || drifted > 0) {
   process.exit(1);
 }
+
+process.stdout.write(
+  `${PLATFORM_COLOURS.length} platform colours in app.json match the palette.\n`,
+);
 
 process.stdout.write(
   `${checked} token pairs checked in two themes. ` +
