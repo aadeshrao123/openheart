@@ -58,7 +58,7 @@ const RESOLVED_STATUSES = Constants.public.Enums.report_status.filter(
   (status) => status !== 'pending',
 );
 
-const SAFETY_CATEGORIES = ['contact', 'solicitation', 'slur'] as const;
+const SAFETY_CATEGORIES = ['contact', 'solicitation', 'slur', 'sexual'] as const;
 
 const DYNAMIC_KEYS: Record<string, readonly string[]> = {
   'safety.reason_': REPORT_REASONS,

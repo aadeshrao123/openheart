@@ -465,7 +465,8 @@
     "report_done_contact": "Si es urgente, escribe a {{email}}. Si alguien esta en peligro inmediato, contacta primero con los servicios de emergencia locales.",
     "text_contact": "Quita los datos de contacto. Compartirlos aquí es como empiezan las estafas.",
     "text_solicitation": "Esto parece un anuncio. Los perfiles son para conocer gente, no para vender.",
-    "text_slur": "Esa palabra no está permitida aquí."
+    "text_slur": "Esa palabra no está permitida aquí.",
+    "text_sexual": "Quita eso. Los perfiles no son el lugar para lenguaje explícito."
   },
   "settings": {
     "title": "Ajustes",

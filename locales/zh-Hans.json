@@ -457,7 +457,8 @@
     "report_done_contact": "如果情况紧急，请写信到 {{email}}。如果有人正处于危险之中，请先联系当地紧急服务。",
     "text_contact": "请删除联系方式。在这里分享它们正是骗局的开端。",
     "text_solicitation": "这看起来像广告。资料是用来认识人的，不是用来推销的。",
-    "text_slur": "这里不允许使用这个词。"
+    "text_slur": "这里不允许使用这个词。",
+    "text_sexual": "请删除。个人资料不是使用露骨用语的地方。"
   },
   "settings": {
     "title": "设置",

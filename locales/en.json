@@ -461,7 +461,8 @@
     "report_done_contact": "If it is urgent, write to {{email}}. If someone is in immediate danger, contact your local emergency services first.",
     "text_contact": "Please take contact details out. Sharing them here is how scams start.",
     "text_solicitation": "This reads as an advert. Profiles are for meeting people, not selling.",
-    "text_slur": "That word is not allowed here."
+    "text_slur": "That word is not allowed here.",
+    "text_sexual": "Please take that out. Profiles are not the place for explicit language."
   },
   "settings": {
     "title": "Settings",

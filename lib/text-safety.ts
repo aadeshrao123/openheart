@@ -1,4 +1,4 @@
-export type SafetyCategory = 'contact' | 'solicitation' | 'slur';
+export type SafetyCategory = 'contact' | 'solicitation' | 'slur' | 'sexual';
 
 export type Violation = { category: SafetyCategory; matched: string };
 
@@ -18,11 +18,17 @@ const LOOKALIKES: Record<string, string> = {
   '|': 'i',
 };
 
-// Two normal forms, because one cannot do both jobs. `spaced` keeps word
-// boundaries, so short terms can be matched without "class" tripping on "ass".
-// `squashed` removes every separator, so f.u.c.k and f u c k collapse, and only
-// long terms are matched against it where a chance collision is implausible.
-export function normalise(input: string): { spaced: string; squashed: string } {
+// `loose` keeps every separator but collapses repeats, and terms are matched
+// against it as gap patterns: dick becomes d[^a-z0-9]*i[^a-z0-9]*c[^a-z0-9]*k.
+// That catches dick, d i c k, d.i.c.k and reeetard in one pass while word
+// boundaries keep Dickens, class and "open issue" clear.
+//
+// `squashed` drops separators entirely and is used only for long unambiguous
+// terms, where a chance collision is implausible.
+export function normalise(input: string): {
+  loose: string;
+  squashed: string;
+} {
   const folded = input
     .toLowerCase()
     .normalize('NFKD')
@@ -34,7 +40,7 @@ export function normalise(input: string): { spaced: string; squashed: string } {
   const collapse = (value: string) => value.replace(/(.)\1+/g, '$1');
 
   return {
-    spaced: collapse(folded.replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim()),
+    loose: collapse(folded),
     squashed: collapse(folded.replace(/[^a-z0-9]/g, '')),
   };
 }
@@ -59,7 +65,7 @@ const SOLICITATION_PATTERNS: RegExp[] = [
 // Deliberately short. It holds terms that are abusive in every context, not
 // words that are merely rude: a bio saying "shit at tennis" is not a safety
 // problem, and blocking it teaches people the app is broken rather than safe.
-// Anything longer than seven characters is also matched against `squashed`.
+// Terms of five characters or more are also matched against `squashed`.
 const SLUR_TERMS: string[] = [
   'nigger',
   'nigga',
@@ -73,19 +79,43 @@ const SLUR_TERMS: string[] = [
   'coon',
 ];
 
+// Explicit, not merely rude. Mild swearing is somebody's voice and blocking it
+// makes the app feel broken rather than safe, so shit, damn and hell all pass.
+//
+// Matched on word boundaries only, never squashed. Anatomy words collide with
+// ordinary writing once the separators are gone: "open issue" squashes to
+// openisue, which contains penis.
+const SEXUAL_TERMS: string[] = [
+  'sex',
+  'dick',
+  'cock',
+  'penis',
+  'vagina',
+  'pussy',
+  'anus',
+  'anal',
+  'blowjob',
+  'handjob',
+  'cum',
+  'horny',
+  'nude',
+  'nudes',
+  'boobs',
+  'tits',
+];
+
 const SQUASH_MIN_LENGTH = 5;
 
-function matchTerms(text: string, terms: string[], boundaries: boolean): string | null {
-  for (const term of terms) {
-    const needle = normalise(term)[boundaries ? 'spaced' : 'squashed'];
-    const pattern = boundaries ? new RegExp(`\\b${needle}\\b`) : null;
+export function gapPattern(term: string): string {
+  return `\\b${term.split('').join('[^a-z0-9]*')}\\b`;
+}
 
-    if (pattern ? pattern.test(text) : text.includes(needle)) {
-      return term;
-    }
-  }
+function matchLoose(text: string, terms: string[]): string | null {
+  return terms.find((term) => new RegExp(gapPattern(term)).test(text)) ?? null;
+}
 
-  return null;
+function matchSquashed(text: string, terms: string[]): string | null {
+  return terms.find((term) => term.length >= SQUASH_MIN_LENGTH && text.includes(term)) ?? null;
 }
 
 export function checkText(input: string): Violation | null {
@@ -93,14 +123,18 @@ export function checkText(input: string): Violation | null {
     return null;
   }
 
-  const { spaced, squashed } = normalise(input);
+  const { loose, squashed } = normalise(input);
 
-  const slur =
-    matchTerms(spaced, SLUR_TERMS, true) ??
-    matchTerms(squashed, SLUR_TERMS.filter((term) => term.length >= SQUASH_MIN_LENGTH), false);
+  const slur = matchLoose(loose, SLUR_TERMS) ?? matchSquashed(squashed, SLUR_TERMS);
 
   if (slur) {
     return { category: 'slur', matched: slur };
+  }
+
+  const sexual = matchLoose(loose, SEXUAL_TERMS);
+
+  if (sexual) {
+    return { category: 'sexual', matched: sexual };
   }
 
   // Against the raw text as well as the normalised form. Collapsing repeats
@@ -109,13 +143,13 @@ export function checkText(input: string): Violation | null {
   const raw = input.toLowerCase();
 
   for (const pattern of CONTACT_PATTERNS) {
-    if (pattern.test(raw) || pattern.test(spaced)) {
+    if (pattern.test(raw) || pattern.test(loose)) {
       return { category: 'contact', matched: pattern.source };
     }
   }
 
   for (const pattern of SOLICITATION_PATTERNS) {
-    if (pattern.test(raw) || pattern.test(spaced)) {
+    if (pattern.test(raw) || pattern.test(loose)) {
       return { category: 'solicitation', matched: pattern.source };
     }
   }

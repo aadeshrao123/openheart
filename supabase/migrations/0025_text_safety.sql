@@ -37,10 +37,14 @@ language plpgsql
 immutable
 as $$
 declare
-  spaced   text := public.normalise_for_safety(input, true);
+  loose    text := public.normalise_for_safety(input, true);
   squashed text := public.normalise_for_safety(input, false);
-  raw      text := lower(input);
   term     text;
+  raw      text := lower(input);
+  sexual   text[] := array[
+    'sex', 'dick', 'cock', 'penis', 'vagina', 'pussy', 'anus', 'anal',
+    'blowjob', 'handjob', 'cum', 'horny', 'nude', 'nudes', 'boobs', 'tits'
+  ];
   slurs    text[] := array[
     'nigger', 'nigga', 'faggot', 'tranny', 'retard',
     'kike', 'chink', 'spic', 'paki', 'coon'
@@ -51,13 +55,18 @@ begin
   end if;
 
   foreach term in array slurs loop
-    if spaced ~ ('\y' || public.normalise_for_safety(term, true) || '\y') then
+    if loose ~ public.gap_pattern(term) then
       return 'slur';
     end if;
 
-    if length(term) >= 5
-       and position(public.normalise_for_safety(term, false) in squashed) > 0 then
+    if length(term) >= 5 and position(term in squashed) > 0 then
       return 'slur';
+    end if;
+  end loop;
+
+  foreach term in array sexual loop
+    if loose ~ public.gap_pattern(term) then
+      return 'sexual';
     end if;
   end loop;
 
@@ -66,14 +75,14 @@ begin
      or raw ~ '\y(wa\.?me|t\.?me|whatsapp|telegram|snapchat|snap ?chat|kik|discord)\y'
      or raw ~ '\y(insta(gram)?|ig|snap|tiktok)[[:space:]]*[:@-][[:space:]]*[a-z0-9._]{3,}'
      or raw ~ '(^|[[:space:]])@[a-z0-9._]{4,}([[:space:]]|$)'
-     or spaced ~ '\y(whatsapp|telegram|snapchat|kik|discord)\y' then
+     or loose ~ '\y(whatsapp|telegram|snapchat|kik|discord)\y' then
     return 'contact';
   end if;
 
   if raw ~ '\y(onlyfans|only ?fans|cashapp|cash ?app|venmo|paypal|bitcoin|crypto)\y'
      or raw ~ '\y(my rates?|full service|incall|outcall|generous|sugar (daddy|baby|mommy))\y'
      or raw ~ '\y(escort|hookup for money|pay for my)\y'
-     or spaced ~ '\y(onlyfans|venmo|paypal|bitcoin|crypto|escort)\y' then
+     or loose ~ '\y(onlyfans|venmo|paypal|bitcoin|crypto|escort)\y' then
     return 'solicitation';
   end if;
 

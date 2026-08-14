@@ -9,7 +9,7 @@
 -- person who did nothing and gives them no way to argue.
 
 begin;
-select plan(16);
+select plan(22);
 
 insert into auth.users (id, instance_id, aud, role, email) values
   ('aaaa0000-0000-0000-0000-000000000001',
@@ -23,7 +23,8 @@ insert into profiles (id, display_name, birthdate) values
 select is(normalise_for_safety('F4K3', false), 'fake', 'digits fold to letters');
 select is(normalise_for_safety('heyyyyy', false), 'hey', 'repeats collapse');
 select is(normalise_for_safety('h.e.l.l.o', false), 'helo', 'separators go, then repeats');
-select is(normalise_for_safety('h.e.l.l.o there', true), 'h e l l o there', 'spaces survive');
+select is(normalise_for_safety('h.e.l.l.o', true), 'h.e.l.l.o', 'separators survive');
+select is(gap_pattern('sex'), '\ys[^a-z0-9]*e[^a-z0-9]*x\y', 'a term becomes a gap pattern');
 
 -- what passes ----------------------------------------------------------------
 
@@ -39,6 +40,11 @@ select is(text_safety_violation('mail me at a@b.co'), 'contact', 'an email is co
 select is(text_safety_violation('add me on telegram'), 'contact', 'another app is contact');
 select is(text_safety_violation('my rates on onlyfans'), 'solicitation', 'paid is solicitation');
 select is(text_safety_violation('r3t4rd'), 'slur', 'a padded slur is still a slur');
+select is(text_safety_violation('send nudes'), 'sexual', 'explicit words are refused');
+select is(text_safety_violation('d.i.c.k'), 'sexual', 'and refused when spelled out');
+select is(text_safety_violation('this weather is shit'), null, 'mild swearing passes');
+select is(text_safety_violation('open issue on my repo'), null, 'open issue is not penis');
+select is(text_safety_violation('I am bisexual'), null, 'bisexual is not sex');
 
 -- and the trigger, which is the point ----------------------------------------
 

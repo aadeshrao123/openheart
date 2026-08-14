@@ -11,10 +11,10 @@ describe('normalise', () => {
     expect(normalise('heyyyyy').squashed).toBe('hey');
   });
 
-  it('keeps words apart in the spaced form and joins them in the squashed one', () => {
-    const { spaced, squashed } = normalise('h.e.l.l.o there');
+  it('keeps separators in the loose form and drops them in the squashed one', () => {
+    const { loose, squashed } = normalise('h.e.l.l.o there');
 
-    expect(spaced).toBe('h e l l o there');
+    expect(loose).toBe('h.e.l.l.o there');
     expect(squashed).toBe('helothere');
   });
 });
@@ -35,6 +35,13 @@ describe('checkText', () => {
       'I love Dickens',
       'Essex born',
       'Cocktail enthusiast',
+      'heyyyyy',
+      'Shit at tennis, good at everything else',
+      'I am bisexual',
+      'Open issue on my repo',
+      'I love Dickens',
+      'Third rock from Uranus',
+      'Sussex born and raised',
     ]) {
       expect(checkText(phrase), phrase).toBeNull();
     }
@@ -58,6 +65,14 @@ describe('checkText', () => {
   it('catches paid solicitation', () => {
     expect(checkText('my rates are on onlyfans')?.category).toBe('solicitation');
     expect(checkText('cashapp me')?.category).toBe('solicitation');
+  });
+
+  it('catches explicit words but not mild swearing', () => {
+    expect(checkText('send nudes')?.category).toBe('sexual');
+    expect(checkText('looking for sex')?.category).toBe('sexual');
+    expect(checkText('d.i.c.k')?.category).toBe('sexual');
+    expect(checkText('this weather is shit')).toBeNull();
+    expect(checkText('damn good coffee')).toBeNull();
   });
 
   it('catches a slur written plainly', () => {

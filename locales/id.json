@@ -457,7 +457,8 @@
     "report_done_contact": "Jika mendesak, tulis ke {{email}}. Jika ada yang dalam bahaya langsung, hubungi layanan darurat setempat lebih dulu.",
     "text_contact": "Hapus detail kontak. Membagikannya di sini adalah awal dari penipuan.",
     "text_solicitation": "Ini terbaca seperti iklan. Profil untuk bertemu orang, bukan berjualan.",
-    "text_slur": "Kata itu tidak diizinkan di sini."
+    "text_slur": "Kata itu tidak diizinkan di sini.",
+    "text_sexual": "Hapus itu. Profil bukan tempat untuk bahasa vulgar."
   },
   "settings": {
     "title": "Pengaturan",
