@@ -151,11 +151,17 @@
         }
       ],
       "expo-asset",
-      "expo-web-browser"
+      "expo-web-browser",
+      "./plugins/with-release-signing"
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "af949e00-8519-4f24-8d8b-3c5380d318b6"
+      }
     }
   }
 }

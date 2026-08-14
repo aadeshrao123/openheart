@@ -8,6 +8,6 @@ export default defineConfig({
     alias: { '@': path.resolve(import.meta.dirname) },
   },
   test: {
-    include: ['lib/**/*.test.ts', 'hooks/**/*.test.ts'],
+    include: ['lib/**/*.test.ts', 'hooks/**/*.test.ts', 'plugins/**/*.test.ts'],
   },
 });
