@@ -462,7 +462,10 @@
     "unblock": "Desbloquear",
     "unblock_action": "Desbloquear a {{name}}",
     "unblock_explainer": "Al desbloquear, esa persona puede volver a aparecer entre tus sugerencias. No recupera una conversación que ya terminó.",
-    "report_done_contact": "Si es urgente, escribe a {{email}}. Si alguien esta en peligro inmediato, contacta primero con los servicios de emergencia locales."
+    "report_done_contact": "Si es urgente, escribe a {{email}}. Si alguien esta en peligro inmediato, contacta primero con los servicios de emergencia locales.",
+    "text_contact": "Quita los datos de contacto. Compartirlos aquí es como empiezan las estafas.",
+    "text_solicitation": "Esto parece un anuncio. Los perfiles son para conocer gente, no para vender.",
+    "text_slur": "Esa palabra no está permitida aquí."
   },
   "settings": {
     "title": "Ajustes",

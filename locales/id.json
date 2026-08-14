@@ -454,7 +454,10 @@
     "unblock": "Buka blokir",
     "unblock_action": "Buka blokir {{name}}",
     "unblock_explainer": "Membuka blokir membuat dia bisa muncul lagi di dekmu. Ini tidak mengembalikan percakapan yang sudah berakhir.",
-    "report_done_contact": "Jika mendesak, tulis ke {{email}}. Jika ada yang dalam bahaya langsung, hubungi layanan darurat setempat lebih dulu."
+    "report_done_contact": "Jika mendesak, tulis ke {{email}}. Jika ada yang dalam bahaya langsung, hubungi layanan darurat setempat lebih dulu.",
+    "text_contact": "Hapus detail kontak. Membagikannya di sini adalah awal dari penipuan.",
+    "text_solicitation": "Ini terbaca seperti iklan. Profil untuk bertemu orang, bukan berjualan.",
+    "text_slur": "Kata itu tidak diizinkan di sini."
   },
   "settings": {
     "title": "Pengaturan",

@@ -21,6 +21,7 @@ import { usePrompts } from '@/hooks/use-prompts';
 import { useSession } from '@/hooks/use-session';
 import { fromDateColumn } from '@/lib/age';
 import { formatDate, formatHeight } from '@/lib/format';
+import { checkText } from '@/lib/text-safety';
 import {
   BIO_MAX,
   CHILDREN_OPTIONS,
@@ -110,7 +111,10 @@ export default function EditProfileScreen() {
   const patch = (next: Partial<Form>) => setForm({ ...current, ...next });
 
   const birthdate = fromDateColumn(profile.birthdate);
-  const valid = current.displayName.trim().length > 0;
+  const unsafe =
+    checkText(current.displayName) ?? checkText(current.bio) ?? checkText(current.jobTitle);
+
+  const valid = current.displayName.trim().length > 0 && unsafe === null;
   const interests = profile.interests ?? [];
   const trimmed = (value: string) => (value.trim() === '' ? null : value.trim());
 
@@ -140,6 +144,12 @@ export default function EditProfileScreen() {
   return (
     <Screen scroll className="gap-10 py-8">
       <Text variant="title">{t('home.edit_profile')}</Text>
+
+      {unsafe ? (
+        <Text variant="caption" tone="danger" role="alert">
+          {t(`safety.text_${unsafe.category}`)}
+        </Text>
+      ) : null}
 
       <Section title={t('profile.section_basics')}>
         <Input

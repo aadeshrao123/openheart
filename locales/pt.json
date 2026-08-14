@@ -462,7 +462,10 @@
     "unblock": "Desbloquear",
     "unblock_action": "Desbloquear {{name}}",
     "unblock_explainer": "Desbloquear faz a pessoa voltar a aparecer nas suas sugestões. Isso não traz de volta uma conversa que terminou.",
-    "report_done_contact": "Se for urgente, escreva para {{email}}. Se alguem estiver em perigo imediato, contate primeiro os servicos de emergencia locais."
+    "report_done_contact": "Se for urgente, escreva para {{email}}. Se alguem estiver em perigo imediato, contate primeiro os servicos de emergencia locais.",
+    "text_contact": "Remova os dados de contato. Compartilhá-los aqui é como começam os golpes.",
+    "text_solicitation": "Isto parece um anúncio. Perfis são para conhecer pessoas, não para vender.",
+    "text_slur": "Essa palavra não é permitida aqui."
   },
   "settings": {
     "title": "Configurações",

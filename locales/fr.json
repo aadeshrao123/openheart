@@ -462,7 +462,10 @@
     "unblock": "Débloquer",
     "unblock_action": "Débloquer {{name}}",
     "unblock_explainer": "Débloquer permet à cette personne de réapparaître dans tes suggestions. Cela ne rétablit pas une conversation terminée.",
-    "report_done_contact": "Si c'est urgent, ecrivez a {{email}}. Si quelqu'un est en danger immediat, contactez d'abord les services d'urgence locaux."
+    "report_done_contact": "Si c'est urgent, ecrivez a {{email}}. Si quelqu'un est en danger immediat, contactez d'abord les services d'urgence locaux.",
+    "text_contact": "Retirez vos coordonnées. Les partager ici est le début des arnaques.",
+    "text_solicitation": "Cela ressemble à une annonce. Les profils servent à rencontrer, pas à vendre.",
+    "text_slur": "Ce mot n'est pas autorisé ici."
   },
   "settings": {
     "title": "Réglages",
