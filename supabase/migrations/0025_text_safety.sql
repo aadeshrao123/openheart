@@ -7,25 +7,34 @@
 -- The same rules live in lib/text-safety.ts so the app can refuse the text
 -- before it is sent. This is the copy that matters. A client is a suggestion.
 
-create or replace function public.normalise_for_safety(input text, keep_spaces boolean)
+-- Two forms, mirroring lib/text-safety.ts. The loose one keeps every separator
+-- and is matched with gap patterns. The squashed one drops them and is used
+-- only for long unambiguous terms.
+create or replace function public.normalise_for_safety(input text, keep_separators boolean)
 returns text
 language sql
 immutable
 as $$
   select case
-    when keep_spaces then
-      regexp_replace(
-        btrim(regexp_replace(
-          regexp_replace(translate(lower(input), '0134578@$!|', 'oieastbasii'),
-                         '[^a-z0-9[:space:]]', ' ', 'g'),
-          '[[:space:]]+', ' ', 'g')),
-        '(.)\1+', '\1', 'g')
+    when keep_separators then
+      regexp_replace(translate(lower(input), '0134578@$!|', 'oieastbasii'),
+                     '(.)\1+', '\1', 'g')
     else
       regexp_replace(
         regexp_replace(translate(lower(input), '0134578@$!|', 'oieastbasii'),
                        '[^a-z0-9]', '', 'g'),
         '(.)\1+', '\1', 'g')
   end
+$$;
+
+-- dick becomes \yd[^a-z0-9]*i[^a-z0-9]*c[^a-z0-9]*k\y, so dick, d i c k and
+-- d.i.c.k are one pass, and the boundaries keep Dickens clear.
+create or replace function public.gap_pattern(term text)
+returns text
+language sql
+immutable
+as $$
+  select '\y' || array_to_string(regexp_split_to_array(term, ''), '[^a-z0-9]*') || '\y'
 $$;
 
 -- Deliberately short, and matched with word boundaries. Blocking a word that
