@@ -1,4 +1,5 @@
 import { Pressable, View } from 'react-native';
+import { Icon } from './icon';
 import { Text } from './text';
 import { cn } from '@/lib/cn';
 
@@ -32,11 +33,20 @@ export function ListRow({
     <View className="min-h-11 flex-row items-center justify-between gap-4 py-3">
       <Text tone={tones[tone]}>{label}</Text>
 
-      {value ? (
-        <Text tone="muted" numberOfLines={1} className="shrink">
-          {value}
-        </Text>
-      ) : null}
+      {/* shrink on the group, not only on the value inside it: without it a
+          long value pushes the label off the row instead of truncating. */}
+      <View className="shrink flex-row items-center gap-2">
+        {value ? (
+          <Text tone="muted" numberOfLines={1} className="shrink">
+            {value}
+          </Text>
+        ) : null}
+
+        {/* Only where the row leads somewhere. A settings list where every row
+            looks identical whether it navigates or just states a value is the
+            thing that makes a screen read as a form. */}
+        {onPress ? <Icon name="chevron_end" size="sm" className="text-fg-subtle" /> : null}
+      </View>
     </View>
   );
 

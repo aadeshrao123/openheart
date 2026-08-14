@@ -22,6 +22,10 @@ const shapes = {
   check_double: ['M2 12.5 L7 17.5 L15.5 7', 'M9 12.5 L14 17.5 L22.5 7'],
   send: ['M4 12 L18.5 12', 'M12.5 6 L18.5 12 L12.5 18'],
   chevron: ['M15 4.5 L8 12 L15 19.5'],
+  // The disclosure chevron, pointing the way the row goes. Its own shape rather
+  // than a mirrored `chevron`, which already means "back" and would then have
+  // to mirror twice in Arabic to end up where it started.
+  chevron_end: ['M9 4.5 L16 12 L9 19.5'],
   close: ['M6 6 L18 18', 'M18 6 L6 18'],
   flag: ['M6 21 L6 3.5', 'M6 4.5 L18.5 4.5 L15.5 9.5 L18.5 14.5 L6 14.5'],
   shield: ['M12 2.5 L20 6 L20 11.5 C20 16.5 16.5 20 12 21.5 C7.5 20 4 16.5 4 11.5 L4 6 Z'],
@@ -36,7 +40,7 @@ const shapes = {
 } as const;
 
 // A tick and a cross are symbols, not directions, so they must not mirror.
-const DIRECTIONAL: ReadonlySet<IconName> = new Set(['send', 'chevron']);
+const DIRECTIONAL: ReadonlySet<IconName> = new Set(['send', 'chevron', 'chevron_end']);
 
 const sizes = {
   sm: 14,
