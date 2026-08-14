@@ -26,7 +26,7 @@ export function normalise(input: string): { spaced: string; squashed: string } {
   const folded = input
     .toLowerCase()
     .normalize('NFKD')
-    .replace(/[̀-ͯ]/g, '')
+    .replace(/\p{M}/gu, '')
     .replace(/[0134578@$!|]/g, (character) => LOOKALIKES[character] ?? character);
 
   // Repeats collapse after the separators are gone, not before, or f.u.u.c.k
