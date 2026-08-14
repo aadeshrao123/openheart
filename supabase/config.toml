@@ -156,6 +156,25 @@ max_indexes = 5
 enabled = true
 # The base URL of your website. Used as an allow-list for redirects and for constructing URLs used
 # in emails.
+#
+# LOCAL ONLY. This file configures `supabase start`, and nothing in it reaches
+# production unless somebody runs `supabase config push`.
+#
+# Do not run that command. [auth.email.smtp] below is commented out, so a push
+# would tell production it has no custom SMTP and every sign-in email would stop
+# going through SES.
+#
+# Production holds its own copies in the dashboard, under Authentication then
+# URL Configuration, and they must be:
+#
+#   Site URL       https://openheartapp.org
+#   Redirect URLs  https://openheartapp.org/auth/callback
+#                  openheart://auth/callback
+#                  http://localhost:8081/auth/callback
+#
+# When a redirect is not on that list Supabase silently falls back to Site URL,
+# which defaults to http://localhost:3000. That is the whole reason signing in
+# with Google lands on a dead localhost page rather than an error.
 site_url = "http://localhost:8081"
 # The public URL that Auth serves on. Defaults to the API external URL with `/auth/v1` appended.
 # external_url = ""
