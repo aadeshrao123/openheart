@@ -10,6 +10,7 @@ vi.mock('expo-localization', () => ({
 
 import {
   formatDate,
+  regionOf,
   formatDayLabel,
   formatDistance,
   formatRelativeTime,
@@ -165,5 +166,34 @@ describe('resolveFormattingLocale', () => {
 
     expect(arabic).not.toMatch(/minute/);
     expect(arabic).toMatch(/[\u0600-\u06FF]/);
+  });
+});
+
+describe('regionOf', () => {
+  it('reads the region from a language and region tag', () => {
+    expect(regionOf('en-US')).toBe('US');
+    expect(regionOf('pt-BR')).toBe('BR');
+  });
+
+  it('skips a script subtag', () => {
+    expect(regionOf('zh-Hans-CN')).toBe('CN');
+    expect(regionOf('zh-Hans')).toBeUndefined();
+  });
+
+  it('accepts a numeric region', () => {
+    expect(regionOf('es-419')).toBe('419');
+  });
+
+  it('stops at an extension rather than reading its subtags as a region', () => {
+    expect(regionOf('en-u-nu-latn')).toBeUndefined();
+    expect(regionOf('en-US-u-ca-gregory')).toBe('US');
+  });
+
+  it('returns undefined for a bare language', () => {
+    expect(regionOf('en')).toBeUndefined();
+  });
+
+  it('uppercases a lowercase region', () => {
+    expect(regionOf('en-us')).toBe('US');
   });
 });

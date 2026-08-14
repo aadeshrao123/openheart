@@ -77,13 +77,7 @@ export function resolveFormattingLocale(
     return device;
   }
 
-  let region: string | undefined;
-
-  try {
-    region = new Intl.Locale(device).region;
-  } catch {
-    region = undefined;
-  }
+  const region = regionOf(device);
 
   return usableLocale(region ? `${chosenLanguage}-${region}` : chosenLanguage);
 }
@@ -110,6 +104,25 @@ function currentLocale(): string {
   return lastLocale;
 }
 
+// Parsed rather than read from Intl.Locale, which does not exist in Hermes. A
+// one character subtag opens the extension section, where "en-u-nu-latn" has a
+// two letter subtag that is not a region.
+export function regionOf(locale: string): string | undefined {
+  const subtags = locale.split('-');
+
+  for (const subtag of subtags.slice(1)) {
+    if (subtag.length === 1) {
+      return undefined;
+    }
+
+    if (/^[A-Za-z]{2}$/.test(subtag) || /^[0-9]{3}$/.test(subtag)) {
+      return subtag.toUpperCase();
+    }
+  }
+
+  return undefined;
+}
+
 // Intl.Locale.measurementSystem is not yet available everywhere, so the handful
 // of imperial regions are listed explicitly. Everywhere else is metric.
 const IMPERIAL_REGIONS = new Set(['US', 'LR', 'MM']);
@@ -117,7 +130,7 @@ const IMPERIAL_REGIONS = new Set(['US', 'LR', 'MM']);
 export const KM_PER_MILE = 1.609344;
 
 export function usesImperialUnits(locale = currentLocale()): boolean {
-  const region = new Intl.Locale(locale).region;
+  const region = regionOf(locale);
 
   return region !== undefined && IMPERIAL_REGIONS.has(region);
 }
