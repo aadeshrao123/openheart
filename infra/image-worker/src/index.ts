@@ -1,7 +1,10 @@
 // Serves profile photos from the private R2 bucket, resized on the way. The
 // binding is the credential, so the bucket needs no public URL.
 
-type R2ObjectBody = { body: ReadableStream };
+type R2ObjectBody = {
+  body: ReadableStream;
+  httpMetadata?: { contentType?: string };
+};
 
 type ImagesBinding = {
   input(stream: ReadableStream): {
@@ -59,11 +62,33 @@ export default {
       return deny(404);
     }
 
-    const transformed = await env.IMAGES.input(object.body)
-      .transform(VARIANTS[variant])
-      .output({ format: 'image/webp', quality: QUALITY[variant] });
+    // Falls back to the stored bytes rather than throwing. A transform needs
+    // Images enabled on the zone, and when it is not the binding raises, which
+    // reached the app as a 500 and an empty photo slot with no explanation.
+    // The client already resizes to about 200KB before upload, so the original
+    // is a reasonable thing to serve while that is being sorted out.
+    let source: Response;
 
-    const source = transformed.response();
+    try {
+      const transformed = await env.IMAGES.input(object.body)
+        .transform(VARIANTS[variant])
+        .output({ format: 'image/webp', quality: QUALITY[variant] });
+
+      source = transformed.response();
+    } catch (error) {
+      console.error('transform failed', variant, error instanceof Error ? error.message : error);
+
+      const original = await env.PHOTOS.get(key);
+
+      if (!original) {
+        return deny(404);
+      }
+
+      source = new Response(original.body, {
+        headers: { 'Content-Type': original.httpMetadata?.contentType ?? 'image/jpeg' },
+      });
+    }
+
     const response = new Response(source.body, source);
 
     // Keys are random and an object at one is never rewritten.
