@@ -146,12 +146,32 @@ thing standing between here and photos actually going live.
 `purge-deleted-media` takes no user JWT: nothing about it is per user and it must
 not be callable by whoever happens to be signed in. It compares an
 `X-Purge-Token` header against `PURGE_TOKEN` at full length, so the comparison
-cannot be timed. Generate one with `openssl rand -hex 32`.
+cannot be timed.
+
+`PURGE_TOKEN` is the one secret that lives in three places rather than two, and
+the third is easy to miss. The workflow in `.github/workflows/purge-media.yml`
+sends it, so it is also a repository secret in GitHub, and it has to be the same
+value as the one this project holds. Set both together, never one at a time:
 
 ```bash
-supabase secrets set --env-file supabase/functions/.env
-supabase secrets list
+T=$(node -e "console.log(require('crypto').randomBytes(32).toString('hex'))")
+supabase secrets set "PURGE_TOKEN=$T"
+gh secret set PURGE_TOKEN --body "$T"
+unset T
 ```
+
+`node` rather than `openssl rand -hex 32` because this is run on Windows as
+often as not, and a .NET or shell builtin that exists in one PowerShell edition
+and not the other is how a blank token gets set. Generate it, check it, then
+write it. Supabase accepts `PURGE_TOKEN=` without complaint and stores an empty
+string, and `supabase secrets list` returns a digest rather than the value, so
+there is no reading it back to find out.
+
+**Do not run `supabase secrets set --env-file supabase/functions/.env`.** That
+file is local development values, and this pushes every one of them over the
+linked project, including `R2_BUCKET`, which repoints the live app at the dev
+bucket. It was safe when the two environments held the same values. They do not
+any more. Set production secrets one at a time, by name.
 
 That `.env` is covered by the `.env` entry in `.gitignore`, which matches at any
 depth. The R2 token needs object read and write on one bucket and nothing else.
