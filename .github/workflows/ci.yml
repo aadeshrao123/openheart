@@ -239,13 +239,24 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          # Pinned for the same reason as the Worker below, before this one
+          # silently ignores something too.
+          wranglerVersion: '4'
           command: pages deploy dist --project-name openheart --branch main
 
       # Its own token: Workers Scripts: Edit, which Pages: Edit does not cover.
+      #
+      # wranglerVersion is the load-bearing line. The action installs wrangler 3
+      # by default, and [images] bindings arrived in 4. Wrangler 3 does not
+      # reject the block, it ignores it, so every deploy of this Worker
+      # succeeded, printed R2 as its only binding, and left env.IMAGES
+      # undefined. The Worker then threw on transform, hit its fallback, and
+      # served full size originals that looked correct.
       - name: Deploy the image Worker
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_WORKER_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: infra/image-worker
+          wranglerVersion: '4'
           command: deploy
