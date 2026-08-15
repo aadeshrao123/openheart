@@ -5,22 +5,36 @@ import Constants from 'expo-constants';
 import { useRouter } from 'expo-router';
 import { getLocales } from 'expo-localization';
 import { supabase } from '@/lib/supabase';
+import { isActiveChat } from '@/lib/active-chat';
 import { useSession } from '@/hooks/use-session';
 
-// What a notification does while the app is already open. No sound, because
-// lib/sounds.ts already plays one for a message that arrives in a conversation
-// the user is looking at, and two is worse than either.
+// What a notification does while the app is already open.
+//
+// Nothing at all if they are reading that very conversation. The message is
+// arriving on screen through realtime as the banner would appear over it, and
+// telling somebody about a thing they are actively looking at is the clearest
+// way to make notifications feel worthless.
+//
+// No sound in either case, because lib/sounds.ts already plays one when a
+// message lands in an open conversation, and two is worse than either.
 //
 // shouldShowAlert is deprecated in this version, per the installed types:
 // banner and list replaced it.
 Notifications.setNotificationHandler({
-  handleNotification: () =>
-    Promise.resolve({
-      shouldShowBanner: true,
-      shouldShowList: true,
+  handleNotification: (notification) => {
+    const data = notification.request.content.data as { match_id?: unknown };
+    const matchId = typeof data?.match_id === 'string' ? data.match_id : null;
+    const reading = matchId !== null && isActiveChat(matchId);
+
+    return Promise.resolve({
+      shouldShowBanner: !reading,
+      // Kept out of the tray as well. A banner they did not need does not
+      // become useful by being filed.
+      shouldShowList: !reading,
       shouldPlaySound: false,
       shouldSetBadge: false,
-    }),
+    });
+  },
 });
 
 // Named to match the channelId the Edge Function sends. Android 8 and above

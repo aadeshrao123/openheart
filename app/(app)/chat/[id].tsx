@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FlatList, KeyboardAvoidingView, Platform, View } from 'react-native';
-import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
+import { Redirect, useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { EmptyState, Screen, Skeleton, Text } from '@/components/ui';
 import { ChatHeader } from '@/components/chat-header';
@@ -22,6 +22,7 @@ import {
 import { useChatConsentRealtime, useConsentStatus } from '@/hooks/use-chat-consent';
 import { useThread, useThreads } from '@/hooks/use-threads';
 import { useSession } from '@/hooks/use-session';
+import { setActiveChat } from '@/lib/active-chat';
 import { ALREADY_READ, RATE_LIMITED, unsafeTextCategory } from '@/lib/db-errors';
 import { formatDayLabel } from '@/lib/format';
 import { isReactionCode, type ReactionCode } from '@/lib/reactions';
@@ -107,6 +108,18 @@ export default function ChatScreen() {
 
   useChatRealtime(matchId);
   useChatConsentRealtime(matchId);
+
+  // So the notification handler can tell that a message arriving here is
+  // already on screen. Focus rather than mount, because the screen stays
+  // mounted underneath a profile pushed on top of it, and a notification is
+  // worth showing then.
+  useFocusEffect(
+    useCallback(() => {
+      setActiveChat(matchId);
+
+      return () => setActiveChat(null);
+    }, [matchId]),
+  );
 
   const { explicitAllowed } = useConsentStatus(matchId);
   const send = useSendMessage(matchId);

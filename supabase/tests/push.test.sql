@@ -10,7 +10,7 @@
 -- sent must never be able to fail the write that prompted it.
 
 begin;
-select plan(14);
+select plan(20);
 
 insert into auth.users (id, instance_id, aud, role, email) values
   ('11111111-1111-1111-1111-111111111111',
@@ -53,6 +53,12 @@ select is(
 
 -- configured ------------------------------------------------------------------
 
+-- Read, so the coalescing rule below starts from a clean conversation. Leaving
+-- it unread is a real state and it is asserted on further down; it is just not
+-- what the next few assertions are about.
+update messages set read_at = now()
+ where match_id = 'aaaaaaaa-0000-4000-8000-000000000001';
+
 select vault.create_secret('https://example.test/functions/v1/send-push', 'push_function_url');
 select vault.create_secret('a-shared-secret', 'push_hook_secret');
 
@@ -93,6 +99,66 @@ select is(
   (select headers ->> 'X-Push-Secret' from net.http_request_queue),
   'a-shared-secret',
   'authenticated with the shared secret rather than a user JWT'
+);
+
+-- one per conversation, not one per message ------------------------------------
+--
+-- The queue already holds the notification for 'and another', which nobody has
+-- read. Everything Ana says next is covered by the notification already sitting
+-- on Ben's lock screen.
+
+select lives_ok(
+  $$ insert into messages (match_id, sender_id, body)
+     values ('aaaaaaaa-0000-4000-8000-000000000001',
+             '11111111-1111-1111-1111-111111111111', 'still there?'),
+            ('aaaaaaaa-0000-4000-8000-000000000001',
+             '11111111-1111-1111-1111-111111111111', 'hello?'),
+            ('aaaaaaaa-0000-4000-8000-000000000001',
+             '11111111-1111-1111-1111-111111111111', 'anyone?') $$,
+  'three more messages into the same unread conversation'
+);
+
+select is(
+  (select count(*)::int from net.http_request_queue), 1,
+  'and the phone is still buzzed exactly once, not four times'
+);
+
+-- Once it is read, the next message is news again.
+update messages set read_at = now()
+ where match_id = 'aaaaaaaa-0000-4000-8000-000000000001'
+   and sender_id = '11111111-1111-1111-1111-111111111111';
+
+select lives_ok(
+  $$ insert into messages (match_id, sender_id, body)
+     values ('aaaaaaaa-0000-4000-8000-000000000001',
+             '11111111-1111-1111-1111-111111111111', 'there you are') $$,
+  'a message after they caught up'
+);
+
+select is(
+  (select count(*)::int from net.http_request_queue), 2,
+  'notifies again, because the last one is no longer on their screen'
+);
+
+-- The hole the unread-only rule left. A notification that never arrived would
+-- otherwise silence the conversation permanently, because every later message
+-- sees an unread one and assumes it did its job.
+delete from net.http_request_queue;
+
+update messages
+   set read_at = null, created_at = now() - interval '2 hours'
+ where match_id = 'aaaaaaaa-0000-4000-8000-000000000001';
+
+select lives_ok(
+  $$ insert into messages (match_id, sender_id, body)
+     values ('aaaaaaaa-0000-4000-8000-000000000001',
+             '11111111-1111-1111-1111-111111111111', 'are you there') $$,
+  'a message hours after an unread one nobody was told about'
+);
+
+select is(
+  (select count(*)::int from net.http_request_queue), 1,
+  'notifies, rather than staying silent for ever on a notification that got lost'
 );
 
 -- who does not get notified ----------------------------------------------------

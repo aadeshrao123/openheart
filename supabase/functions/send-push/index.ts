@@ -70,6 +70,17 @@ serveJson(async (request) => {
       // silently on Android 8 and above.
       channelId: 'default',
       priority: 'high',
+      // The second line of defence behind the trigger in 0030. That stops most
+      // repeats being sent at all; these stop any that are from stacking.
+      //
+      // Keyed on the conversation, so a second notification about the same one
+      // replaces the first rather than sitting under it. Three fields because
+      // the platforms do it differently: tag replaces what is already on screen
+      // on Android, collapseId coalesces in transit and replaces on iOS, and
+      // threadId is what groups them in iOS notification centre.
+      tag: matchId,
+      collapseId: matchId,
+      threadId: matchId,
     };
   });
 
