@@ -635,5 +635,11 @@
     "revoked_by_them": "{{name}} ha vuelto a activar el filtro. Puede pedirlo si cambia de opinión.",
     "refused": "No, salvo que los dos lo hayáis acordado. Puedes pedirlo en su perfil, y puede decir que no.",
     "withdraw": "Retirar la pregunta"
+  },
+  "push": {
+    "match_title": "Hay match",
+    "match_body": "Alguien que te gusto te ha correspondido.",
+    "message_title": "Nuevo mensaje",
+    "message_body": "Abre OpenHeart para leerlo."
   }
 }

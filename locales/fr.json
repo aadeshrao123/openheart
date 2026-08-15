@@ -635,5 +635,11 @@
     "revoked_by_them": "{{name}} a réactivé le filtre. Cette personne peut redemander si elle change d'avis.",
     "refused": "Pas tant que vous n'êtes pas d'accord tous les deux. Vous pouvez le demander sur son profil, et cette personne peut refuser.",
     "withdraw": "Retirer la demande"
+  },
+  "push": {
+    "match_title": "C'est un match",
+    "match_body": "Quelqu'un que vous avez aime vous a aime en retour.",
+    "message_title": "Nouveau message",
+    "message_body": "Ouvrez OpenHeart pour le lire."
   }
 }

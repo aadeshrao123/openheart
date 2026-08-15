@@ -130,7 +130,8 @@ name and address go. That is one of the items still to be filled in.
 | Approximate location | To show you people nearby |
 | Time you were last active | To order results, so you see people who are actually around |
 | App version | To tell you when a version is too old to be safe to run |
-| Push notification token | To tell you about a match or a message, once notifications ship |
+| Push notification token | To tell you about a match or a message |
+| The language your device is set to | So a notification is written in it |
 
 ### We do not collect
 
@@ -211,7 +212,7 @@ purposes, and none of them is paid for your data.
 | Cloudflare | Photo storage and delivery (R2 and Images) | Western Europe |
 | Amazon Web Services | Adult-content scan and the face comparison, via Rekognition | ap-south-1 |
 | Canadian Centre for Child Protection | Abuse-material matching, via Arachnid Shield | Canada |
-| Expo | Delivering push notifications, once they ship | United States |
+| Expo | Delivering push notifications | United States |
 
 Photos leave the EU for the two scans and for the Cloudflare origin. The
 transfer mechanism is an open item below.

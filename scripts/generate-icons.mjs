@@ -22,6 +22,7 @@ const OUT = path.join(ROOT, 'assets');
 // stylesheet, because a launcher icon is painted long before anything has
 // parsed one.
 const CLARET = [166, 58, 76];
+const WHITE = [255, 255, 255];
 const PAPER = [252, 250, 247];
 
 // The dark theme's --brand, not the light one dimmed. Claret on ink is around
@@ -197,6 +198,11 @@ const TARGETS = [
     foreground: CLARET_DARK,
   },
   { file: 'favicon.png', size: 256, scale: 0.78, background: PAPER, foreground: CLARET },
+  // Android reads only the alpha channel of a notification icon and paints the
+  // result in the colour given to the expo-notifications plugin, so the mark is
+  // drawn white on transparent and the claret is applied there. A coloured icon
+  // here arrives as a white square.
+  { file: 'notification-icon.png', size: 256, scale: 0.7, background: null, foreground: WHITE },
 ];
 
 mkdirSync(OUT, { recursive: true });

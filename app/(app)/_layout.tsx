@@ -5,6 +5,7 @@ import { SuspendedView } from '@/components/suspended-view';
 import { useAuthGate } from '@/hooks/use-auth-gate';
 import { useLastActivePing } from '@/hooks/use-last-active';
 import { useMyProfile } from '@/hooks/use-my-profile';
+import { usePush } from '@/hooks/use-push';
 import { screenTransition } from '@/lib/screen-transitions';
 import { useReducedMotion } from '@/lib/use-reduced-motion';
 
@@ -21,6 +22,13 @@ export default function AppLayout() {
   // ignores the call while signed out anyway, but mounting it here keeps the
   // write out of the auth and onboarding flows entirely.
   useLastActivePing();
+
+  // Here rather than on a screen, because a notification is about the app and
+  // not about wherever the user happens to be standing. On native this
+  // registers the device token and routes a tap; on web it is an entirely
+  // different implementation behind the same name, since expo-notifications
+  // has no web build at all.
+  usePush();
 
   if (gate === 'loading') {
     return <SplashView />;

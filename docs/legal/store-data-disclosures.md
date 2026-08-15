@@ -43,6 +43,7 @@ definition, and pretending otherwise would be the wrong answer.
 | Photos or Videos | User Content | App Functionality | Yes | No |
 | Other User Content | User Content | App Functionality | Yes | No |
 | Sensitive Info | Sensitive Info | App Functionality | Yes | No |
+| Device ID | Identifiers | App Functionality | Yes | No |
 
 Notes for the reviewer field, and the reasoning behind the awkward ones:
 
@@ -63,11 +64,10 @@ Notes for the reviewer field, and the reasoning behind the awkward ones:
 - **Photos or Videos** includes the two verification selfies, even though they
   are destroyed once the check finishes. They are collected at the moment they
   are uploaded, and the label asks about collection.
-- **User ID and Device ID are deliberately absent.** The account identifier is
-  not exposed for any purpose beyond running the service, and no device
-  identifier is read. Once push notifications ship, the Expo push token is a
-  device identifier and **Device ID must be added here** with App Functionality
-  as its purpose. That is the one entry this table will need.
+- **User ID is deliberately absent, Device ID is not.** The account identifier
+  is not exposed for any purpose beyond running the service. The Expo push
+  token is a device identifier and is declared, because a device that can be
+  sent a notification is a device that has been identified.
 
 ### Age rating
 
@@ -116,6 +116,7 @@ Protection are all processors, so every "shared" answer is No.
 | Photos and videos: Photos | Yes | No | No | App functionality |
 | Messages: Other in-app messages | Yes | No | No | App functionality |
 | App activity: Other actions | Yes | No | No | App functionality |
+| Device or other IDs | Yes | No | No | App functionality |
 
 Play asks two extra questions the Apple label does not:
 
@@ -133,8 +134,9 @@ Notes on the entries that need care:
   who the user is looking for, so it is declared rather than argued about.
 - **Approximate location, not Precise**, for the same reason as Apple.
 - **Other actions** covers swipes and last-active timestamps.
-- Once notifications ship, the Expo push token is a **Device or other IDs**
-  entry. Add it in the same change that adds the client registration.
+- **Device or other IDs** is the Expo push token. A browser has no such token:
+  web notifications are raised by the page itself while a tab is open, and
+  nothing is stored for them.
 
 ### Additional Play declarations for this app
 
@@ -155,12 +157,10 @@ Notes on the entries that need care:
 
 ## Open items
 
-1. **A web account-deletion page.** Play requires a URL where someone who has
-   uninstalled the app can request deletion. It needs to exist before submission
-   and it is not built.
-2. **Device ID and Device or other IDs entries**, in both consoles, in the same
-   change that ships push notifications.
-3. **Confirm the Supabase production region**, because the privacy policy names
+1. **Confirm the Supabase production region**, because the privacy policy names
    it and this file's processor list has to agree.
-4. **Data safety answers are per release.** Anything that adds a column, a
+2. **Data safety answers are per release.** Anything that adds a column, a
    permission or a vendor changes this file too.
+
+The web account-deletion page Play requires is live at
+https://openheartapp.org/account-deletion.

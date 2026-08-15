@@ -621,5 +621,11 @@
     "revoked_by_them": "{{name}} 重新打开了过滤。如果改主意，他们可以再问。",
     "refused": "除非你们两人都同意，否则不行。你可以在对方资料里请求，他们也可以拒绝。",
     "withdraw": "撤回这个请求"
+  },
+  "push": {
+    "match_title": "配对成功",
+    "match_body": "你喜欢的人也喜欢你。",
+    "message_title": "新消息",
+    "message_body": "打开 OpenHeart 查看。"
   }
 }

@@ -160,6 +160,14 @@
           "enableBackgroundRecording": false
         }
       ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#CE1E48",
+          "defaultChannel": "default"
+        }
+      ],
       "expo-asset",
       "expo-web-browser",
       "./plugins/with-release-signing"

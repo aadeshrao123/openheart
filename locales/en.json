@@ -628,5 +628,11 @@
     "revoked_by_them": "{{name}} turned the filter back on. They can ask again if they change their mind.",
     "refused": "Not unless you have both agreed to it. You can ask on their profile, and they can say no.",
     "withdraw": "Take the question back"
+  },
+  "push": {
+    "match_title": "It is a match",
+    "match_body": "Someone you liked liked you back.",
+    "message_title": "New message",
+    "message_body": "Open OpenHeart to read it."
   }
 }

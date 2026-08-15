@@ -113,6 +113,40 @@ Set by hand, once per project:
 | `AWS_SECRET_ACCESS_KEY` | Same user. |
 | `ARACHNID_SHIELD_USERNAME` | Arachnid Shield API credentials, free. See below. |
 | `ARACHNID_SHIELD_PASSWORD` | Same credentials. |
+| `PUSH_SECRET` | Any long random string. Must equal the Vault entry. See below. |
+
+## send-push, and the three places its secret lives
+
+`send-push` is called by a trigger inside Postgres rather than by anybody
+signed in, so it is guarded the same way `purge-deleted-media` is: a shared
+secret in a header, compared at full length.
+
+The trigger cannot read a function secret, and this file is public, so the
+value it sends comes from Vault. Both halves have to be set, and they have to
+match:
+
+```bash
+T=$(node -e "console.log(require('crypto').randomBytes(32).toString('hex'))")
+supabase secrets set "PUSH_SECRET=$T"
+```
+
+then, as SQL against the same project, with the same value:
+
+```sql
+select vault.create_secret('<that value>', 'push_hook_secret');
+select vault.create_secret('https://<ref>.supabase.co/functions/v1/send-push',
+                           'push_function_url');
+```
+
+With either Vault entry missing, `queue_push` returns without doing anything
+and no notification is ever sent. That is deliberate: a notification that
+cannot be sent must never be able to fail the message that prompted it. The
+cost is that a misconfiguration is silent, so the check is that
+`net.http_request_queue` gains a row when a message is inserted.
+
+Android also needs FCM credentials attached to the EAS project before a real
+device can receive anything. `eas credentials` does that, and nothing in this
+repository can.
 
 ## The two scanners, and what they do not cover
 

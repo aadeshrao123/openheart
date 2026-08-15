@@ -1,7 +1,7 @@
 import { errorResponse, jsonResponse, serveJson } from '../_shared/http.ts';
 import { createR2Client, deleteObject } from '../_shared/r2.ts';
 import { createAdminClient } from '../_shared/supabase-admin.ts';
-import { requireEnv } from '../_shared/env.ts';
+import { hasSecret } from '../_shared/secret.ts';
 
 // Small enough that one invocation finishes inside the function timeout even
 // when every delete is slow, and a scheduled run just picks up the rest.
@@ -12,13 +12,7 @@ serveJson(async (request) => {
     return errorResponse('method_not_allowed', 405);
   }
 
-  // No user JWT here: nothing about this is per user, and it must not be
-  // callable by whoever happens to be signed in. A shared secret in a header is
-  // the check, compared at full length so the comparison cannot be timed.
-  const provided = request.headers.get('X-Purge-Token') ?? '';
-  const expected = requireEnv('PURGE_TOKEN');
-
-  if (!timingSafeEqual(provided, expected)) {
+  if (!hasSecret(request, 'X-Purge-Token', 'PURGE_TOKEN')) {
     return errorResponse('unauthorized', 401);
   }
 
@@ -107,18 +101,3 @@ async function purgeOne(r2: ReturnType<typeof createR2Client>, key: string): Pro
   }
 }
 
-// The token is a fixed-length secret, so comparing every byte is enough to keep
-// the duration independent of how much of it a caller got right.
-function timingSafeEqual(left: string, right: string): boolean {
-  if (left.length !== right.length) {
-    return false;
-  }
-
-  let difference = 0;
-
-  for (let index = 0; index < left.length; index += 1) {
-    difference |= left.charCodeAt(index) ^ right.charCodeAt(index);
-  }
-
-  return difference === 0;
-}

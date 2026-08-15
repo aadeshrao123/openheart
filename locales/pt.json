@@ -635,5 +635,11 @@
     "revoked_by_them": "{{name}} voltou a ligar o filtro. Pode pedir de novo se mudar de ideias.",
     "refused": "Não, a menos que os dois tenham concordado. Pode pedir no perfil dessa pessoa, e ela pode dizer que não.",
     "withdraw": "Retirar o pedido"
+  },
+  "push": {
+    "match_title": "Deu match",
+    "match_body": "Alguem de quem voce gostou gostou de voce.",
+    "message_title": "Nova mensagem",
+    "message_body": "Abra o OpenHeart para ler."
   }
 }

@@ -621,5 +621,11 @@
     "revoked_by_them": "{{name}} menyalakan filter lagi. Mereka bisa meminta lagi kalau berubah pikiran.",
     "refused": "Tidak, kecuali kalian berdua sudah sepakat. Anda bisa memintanya di profil mereka, dan mereka boleh menolak.",
     "withdraw": "Tarik kembali permintaan"
+  },
+  "push": {
+    "match_title": "Kalian cocok",
+    "match_body": "Seseorang yang kamu suka juga menyukaimu.",
+    "message_title": "Pesan baru",
+    "message_body": "Buka OpenHeart untuk membacanya."
   }
 }
