@@ -24,6 +24,18 @@ serveJson(async (request) => {
 
   const admin = createAdminClient();
 
+  // Before the drain, so anything it queues goes out in this same run. An
+  // abandoned attempt leaves its selfies in R2 with nothing else in the system
+  // holding a reference to them, and this is the only thing that finds them.
+  const { data: expired, error: expireError } = await admin.rpc(
+    'expire_stale_verification_attempts',
+    {},
+  );
+
+  if (expireError) {
+    throw expireError;
+  }
+
   const { data: rows, error: selectError } = await admin
     .from('deleted_media')
     .select('r2_key')
@@ -71,7 +83,15 @@ serveJson(async (request) => {
     purged += 1;
   }
 
-  return jsonResponse({ purged, failed, remaining: queued.length - purged - failed }, 200);
+  return jsonResponse(
+    {
+      purged,
+      failed,
+      remaining: queued.length - purged - failed,
+      expired: expired ?? 0,
+    },
+    200,
+  );
 });
 
 async function purgeOne(r2: ReturnType<typeof createR2Client>, key: string): Promise<boolean> {

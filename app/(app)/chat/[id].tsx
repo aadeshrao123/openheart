@@ -4,6 +4,7 @@ import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { EmptyState, Screen, Skeleton, Text } from '@/components/ui';
 import { ChatHeader } from '@/components/chat-header';
+import { ConsentBanner } from '@/components/chat-consent';
 import { LoadFailed } from '@/components/load-failed';
 import { MessageActions } from '@/components/message-actions';
 import { MessageBubble } from '@/components/message-bubble';
@@ -18,11 +19,13 @@ import {
   useUnsendMessage,
   type ChatMessage,
 } from '@/hooks/use-chat';
+import { useChatConsentRealtime, useConsentStatus } from '@/hooks/use-chat-consent';
 import { useThread, useThreads } from '@/hooks/use-threads';
 import { useSession } from '@/hooks/use-session';
-import { ALREADY_READ, RATE_LIMITED } from '@/lib/db-errors';
+import { ALREADY_READ, RATE_LIMITED, unsafeTextCategory } from '@/lib/db-errors';
 import { formatDayLabel } from '@/lib/format';
 import { isReactionCode, type ReactionCode } from '@/lib/reactions';
+import { checkMessage } from '@/lib/text-safety';
 
 type Item =
   | { kind: 'day'; key: string; label: string }
@@ -103,7 +106,9 @@ export default function ChatScreen() {
   const { data: messages, isPending, isError, isFetching, refetch } = useMessages(matchId);
 
   useChatRealtime(matchId);
+  useChatConsentRealtime(matchId);
 
+  const { explicitAllowed } = useConsentStatus(matchId);
   const send = useSendMessage(matchId);
   const unsend = useUnsendMessage(matchId);
   const react = useSetReaction(matchId);
@@ -168,9 +173,28 @@ export default function ChatScreen() {
       return undefined;
     }
 
-    return send.error.message === RATE_LIMITED
-      ? t('chat.rate_limited')
-      : t('common.error_generic');
+    if (send.error.message === RATE_LIMITED) {
+      return t('chat.rate_limited');
+    }
+
+    const refused = unsafeTextCategory(send.error.message);
+
+    return refused ? refusalText(refused) : t('common.error_generic');
+  };
+
+  // Different words to the profile screen for the same rule. A bio is refused
+  // because a bio is public; this is refused because the other person has not
+  // agreed, which is a thing they can do something about.
+  const refusalText = (category: string) =>
+    category === 'sexual' ? t('consent.refused') : t('safety.text_slur');
+
+  // The same rules the trigger applies, so a refusal arrives while the words
+  // are still in the field. The copy in the database is the one that decides;
+  // this only saves a round trip and says why.
+  const refuse = (body: string) => {
+    const violation = checkMessage(body, explicitAllowed);
+
+    return violation ? refusalText(violation.category) : undefined;
   };
 
   // Both roll their optimistic change back when they fail, so with nothing said
@@ -261,11 +285,16 @@ export default function ChatScreen() {
             </Text>
           </View>
         ) : (
-          <MessageComposer
-            onSend={(body) => send.mutate(body)}
-            disabled={send.isPending}
-            error={sendError()}
-          />
+          <>
+            <ConsentBanner matchId={matchId} name={name} />
+
+            <MessageComposer
+              onSend={(body) => send.mutate(body)}
+              disabled={send.isPending}
+              error={sendError()}
+              validate={refuse}
+            />
+          </>
         )}
       </KeyboardAvoidingView>
 

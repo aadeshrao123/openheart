@@ -48,6 +48,28 @@ and if we find out that you are, the account goes.
 - Automate, scrape, or otherwise access the service other than through the app.
 - Try to work out someone's exact location.
 
+## Explicit language
+
+Your profile never allows it. A display name, a bio and a prompt answer are read
+by people who have not chosen to talk to you, and they are held to that whether
+you like it or not.
+
+Messages refuse it too, until both of you say otherwise. One of you asks inside
+the conversation, the other agrees, and then explicit language is allowed
+between the two of you and nowhere else. Four things about that agreement:
+
+- It takes both of you. One person cannot turn it off for the other.
+- Either of you can turn it back on alone, at any moment, without the other
+  agreeing and without giving a reason.
+- It covers explicit language and nothing else. Slurs and abuse stay refused
+  with the agreement in place, because agreeing to flirt is not agreeing to be
+  abused. Nor does it permit anything else on this page.
+- If you refuse, or you turn it back on, only you can raise it again. The other
+  person is given no way to keep asking.
+
+Everyone here is 18 or over, and none of this changes that or the rules above
+it.
+
 ## What we can do about it
 
 We can remove content, suspend an account, or end one. We try to do the smallest

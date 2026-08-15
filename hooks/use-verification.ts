@@ -49,6 +49,8 @@ type StartResponse = {
   attempt_id: string;
   challenge: VerificationChallenge;
   upload_url: string;
+  challenge_two: VerificationChallenge;
+  upload_url_two: string;
 };
 
 // Split from the submit below rather than one call, because the pose has to be
@@ -71,28 +73,35 @@ export function useStartVerification() {
 
 type SubmitInput = {
   attemptId: string;
-  uploadUrl: string;
-  uri: string;
+  captures: { uploadUrl: string; uri: string }[];
 };
 
 export function useSubmitVerification() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ attemptId, uploadUrl, uri }: SubmitInput) => {
-      // Same path a profile photo takes: resized to the cost target and handed
-      // over as bytes, because a file:// URI is not a body on every platform.
-      const prepared = await preparePhoto(uri);
+    mutationFn: async ({ attemptId, captures }: SubmitInput) => {
+      // Both poses go up before either is judged. Uploading and verifying one
+      // at a time would tell somebody their first pose passed, which is the
+      // feedback that makes guessing the pair worth doing.
+      await Promise.all(
+        captures.map(async ({ uploadUrl, uri }) => {
+          // Same path a profile photo takes: resized to the cost target and
+          // handed over as bytes, because a file:// URI is not a body on every
+          // platform.
+          const prepared = await preparePhoto(uri);
 
-      const upload = await fetch(uploadUrl, {
-        method: 'PUT',
-        headers: { 'Content-Type': prepared.contentType },
-        body: prepared.bytes,
-      });
+          const upload = await fetch(uploadUrl, {
+            method: 'PUT',
+            headers: { 'Content-Type': prepared.contentType },
+            body: prepared.bytes,
+          });
 
-      if (!upload.ok) {
-        throw new Error('upload_failed');
-      }
+          if (!upload.ok) {
+            throw new Error('upload_failed');
+          }
+        }),
+      );
 
       return await callFunction<VerificationOutcome>('verify-selfie', {
         attempt_id: attemptId,

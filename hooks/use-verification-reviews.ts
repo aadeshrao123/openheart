@@ -2,15 +2,22 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { callFunction } from '@/lib/functions';
 import { useIsModerator } from '@/hooks/use-moderation';
+import type { VerificationChallenge } from '@/hooks/use-verification';
 import type { Database } from '@/lib/database.types';
 
 type ReviewRow =
   Database['public']['Functions']['list_verification_reviews']['Returns'][number];
 
 // Widened, because the generator types every column of a `returns table` as
-// non-null. An attempt sent for review carries no reason code.
-export type VerificationReview = Omit<ReviewRow, 'failure_reason'> & {
+// non-null. An attempt sent for review carries no reason code, and one started
+// before the second pose existed carries only one challenge.
+export type VerificationReview = Omit<
+  ReviewRow,
+  'failure_reason' | 'challenge_two' | 'selfie_two_r2_key'
+> & {
   failure_reason: string | null;
+  challenge_two: VerificationChallenge | null;
+  selfie_two_r2_key: string | null;
 };
 
 export const verificationReviewsKey = ['verification-reviews'] as const;
@@ -34,7 +41,7 @@ export function useVerificationReviews() {
 }
 
 type SelfieView = {
-  selfie_url: string;
+  selfies: { challenge: VerificationChallenge; url: string }[];
   photo_urls: string[];
 };
 

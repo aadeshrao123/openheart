@@ -529,11 +529,12 @@
     "open": "查看这一条",
     "selfie": "自拍",
     "profile_photos": "资料里的照片",
-    "question": "这是同一个人吗？姿势和要求的一致吗？",
+    "question": "这是同一个人吗，而且做出了要求的姿势？",
     "action_approve": "是同一个人，通过验证",
     "action_reject": "不是同一个人",
     "load_failed": "照片加载失败。请关闭后重新打开。",
-    "attempt_count_other": "该账号已尝试 {{count}} 次"
+    "attempt_count_other": "该账号已尝试 {{count}} 次",
+    "pose_pair": "{{first}}，然后{{second}}"
   },
   "suspended": {
     "title": "你的账号已被封禁",
@@ -542,13 +543,13 @@
   },
   "verify": {
     "title": "验证你的资料",
-    "why": "一张简单的自拍就能证明这里是真人。这是让这个应用远离机器人和盗用照片的唯一办法，没有它谁也进不了别人的卡片堆。",
+    "why": "两张快速自拍能证明这里是一个真实的人。这是唯一能让这个应用远离机器人和盗图的办法。",
     "consent_title": "开始之前",
-    "consent_compare": "你的自拍会与资料里已有的照片比对，确认是同一个人。",
-    "consent_deleted": "比对一结束就删除。它不会出现在你的资料里，配对到的人也永远看不到。",
+    "consent_compare": "你的自拍会与你资料上已有的照片比对，确认是同一个人。",
+    "consent_deleted": "校验一结束它们就被删除。它们不会出现在你的资料上，也没有人会看到。",
     "consent_stored": "不保存任何面部数据。我们只记录这次验证是否通过。",
     "consent_human": "如果验证结果不确定，会由一位审核员来看，而不是直接拒绝你。",
-    "consent_agree": "我同意，去拍自拍",
+    "consent_agree": "我同意，拍我的自拍",
     "needs_photos": "请先添加至少一张已通过审核的照片。目前还没有可以和自拍比对的照片。",
     "rate_limited": "今天试的次数够多了，明天再来吧。",
     "in_review": "你上一次的尝试正在审核员那里，你什么都不用做。",
@@ -561,7 +562,7 @@
     "pose_turn_right": "把头转向你的右边",
     "pose_look_up": "把头向上抬",
     "pose_look_down": "把头向下低",
-    "pose_hint": "保持这个姿势，让整张脸都在取景框里，然后拍照。方向由我们来选，这样谁也没法提前准备。",
+    "pose_hint": "保持姿势，整张脸在画面内，然后拍照。两个方向都由我们选，这样没有人能提前准备。",
     "capture": "拍照",
     "try_again": "再试一次",
     "result_passed": "你已通过验证",
@@ -581,7 +582,12 @@
     "reason_low_confidence": "我们没能足够清楚地辨认出人脸。",
     "reason_no_match": "自拍和你的照片没有明显匹配上。",
     "reason_unsafe_image": "那张照片不能使用。",
-    "reason_not_an_image": "那个文件不是我们能读取的照片。"
+    "reason_not_an_image": "那个文件不是我们能读取的照片。",
+    "pose_step": "第 {{step}} 个姿势，共 {{total}} 个",
+    "pose_next": "接下来：{{pose}}",
+    "capture_next": "拍下这张，还有一张",
+    "reason_different_person": "两个姿势不是同一张脸。",
+    "reason_expired": "那次尝试没有完成，因此已关闭，照片也已删除。"
   },
   "likes": {
     "title": "谁喜欢你",
@@ -597,5 +603,23 @@
     "likes": "喜欢",
     "messages": "消息",
     "profile": "我的"
+  },
+  "consent": {
+    "title": "露骨用语",
+    "ask": "请求关闭过滤",
+    "ask_explainer": "需要 {{name}} 同意。在那之前什么都不变，之后你们任何一方都可以单独重新打开。",
+    "asked_title": "{{name}} 请求关闭过滤",
+    "asked_body": "如果你们都同意，仅在这个对话里允许露骨用语。你可以随时单独重新打开它。",
+    "accept": "我同意",
+    "decline": "不用了",
+    "waiting": "等待 {{name}} 回复。",
+    "answer_in_chat": "{{name}} 请求关闭过滤。请在对话里回复。",
+    "active_short": "这个对话的过滤已关闭。",
+    "active_explainer": "你们都同意了，所以这里允许露骨用语。重新打开立即生效，不需要对方同意。",
+    "turn_back_on": "重新打开过滤",
+    "declined_by_them": "{{name}} 拒绝了。如果改主意，他们可以再问。",
+    "revoked_by_them": "{{name}} 重新打开了过滤。如果改主意，他们可以再问。",
+    "refused": "除非你们两人都同意，否则不行。你可以在对方资料里请求，他们也可以拒绝。",
+    "withdraw": "撤回这个请求"
   }
 }

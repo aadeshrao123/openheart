@@ -16,22 +16,22 @@
 <meta name="twitter:card" content="summary_large_image">
 <style>
 :root {
-  --bg: 253 252 252;
-  --surface: 245 244 246;
-  --border: 223 221 227;
-  --fg: 23 22 26;
-  --fg-muted: 92 90 100;
-  --brand: 193 40 82;
+  --bg: 254 252 253;
+  --surface: 248 243 245;
+  --border: 228 220 226;
+  --fg: 26 20 24;
+  --fg-muted: 94 86 92;
+  --brand: 206 30 72;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-  --bg: 17 17 20;
-  --surface: 25 25 29;
-  --border: 58 58 66;
-  --fg: 250 250 252;
-  --fg-muted: 172 172 184;
-  --brand: 246 122 146;
+  --bg: 10 9 12;
+  --surface: 21 20 25;
+  --border: 56 53 65;
+  --fg: 250 249 252;
+  --fg-muted: 176 172 186;
+  --brand: 241 103 123;
   }
 }
 
@@ -283,8 +283,8 @@ name and address go. That is one of the items still to be filled in.</p>
 <td align="left">No, a profile needs one photo</td>
 </tr>
 <tr>
-<td align="left">A verification selfie</td>
-<td align="left">To prove there is a real person behind the profile</td>
+<td align="left">Two verification selfies</td>
+<td align="left">To prove a real person is behind the profile</td>
 <td align="left">No, but see below</td>
 </tr>
 <tr>
@@ -301,6 +301,11 @@ name and address go. That is one of the items still to be filled in.</p>
 <td align="left">Reports you file</td>
 <td align="left">So a moderator can act</td>
 <td align="left">Yes, by not filing one</td>
+</tr>
+<tr>
+<td align="left">Whether a match agreed to allow explicit language</td>
+<td align="left">What to refuse there</td>
+<td align="left">Yes, by not agreeing</td>
 </tr>
 </tbody></table>
 <h3>Your device gives us</h3>
@@ -356,26 +361,28 @@ compares it against a database of known child sexual abuse material.</li>
 <p>There is no &quot;upload now, check later&quot;. A photo that fails is queued for deletion
 from storage.</p>
 <h2>Photo verification, and your face</h2>
-<p>To enter anyone&#39;s deck you take one selfie in a pose we choose at the moment you
-start. We ask you to agree to this before the camera opens.</p>
-<p>What happens to it:</p>
+<p>To enter anyone&#39;s deck you take two selfies, in two different poses we choose at
+the moment you start. We ask you to agree to this before the camera opens. Two
+rather than one because a single pose can be guessed and prepared for in
+advance, which would make it no proof of anything.</p>
+<p>What happens to them:</p>
 <ul>
-<li>It is compared against the photos already on your profile, using Amazon
-Rekognition, to check they are the same person.</li>
+<li>They are compared against each other, and against the photos already on your
+profile, using Amazon Rekognition, to check they are all the same person.</li>
 <li>Amazon documents these operations as stateless: they do not store the image
 and do not add you to any collection.</li>
 <li>We store the result, which is a pass, a fail, or a reason code such as &quot;too
 dark&quot;. We do not store a similarity score, a face template, or any other
 measurement of your face.</li>
-<li>The selfie itself is queued for deletion as soon as the result is final.</li>
-<li>If the automated check is not confident, one of our moderators looks at the
-selfie and your profile photos, and the selfie is deleted once they decide. We
-do this rather than rejecting you automatically because face comparison is
-measurably less accurate on darker skin, and an automatic no would lock real
-people out unevenly.</li>
+<li>The selfies themselves are queued for deletion as soon as the result is final.</li>
+<li>If the automated check is not confident, one of our moderators looks at both
+selfies and your profile photos, and they are deleted once the moderator
+decides. We do this rather than rejecting you automatically because face
+comparison is measurably less accurate on darker skin, and an automatic no
+would lock real people out unevenly.</li>
 </ul>
-<p>Your selfie never appears on your profile and nobody you match with ever sees
-it.</p>
+<p>Your selfies never appear on your profile and nobody you match with ever sees
+them.</p>
 <p><strong>If you are in the EU or UK</strong>, this processing is biometric data used to
 identify you, and we rely on your explicit consent, which is the agreement
 screen shown before the camera opens. You can withdraw it by deleting your

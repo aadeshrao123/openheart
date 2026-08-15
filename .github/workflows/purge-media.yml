@@ -59,6 +59,7 @@ jobs:
           node -e '
             const result = require("./response.json");
             console.log(
-              `purged ${result.purged}, failed ${result.failed}, remaining ${result.remaining}`
+              `purged ${result.purged}, failed ${result.failed}, ` +
+              `remaining ${result.remaining}, expired ${result.expired}`
             );
           '

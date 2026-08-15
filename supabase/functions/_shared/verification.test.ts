@@ -3,6 +3,7 @@ import {
   judgeFace,
   poseMatchesChallenge,
   randomChallenge,
+  randomChallengePair,
   YAW_IS_POSITIVE_TURNING_RIGHT,
   type VerificationChallenge,
 } from './verification.ts';
@@ -132,4 +133,25 @@ Deno.test('the challenge is one of the four and varies', () => {
 
   // A constant challenge would let one prepared photo pass forever.
   expect(seen.size, CHALLENGES.length, 'all four appear');
+});
+
+// The same pose twice is one photo used twice, and it is the one pair that
+// proves nothing. If this ever passes with a repeat, two poses cost twice as
+// much as one and buy nothing.
+Deno.test('the pair is always two different poses', () => {
+  const pairs = new Set<string>();
+
+  for (let attempt = 0; attempt < 500; attempt += 1) {
+    const [first, second] = randomChallengePair();
+
+    expect(CHALLENGES.includes(first), true, `${first} is a known challenge`);
+    expect(CHALLENGES.includes(second), true, `${second} is a known challenge`);
+    expect(first === second, false, `${first} repeated`);
+
+    pairs.add(`${first}:${second}`);
+  }
+
+  // Four choices for the first and three for the second, and order matters
+  // because the screen asks for them in order.
+  expect(pairs.size, CHALLENGES.length * (CHALLENGES.length - 1), 'all twelve appear');
 });

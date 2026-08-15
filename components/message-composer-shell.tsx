@@ -8,6 +8,9 @@ export type MessageComposerProps = {
   onSend: (body: string) => void;
   disabled?: boolean;
   error?: string;
+  // Runs as the draft changes, so a refusal arrives while there is still
+  // something to edit rather than after a round trip that reads as a failure.
+  validate?: (body: string) => string | undefined;
 };
 
 export type ComposerShellProps = MessageComposerProps & {
@@ -21,13 +24,15 @@ export function ComposerShell({
   onSend,
   disabled = false,
   error,
+  validate,
   fieldProps,
 }: ComposerShellProps) {
   const { t } = useTranslation();
   const [draft, setDraft] = useState('');
 
   const body = draft.trim();
-  const canSend = body.length > 0 && !disabled;
+  const refused = body.length > 0 ? validate?.(body) : undefined;
+  const canSend = body.length > 0 && !disabled && refused === undefined;
 
   const send = () => {
     if (!canSend) {
@@ -40,9 +45,9 @@ export function ComposerShell({
 
   return (
     <View className="gap-2 border-t border-border px-4 pb-2 pt-3">
-      {error ? (
+      {refused ?? error ? (
         <Text variant="caption" tone="danger" role="alert">
-          {error}
+          {refused ?? error}
         </Text>
       ) : null}
 

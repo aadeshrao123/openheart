@@ -271,3 +271,17 @@ export function createRekognitionVerificationProvider(): VerificationProvider {
 export function randomChallenge(): VerificationChallenge {
   return CHALLENGES[Math.floor(Math.random() * CHALLENGES.length)];
 }
+
+// Two poses, and the pair is worth more than twice one pose. A single challenge
+// is a one in four guess for somebody holding four photos of a stolen face; an
+// ordered pair of distinct poses is one in twelve, and both have to be produced
+// inside one attempt against upload URLs that expire together.
+//
+// Distinct because a repeated pose is the same photo twice, which is the one
+// pair that proves nothing.
+export function randomChallengePair(): [VerificationChallenge, VerificationChallenge] {
+  const first = randomChallenge();
+  const rest = CHALLENGES.filter((challenge) => challenge !== first);
+
+  return [first, rest[Math.floor(Math.random() * rest.length)]];
+}

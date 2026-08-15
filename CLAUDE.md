@@ -308,6 +308,29 @@ A channel must be given a JWT before it subscribes. supabase-js pushes one on
 auth state change, but a subscription that beats it is authorized as anonymous,
 matches no rows, and then silently receives nothing rather than failing.
 
+## Explicit language is refused until both people say otherwise
+
+Written profile text never allows it, in any circumstance. Messages refuse it
+too by default, and the two people in one conversation can agree to turn that
+off between themselves.
+
+The shape of the agreement is the point, and each rule below closes a hole:
+
+- **Both, not either.** One person disabling their own filter to receive is
+  coherent and nobody predicts it correctly. A safety control whose direction
+  users get backwards is not one.
+- **Either side revokes alone and immediately.** Consent that needs the other
+  person's agreement to withdraw is not consent.
+- **Only the sexual category moves.** Slurs stay refused with the agreement in
+  place, because nobody agreed to be abused. Contact details and solicitation
+  are untouched: swapping numbers after matching is ordinary and unrelated.
+- **Whoever said no owns when it is asked again.** After a decline or a
+  revocation only that person may reopen it. A cooldown time-boxes the nagging;
+  this removes it.
+
+The trigger on `messages` is the enforcement. `lib/text-safety.ts` runs the same
+rules in the app so nobody round-trips to find out, and that copy is advice.
+
 ## Component rules
 
 There are two kinds of component and they do not mix:

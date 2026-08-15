@@ -6,7 +6,7 @@
 -- follows is about proving they cannot rather than proving verification works.
 
 begin;
-select plan(22);
+select plan(30);
 
 -- fixtures -------------------------------------------------------------------
 insert into auth.users (id, email) values
@@ -19,11 +19,28 @@ insert into profiles (id, display_name, birthdate) values
   ('22222222-2222-2222-2222-222222222222', 'Ben',  '1994-01-01'),
   ('33333333-3333-3333-3333-333333333333', 'Cleo', '1993-01-01');
 
-insert into verification_attempts (id, profile_id, challenge, selfie_r2_key, status) values
+insert into verification_attempts
+  (id, profile_id, challenge, challenge_two, selfie_r2_key, selfie_two_r2_key, status) values
   ('aaaaaaaa-0000-4000-8000-000000000001',
-   '11111111-1111-1111-1111-111111111111', 'turn_left', 'verification/ana-1', 'review'),
+   '11111111-1111-1111-1111-111111111111', 'turn_left', 'look_up',
+   'verification/ana-1', 'verification/ana-2', 'review'),
+  -- Deliberately one pose. An attempt started before the second existed is
+  -- still owed its verdict on the terms it was issued under.
   ('aaaaaaaa-0000-4000-8000-000000000002',
-   '22222222-2222-2222-2222-222222222222', 'look_up', 'verification/ben-1', 'pending');
+   '22222222-2222-2222-2222-222222222222', 'look_up', null,
+   'verification/ben-1', null, 'pending');
+
+-- The same pose twice is one photo used twice, which is the one pair that
+-- proves nothing.
+select throws_ok(
+  $$ insert into verification_attempts
+       (profile_id, challenge, challenge_two, selfie_r2_key, selfie_two_r2_key)
+     values ('11111111-1111-1111-1111-111111111111', 'turn_left', 'turn_left',
+             'verification/dup-1', 'verification/dup-2') $$,
+  '23514',
+  null,
+  'an attempt cannot ask for the same pose twice'
+);
 
 -- Ana, an ordinary user with an attempt under review ------------------------
 set local role authenticated;
@@ -113,6 +130,13 @@ select is(
   'the queue names the person so a moderator can judge the photo against them'
 );
 
+-- A moderator shown one of two poses, or not told there was a second, approves
+-- on half the evidence.
+select is(
+  (select challenge_two::text from list_verification_reviews() limit 1), 'look_up',
+  'the queue carries both poses, not just the first'
+);
+
 select lives_ok(
   $$ select review_verification('aaaaaaaa-0000-4000-8000-000000000001', true) $$,
   'a moderator can approve an attempt a machine would not'
@@ -133,6 +157,14 @@ reset role;
 select is(
   (select count(*) from deleted_media where r2_key = 'verification/ana-1')::int, 1,
   'reviewing queues the selfie for deletion from storage'
+);
+
+-- Both, or the second outlives the decision it was evidence for.
+select is(
+  (select count(*) from deleted_media
+    where r2_key in ('verification/ana-1', 'verification/ana-2'))::int,
+  2,
+  'reviewing queues every pose, not only the first'
 );
 
 set local role authenticated;
@@ -213,6 +245,64 @@ select is(
       and has_function_privilege('authenticated', p.oid, 'execute'))::int,
   0,
   'authenticated holds no execute grant on the function that sets photo_verified'
+);
+
+-- Abandoned attempts ---------------------------------------------------------
+-- A selfie reaches storage before anything judges it. Close the app in between
+-- and nothing ever looked at the row again, so the selfies stayed in R2 for
+-- good. deleted_media is the only path into the purge job.
+
+reset role;
+
+insert into verification_attempts
+  (id, profile_id, challenge, challenge_two, selfie_r2_key, selfie_two_r2_key, created_at)
+values
+  ('aaaaaaaa-0000-4000-8000-000000000003',
+   '11111111-1111-1111-1111-111111111111', 'turn_left', 'look_down',
+   'verification/stale-1', 'verification/stale-2', now() - interval '3 days'),
+  -- Started a minute ago and still being taken. Expiring this one would kill a
+  -- real attempt mid-flow.
+  ('aaaaaaaa-0000-4000-8000-000000000004',
+   '11111111-1111-1111-1111-111111111111', 'look_up', 'turn_right',
+   'verification/fresh-1', 'verification/fresh-2', now());
+
+select is(
+  expire_stale_verification_attempts(),
+  1,
+  'only the attempt nobody came back to is expired'
+);
+
+select is(
+  (select count(*) from deleted_media
+    where r2_key in ('verification/stale-1', 'verification/stale-2'))::int,
+  2,
+  'both of its selfies are queued for deletion from storage'
+);
+
+select is(
+  (select count(*) from deleted_media
+    where r2_key in ('verification/fresh-1', 'verification/fresh-2'))::int,
+  0,
+  'and an attempt still in progress keeps its selfies'
+);
+
+select is(
+  (select status::text from verification_attempts
+    where id = 'aaaaaaaa-0000-4000-8000-000000000004'),
+  'pending',
+  'an attempt still in progress is left alone entirely'
+);
+
+set local role authenticated;
+
+select is(
+  (select count(*) from pg_proc p
+     join pg_namespace n on n.oid = p.pronamespace
+    where n.nspname = 'public'
+      and p.proname = 'expire_stale_verification_attempts'
+      and has_function_privilege('authenticated', p.oid, 'execute'))::int,
+  0,
+  'expiring attempts is not reachable by a signed-in user'
 );
 
 select * from finish();

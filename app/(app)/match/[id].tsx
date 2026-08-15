@@ -11,6 +11,7 @@ import { haptics } from '@/lib/haptics';
 import { photoUrl } from '@/lib/photos';
 import { isGender } from '@/lib/profile-options';
 import { SafetyActions } from '@/components/safety-actions';
+import { ConsentControl } from '@/components/chat-consent';
 
 // Matches the shape of the loaded page: a photo, the name line, then the bio.
 function MatchProfileSkeleton() {
@@ -152,6 +153,14 @@ export default function MatchProfileScreen() {
           />
         </View>
       ))}
+
+      {/* Only while the conversation is open, and never for a deleted account:
+          there is nobody left to agree with. */}
+      {!thread.unmatched && !deleted ? (
+        <Rail tone="border">
+          <ConsentControl matchId={matchId} name={name} />
+        </Rail>
+      ) : null}
 
       <Rail tone="border" className="gap-3">
         <Text variant="overline" tone="subtle">

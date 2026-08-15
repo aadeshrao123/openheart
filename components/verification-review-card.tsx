@@ -28,7 +28,12 @@ export function VerificationReviewCard({ review }: VerificationReviewCardProps) 
     <Card className="gap-4">
       <View className="gap-1">
         <Text variant="overline" tone="brand">
-          {t(`verify.pose_${review.challenge}`)}
+          {review.challenge_two
+            ? t('review.pose_pair', {
+                first: t(`verify.pose_${review.challenge}`),
+                second: t(`verify.pose_${review.challenge_two}`),
+              })
+            : t(`verify.pose_${review.challenge}`)}
         </Text>
 
         <Text variant="heading">{review.display_name}</Text>
@@ -76,20 +81,25 @@ export function VerificationReviewCard({ review }: VerificationReviewCardProps) 
 
           {photos.data ? (
             <>
-              <View className="gap-1">
-                <Text variant="overline" tone="subtle">
-                  {t('review.selfie')}
-                </Text>
+              {/* Every pose, each under the instruction it was given. A pose
+                  shown without what was asked for is a photo of a face, and
+                  there is nothing to judge it against. */}
+              {photos.data.selfies.map((selfie) => (
+                <View key={selfie.url} className="gap-1">
+                  <Text variant="overline" tone="subtle">
+                    {t(`verify.pose_${selfie.challenge}`)}
+                  </Text>
 
-                <View className="aspect-card overflow-hidden rounded-card bg-surface">
-                  <Image
-                    source={{ uri: photos.data.selfie_url }}
-                    style={{ width: '100%', height: '100%' }}
-                    contentFit="contain"
-                    accessibilityLabel={t('review.selfie')}
-                  />
+                  <View className="aspect-card overflow-hidden rounded-card bg-surface">
+                    <Image
+                      source={{ uri: selfie.url }}
+                      style={{ width: '100%', height: '100%' }}
+                      contentFit="contain"
+                      accessibilityLabel={t('review.selfie')}
+                    />
+                  </View>
                 </View>
-              </View>
+              ))}
 
               <View className="gap-1">
                 <Text variant="overline" tone="subtle">

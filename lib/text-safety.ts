@@ -118,6 +118,33 @@ function matchSquashed(text: string, terms: string[]): string | null {
   return terms.find((term) => term.length >= SQUASH_MIN_LENGTH && text.includes(term)) ?? null;
 }
 
+// Messages, not profile text. Two people who have matched swapping numbers is
+// ordinary, so contact and solicitation are not consulted here at all.
+//
+// `explicitAllowed` is the agreement from migration 0027, and it moves exactly
+// one category. Slurs are refused with or without it: nobody agreed to that,
+// and an agreement about explicit language is not one about abuse.
+export function checkMessage(input: string, explicitAllowed: boolean): Violation | null {
+  if (!input.trim()) {
+    return null;
+  }
+
+  const { loose, squashed } = normalise(input);
+  const slur = matchLoose(loose, SLUR_TERMS) ?? matchSquashed(squashed, SLUR_TERMS);
+
+  if (slur) {
+    return { category: 'slur', matched: slur };
+  }
+
+  if (explicitAllowed) {
+    return null;
+  }
+
+  const sexual = matchLoose(loose, SEXUAL_TERMS);
+
+  return sexual ? { category: 'sexual', matched: sexual } : null;
+}
+
 export function checkText(input: string): Violation | null {
   if (!input.trim()) {
     return null;

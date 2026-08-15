@@ -541,13 +541,14 @@
     "open": "Examiner celui-ci",
     "selfie": "Le selfie",
     "profile_photos": "Photos du profil",
-    "question": "Est-ce la même personne, dans la pose demandée ?",
+    "question": "Est-ce la même personne, dans les poses demandées ?",
     "action_approve": "Même personne, valider",
     "action_reject": "Ce n'est pas la même personne",
     "load_failed": "Les photos n'ont pas pu être chargées. Fermez et rouvrez.",
     "attempt_count_one": "{{count}} tentative depuis ce compte",
     "attempt_count_many": "{{count}} tentatives depuis ce compte",
-    "attempt_count_other": "{{count}} tentatives depuis ce compte"
+    "attempt_count_other": "{{count}} tentatives depuis ce compte",
+    "pose_pair": "{{first}}, puis {{second}}"
   },
   "suspended": {
     "title": "Ton compte est suspendu",
@@ -556,13 +557,13 @@
   },
   "verify": {
     "title": "Verifiez votre profil",
-    "why": "Un selfie rapide prouve qu'il y a une vraie personne ici. C'est la seule chose qui garde cette application libre de bots et de photos volees, et personne n'entre dans le jeu de quelqu'un d'autre sans cela.",
+    "why": "Deux selfies rapides prouvent qu'il y a une vraie personne ici. C'est la seule chose qui garde cette app sans bots ni photos volées, et personne n'entre dans le deck de quelqu'un sans ça.",
     "consent_title": "Avant de commencer",
-    "consent_compare": "Votre selfie est compare aux photos deja sur votre profil, pour verifier que c'est la meme personne.",
-    "consent_deleted": "Il est supprime des que cette verification est terminee. Il n'apparait jamais sur votre profil et personne avec qui vous matchez ne le voit.",
+    "consent_compare": "Vos selfies sont comparés aux photos déjà sur votre profil, pour vérifier qu'il s'agit de la même personne.",
+    "consent_deleted": "Ils sont supprimés dès que cette vérification est terminée. Ils n'apparaissent jamais sur votre profil et personne avec qui vous matchez ne les voit.",
     "consent_stored": "Aucune donnee faciale n'est conservee. Nous stockons uniquement si la verification a reussi.",
     "consent_human": "Si la verification est incertaine, un moderateur la regarde plutot que de vous refuser.",
-    "consent_agree": "J'accepte, prendre mon selfie",
+    "consent_agree": "J'accepte, prenez mes selfies",
     "needs_photos": "Ajoutez d'abord au moins une photo approuvee. Il n'y a encore rien a comparer avec un selfie.",
     "rate_limited": "Assez d'essais pour aujourd'hui. Reessayez demain.",
     "in_review": "Votre dernier essai est chez un moderateur. Vous n'avez rien a faire.",
@@ -575,7 +576,7 @@
     "pose_turn_right": "Tournez la tete vers votre droite",
     "pose_look_up": "Inclinez la tete vers le haut",
     "pose_look_down": "Inclinez la tete vers le bas",
-    "pose_hint": "Tenez la pose, gardez tout votre visage dans le cadre, puis prenez la photo. Nous choisissons la direction pour que personne ne puisse la preparer a l'avance.",
+    "pose_hint": "Tenez la pose, tout le visage dans le cadre, puis prenez la photo. Nous choisissons les deux directions, pour que personne ne puisse les préparer à l'avance.",
     "capture": "Prendre la photo",
     "try_again": "Reessayer",
     "result_passed": "Vous etes verifie",
@@ -595,7 +596,12 @@
     "reason_low_confidence": "Nous n'avons pas pu distinguer un visage assez clairement.",
     "reason_no_match": "Le selfie ne correspondait pas clairement a vos photos.",
     "reason_unsafe_image": "Cette photo ne peut pas etre utilisee.",
-    "reason_not_an_image": "Ce fichier n'etait pas une photo que nous pouvons lire."
+    "reason_not_an_image": "Ce fichier n'etait pas une photo que nous pouvons lire.",
+    "pose_step": "Pose {{step}} sur {{total}}",
+    "pose_next": "Ensuite : {{pose}}",
+    "capture_next": "Prenez-la, puis encore une",
+    "reason_different_person": "Les deux poses n'étaient pas le même visage.",
+    "reason_expired": "Cette tentative est restee inachevee, elle a donc ete close et les photos supprimees."
   },
   "likes": {
     "title": "On vous aime",
@@ -611,5 +617,23 @@
     "likes": "J'aime",
     "messages": "Messages",
     "profile": "Profil"
+  },
+  "consent": {
+    "title": "Langage explicite",
+    "ask": "Demander à désactiver le filtre",
+    "ask_explainer": "{{name}} doit accepter. D'ici là rien ne change, et ensuite chacun de vous peut le réactiver seul.",
+    "asked_title": "{{name}} demande à désactiver le filtre",
+    "asked_body": "Si vous êtes d'accord tous les deux, le langage explicite est autorisé dans cette conversation et nulle part ailleurs. Vous pouvez le réactiver quand vous voulez, seul.",
+    "accept": "J'accepte",
+    "decline": "Non merci",
+    "waiting": "En attente de la réponse de {{name}}.",
+    "answer_in_chat": "{{name}} demande à désactiver le filtre. Répondez dans la conversation.",
+    "active_short": "Le filtre est désactivé dans cette conversation.",
+    "active_explainer": "Vous êtes d'accord tous les deux, le langage explicite est donc autorisé ici. Le réactiver prend effet immédiatement et ne demande pas son accord.",
+    "turn_back_on": "Réactiver le filtre",
+    "declined_by_them": "{{name}} a dit non. Cette personne peut redemander si elle change d'avis.",
+    "revoked_by_them": "{{name}} a réactivé le filtre. Cette personne peut redemander si elle change d'avis.",
+    "refused": "Pas tant que vous n'êtes pas d'accord tous les deux. Vous pouvez le demander sur son profil, et cette personne peut refuser.",
+    "withdraw": "Retirer la demande"
   }
 }

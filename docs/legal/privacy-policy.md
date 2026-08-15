@@ -48,10 +48,11 @@ name and address go. That is one of the items still to be filled in.
 | Gender, who you are looking for | To show you relevant people, and them you | No |
 | Bio | Your profile | Yes, leave it blank |
 | Photos | Your profile | No, a profile needs one photo |
-| A verification selfie | To prove there is a real person behind the profile | No, but see below |
+| Two verification selfies | To prove a real person is behind the profile | No, but see below |
 | Distance, age range | Your search preferences | Defaults are used if you do not set them |
 | Messages and reactions | To deliver them | Yes, by not sending any |
 | Reports you file | So a moderator can act | Yes, by not filing one |
+| Whether a match agreed to allow explicit language | What to refuse there | Yes, by not agreeing |
 
 ### Your device gives us
 
@@ -99,27 +100,29 @@ from storage.
 
 ## Photo verification, and your face
 
-To enter anyone's deck you take one selfie in a pose we choose at the moment you
-start. We ask you to agree to this before the camera opens.
+To enter anyone's deck you take two selfies, in two different poses we choose at
+the moment you start. We ask you to agree to this before the camera opens. Two
+rather than one because a single pose can be guessed and prepared for in
+advance, which would make it no proof of anything.
 
-What happens to it:
+What happens to them:
 
-- It is compared against the photos already on your profile, using Amazon
-  Rekognition, to check they are the same person.
+- They are compared against each other, and against the photos already on your
+  profile, using Amazon Rekognition, to check they are all the same person.
 - Amazon documents these operations as stateless: they do not store the image
   and do not add you to any collection.
 - We store the result, which is a pass, a fail, or a reason code such as "too
   dark". We do not store a similarity score, a face template, or any other
   measurement of your face.
-- The selfie itself is queued for deletion as soon as the result is final.
-- If the automated check is not confident, one of our moderators looks at the
-  selfie and your profile photos, and the selfie is deleted once they decide. We
-  do this rather than rejecting you automatically because face comparison is
-  measurably less accurate on darker skin, and an automatic no would lock real
-  people out unevenly.
+- The selfies themselves are queued for deletion as soon as the result is final.
+- If the automated check is not confident, one of our moderators looks at both
+  selfies and your profile photos, and they are deleted once the moderator
+  decides. We do this rather than rejecting you automatically because face
+  comparison is measurably less accurate on darker skin, and an automatic no
+  would lock real people out unevenly.
 
-Your selfie never appears on your profile and nobody you match with ever sees
-it.
+Your selfies never appear on your profile and nobody you match with ever sees
+them.
 
 **If you are in the EU or UK**, this processing is biometric data used to
 identify you, and we rely on your explicit consent, which is the agreement

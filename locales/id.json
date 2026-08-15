@@ -529,11 +529,12 @@
     "open": "Lihat yang ini",
     "selfie": "Swafoto",
     "profile_photos": "Foto di profil",
-    "question": "Apakah ini orang yang sama, dengan pose yang diminta?",
+    "question": "Apakah ini orang yang sama, dalam pose yang diminta?",
     "action_approve": "Orang yang sama, verifikasi",
     "action_reject": "Bukan orang yang sama",
     "load_failed": "Foto tidak dapat dimuat. Tutup lalu buka lagi.",
-    "attempt_count_other": "{{count}} percobaan dari akun ini"
+    "attempt_count_other": "{{count}} percobaan dari akun ini",
+    "pose_pair": "{{first}}, lalu {{second}}"
   },
   "suspended": {
     "title": "Akunmu ditangguhkan",
@@ -542,10 +543,10 @@
   },
   "verify": {
     "title": "Verifikasi profil Anda",
-    "why": "Satu swafoto singkat membuktikan ada orang sungguhan di sini. Inilah satu-satunya hal yang menjaga aplikasi ini bebas dari bot dan foto curian, dan tidak ada yang masuk ke dek orang lain tanpanya.",
+    "why": "Dua swafoto singkat membuktikan ada orang sungguhan di sini. Inilah satu hal yang menjaga aplikasi ini bebas dari bot dan foto curian, dan tidak ada yang masuk ke dek orang lain tanpanya.",
     "consent_title": "Sebelum mulai",
     "consent_compare": "Swafoto Anda dibandingkan dengan foto yang sudah ada di profil Anda, untuk memastikan orangnya sama.",
-    "consent_deleted": "Foto itu dihapus begitu pemeriksaan selesai. Foto itu tidak pernah muncul di profil Anda dan tidak dilihat oleh siapa pun yang cocok dengan Anda.",
+    "consent_deleted": "Keduanya dihapus begitu pemeriksaan itu selesai. Keduanya tidak pernah muncul di profil Anda dan tidak pernah dilihat siapa pun yang cocok dengan Anda.",
     "consent_stored": "Tidak ada data wajah yang disimpan. Kami hanya menyimpan apakah pemeriksaan berhasil.",
     "consent_human": "Jika pemeriksaan tidak pasti, seorang moderator yang melihatnya, bukan menolak Anda.",
     "consent_agree": "Saya setuju, ambil swafoto saya",
@@ -561,7 +562,7 @@
     "pose_turn_right": "Palingkan kepala ke kanan Anda",
     "pose_look_up": "Dongakkan kepala ke atas",
     "pose_look_down": "Tundukkan kepala ke bawah",
-    "pose_hint": "Tahan posisinya, pastikan seluruh wajah masuk bingkai, lalu ambil fotonya. Kami yang memilih arahnya agar tidak ada yang bisa menyiapkannya lebih dulu.",
+    "pose_hint": "Tahan posenya, seluruh wajah di dalam bingkai, lalu ambil fotonya. Kami yang memilih kedua arahnya, supaya tidak ada yang bisa menyiapkannya lebih dulu.",
     "capture": "Ambil foto",
     "try_again": "Coba lagi",
     "result_passed": "Anda sudah terverifikasi",
@@ -581,7 +582,12 @@
     "reason_low_confidence": "Kami tidak bisa mengenali wajah dengan cukup jelas.",
     "reason_no_match": "Swafoto tidak jelas cocok dengan foto Anda.",
     "reason_unsafe_image": "Foto itu tidak bisa digunakan.",
-    "reason_not_an_image": "Berkas itu bukan foto yang bisa kami baca."
+    "reason_not_an_image": "Berkas itu bukan foto yang bisa kami baca.",
+    "pose_step": "Pose {{step}} dari {{total}}",
+    "pose_next": "Lalu: {{pose}}",
+    "capture_next": "Ambil, lalu satu lagi",
+    "reason_different_person": "Kedua pose itu bukan wajah yang sama.",
+    "reason_expired": "Percobaan itu tidak diselesaikan, jadi ditutup dan fotonya dihapus."
   },
   "likes": {
     "title": "Menyukaimu",
@@ -597,5 +603,23 @@
     "likes": "Suka",
     "messages": "Pesan",
     "profile": "Profil"
+  },
+  "consent": {
+    "title": "Bahasa vulgar",
+    "ask": "Minta matikan filter",
+    "ask_explainer": "{{name}} harus setuju. Sampai itu terjadi tidak ada yang berubah, dan setelahnya salah satu dari kalian bisa menyalakannya lagi sendiri.",
+    "asked_title": "{{name}} meminta filter dimatikan",
+    "asked_body": "Kalau kalian berdua setuju, bahasa vulgar diizinkan di percakapan ini saja. Anda bisa menyalakannya lagi kapan pun, sendiri.",
+    "accept": "Saya setuju",
+    "decline": "Tidak, terima kasih",
+    "waiting": "Menunggu jawaban {{name}}.",
+    "answer_in_chat": "{{name}} meminta filter dimatikan. Jawab di percakapan.",
+    "active_short": "Filter mati di percakapan ini.",
+    "active_explainer": "Kalian berdua setuju, jadi bahasa vulgar diizinkan di sini. Menyalakannya lagi langsung berlaku dan tidak perlu persetujuan mereka.",
+    "turn_back_on": "Nyalakan filter lagi",
+    "declined_by_them": "{{name}} menolak. Mereka bisa meminta lagi kalau berubah pikiran.",
+    "revoked_by_them": "{{name}} menyalakan filter lagi. Mereka bisa meminta lagi kalau berubah pikiran.",
+    "refused": "Tidak, kecuali kalian berdua sudah sepakat. Anda bisa memintanya di profil mereka, dan mereka boleh menolak.",
+    "withdraw": "Tarik kembali permintaan"
   }
 }

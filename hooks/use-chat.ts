@@ -10,6 +10,9 @@ import {
   NOT_IN_STATE_SQLSTATE,
   RATE_LIMITED,
   RATE_LIMIT_SQLSTATE,
+  UNSAFE_TEXT,
+  UNSAFE_TEXT_SQLSTATE,
+  unsafeTextCategory,
 } from '@/lib/db-errors';
 import type { RealtimeChannel, RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 import type { Database } from '@/lib/database.types';
@@ -127,6 +130,13 @@ export function useSendMessage(matchId: string) {
       if (error) {
         if (error.code === RATE_LIMIT_SQLSTATE) {
           throw new Error(RATE_LIMITED);
+        }
+
+        // The app refuses this text before it is sent, so reaching here means
+        // the two disagreed: usually a consent state that changed while the
+        // message was being typed.
+        if (error.code === UNSAFE_TEXT_SQLSTATE) {
+          throw new Error(`${UNSAFE_TEXT}:${unsafeTextCategory(error.message) ?? 'sexual'}`);
         }
 
         throw error;

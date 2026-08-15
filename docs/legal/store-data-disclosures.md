@@ -56,10 +56,13 @@ Notes for the reviewer field, and the reasoning behind the awkward ones:
   orientation, inferable from gender plus who the user is looking for; the date
   of birth used for the age gate; and the face comparison performed during photo
   verification.
-- **Other User Content** is bios, messages and reports.
-- **Photos or Videos** includes the verification selfie, even though it is
-  destroyed once the check finishes. It is collected at the moment it is
-  uploaded, and the label asks about collection.
+- **Other User Content** is bios, messages and reports. It also covers the
+  per-conversation record of whether two people agreed to allow explicit
+  language between them, which is a state and a pair of user ids rather than
+  anything either of them wrote.
+- **Photos or Videos** includes the two verification selfies, even though they
+  are destroyed once the check finishes. They are collected at the moment they
+  are uploaded, and the label asks about collection.
 - **User ID and Device ID are deliberately absent.** The account identifier is
   not exposed for any purpose beyond running the service, and no device
   identifier is read. Once push notifications ship, the Expo push token is a

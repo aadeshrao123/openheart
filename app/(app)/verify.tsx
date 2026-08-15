@@ -16,6 +16,10 @@ import { useMyProfile } from '@/hooks/use-my-profile';
 
 type Stage = 'consent' | 'capture' | 'result';
 
+type Pose = { challenge: VerificationChallenge; uploadUrl: string };
+
+type Attempt = { id: string; poses: Pose[] };
+
 export default function VerifyScreen() {
   const { t } = useTranslation();
   const router = useRouter();
@@ -23,8 +27,8 @@ export default function VerifyScreen() {
   const { data: latest } = useLatestVerification();
 
   const [stage, setStage] = useState<Stage>('consent');
-  const [challenge, setChallenge] = useState<VerificationChallenge | null>(null);
-  const [attempt, setAttempt] = useState<{ id: string; uploadUrl: string } | null>(null);
+  const [attempt, setAttempt] = useState<Attempt | null>(null);
+  const [taken, setTaken] = useState<string[]>([]);
   const [permission, requestPermission] = useCameraPermissions();
   const camera = useRef<CameraView>(null);
 
@@ -34,11 +38,26 @@ export default function VerifyScreen() {
   const begin = () => {
     start.mutate(undefined, {
       onSuccess: (issued) => {
-        setChallenge(issued.challenge);
-        setAttempt({ id: issued.attempt_id, uploadUrl: issued.upload_url });
+        setAttempt({
+          id: issued.attempt_id,
+          poses: [
+            { challenge: issued.challenge, uploadUrl: issued.upload_url },
+            { challenge: issued.challenge_two, uploadUrl: issued.upload_url_two },
+          ],
+        });
+
+        setTaken([]);
         setStage('capture');
       },
     });
+  };
+
+  const restart = () => {
+    submit.reset();
+    start.reset();
+    setAttempt(null);
+    setTaken([]);
+    setStage('consent');
   };
 
   const capture = async () => {
@@ -52,8 +71,24 @@ export default function VerifyScreen() {
       return;
     }
 
+    const captured = [...taken, photo.uri];
+
+    // Nothing is uploaded until both poses are held. Judging the first on its
+    // own would tell somebody it passed, and that feedback is what makes
+    // guessing the pair worth trying.
+    if (captured.length < attempt.poses.length) {
+      setTaken(captured);
+      return;
+    }
+
     submit.mutate(
-      { attemptId: attempt.id, uploadUrl: attempt.uploadUrl, uri: photo.uri },
+      {
+        attemptId: attempt.id,
+        captures: attempt.poses.map((pose, index) => ({
+          uploadUrl: pose.uploadUrl,
+          uri: captured[index],
+        })),
+      },
       {
         onSuccess: (outcome) => {
           if (outcome.status === 'passed') {
@@ -145,7 +180,7 @@ export default function VerifyScreen() {
     );
   }
 
-  if (stage === 'capture') {
+  if (stage === 'capture' && attempt) {
     if (!permission?.granted) {
       return (
         <Screen className="justify-center gap-5">
@@ -154,35 +189,47 @@ export default function VerifyScreen() {
 
           <Button label={t('verify.camera_allow')} onPress={() => void requestPermission()} />
 
-          <Button
-            variant="ghost"
-            label={t('common.cancel')}
-            onPress={() => setStage('consent')}
-          />
+          <Button variant="ghost" label={t('common.cancel')} onPress={restart} />
         </Screen>
       );
     }
 
+    const step = taken.length;
+    const pose = attempt.poses[step];
+
     return (
       <Screen className="justify-center gap-5">
-        <Text variant="title">{t(`verify.pose_${challenge}`)}</Text>
+        <View className="gap-2">
+          <Text variant="overline" tone="accent">
+            {t('verify.pose_step', { step: step + 1, total: attempt.poses.length })}
+          </Text>
+          <Text variant="title">{t(`verify.pose_${pose.challenge}`)}</Text>
+        </View>
+
         <Text tone="muted">{t('verify.pose_hint')}</Text>
 
         <View className="aspect-card overflow-hidden rounded-card bg-surface">
           <CameraView ref={camera} facing="front" style={{ flex: 1 }} />
         </View>
 
+        {/* The next pose is named before this one is taken. Springing it
+            afterwards would read as a trick being played on somebody who is
+            only trying to prove they are real. */}
+        {attempt.poses[step + 1] ? (
+          <Text variant="caption" tone="subtle">
+            {t('verify.pose_next', {
+              pose: t(`verify.pose_${attempt.poses[step + 1].challenge}`),
+            })}
+          </Text>
+        ) : null}
+
         <Button
-          label={t('verify.capture')}
+          label={step + 1 < attempt.poses.length ? t('verify.capture_next') : t('verify.capture')}
           loading={submit.isPending}
           onPress={() => void capture()}
         />
 
-        <Button
-          variant="ghost"
-          label={t('common.cancel')}
-          onPress={() => setStage('consent')}
-        />
+        <Button variant="ghost" label={t('common.cancel')} onPress={restart} />
       </Screen>
     );
   }
@@ -210,15 +257,7 @@ export default function VerifyScreen() {
       {outcome === 'passed' ? (
         <Button label={t('home.browse')} onPress={() => router.replace('/deck')} />
       ) : (
-        <Button
-          variant="secondary"
-          label={t('verify.try_again')}
-          onPress={() => {
-            submit.reset();
-            start.reset();
-            setStage('consent');
-          }}
-        />
+        <Button variant="secondary" label={t('verify.try_again')} onPress={restart} />
       )}
 
       <Button variant="ghost" label={t('common.back')} onPress={() => router.back()} />

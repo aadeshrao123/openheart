@@ -541,13 +541,14 @@
     "open": "Revisar este",
     "selfie": "El selfie",
     "profile_photos": "Fotos del perfil",
-    "question": "¿Es la misma persona, en la pose que se pidió?",
+    "question": "¿Es la misma persona, en las posturas que se pidieron?",
     "action_approve": "Es la misma persona, verificar",
     "action_reject": "No es la misma persona",
     "load_failed": "No se pudieron cargar las fotos. Cierra esto y ábrelo de nuevo.",
     "attempt_count_one": "{{count}} intento desde esta cuenta",
     "attempt_count_many": "{{count}} de intentos desde esta cuenta",
-    "attempt_count_other": "{{count}} intentos desde esta cuenta"
+    "attempt_count_other": "{{count}} intentos desde esta cuenta",
+    "pose_pair": "{{first}}, luego {{second}}"
   },
   "suspended": {
     "title": "Tu cuenta está suspendida",
@@ -556,13 +557,13 @@
   },
   "verify": {
     "title": "Verifica tu perfil",
-    "why": "Un selfie rapido demuestra que hay una persona real aqui. Es lo unico que mantiene esta aplicacion libre de bots y fotos robadas, y nadie entra en el mazo de otra persona sin ello.",
+    "why": "Dos selfies rápidos demuestran que hay una persona real aquí. Es lo único que mantiene esta app libre de bots y fotos robadas, y nadie entra en el mazo de otra persona sin ello.",
     "consent_title": "Antes de empezar",
-    "consent_compare": "Tu selfie se compara con las fotos que ya tienes en tu perfil, para comprobar que son la misma persona.",
-    "consent_deleted": "Se borra en cuanto termina esa comprobacion. Nunca aparece en tu perfil y nadie con quien hagas match lo ve.",
+    "consent_compare": "Tus selfies se comparan con las fotos que ya tienes en tu perfil, para comprobar que son la misma persona.",
+    "consent_deleted": "Se borran en cuanto termina esa comprobación. Nunca aparecen en tu perfil y nadie con quien hagas match los ve.",
     "consent_stored": "No se guarda ningun dato facial. Solo guardamos si la comprobacion fue superada.",
     "consent_human": "Si la comprobacion no es concluyente, un moderador la revisa en lugar de rechazarte.",
-    "consent_agree": "Acepto, tomar mi selfie",
+    "consent_agree": "Acepto, toma mis selfies",
     "needs_photos": "Anade primero al menos una foto aprobada. Todavia no hay nada con que comparar un selfie.",
     "rate_limited": "Suficientes intentos por hoy. Vuelve a intentarlo manana.",
     "in_review": "Tu ultimo intento esta con un moderador. No tienes que hacer nada.",
@@ -575,7 +576,7 @@
     "pose_turn_right": "Gira la cabeza hacia tu derecha",
     "pose_look_up": "Inclina la cabeza hacia arriba",
     "pose_look_down": "Inclina la cabeza hacia abajo",
-    "pose_hint": "Manten la postura, deja toda la cara en el encuadre y haz la foto. Elegimos la direccion para que nadie pueda prepararla de antemano.",
+    "pose_hint": "Mantén la postura, con toda la cara dentro del encuadre, y haz la foto. Elegimos las dos direcciones, para que nadie pueda prepararlas de antemano.",
     "capture": "Hacer la foto",
     "try_again": "Intentar de nuevo",
     "result_passed": "Estas verificado",
@@ -595,7 +596,12 @@
     "reason_low_confidence": "No pudimos distinguir una cara con suficiente claridad.",
     "reason_no_match": "El selfie no coincidia claramente con tus fotos.",
     "reason_unsafe_image": "Esa foto no se puede usar.",
-    "reason_not_an_image": "Ese archivo no era una foto que podamos leer."
+    "reason_not_an_image": "Ese archivo no era una foto que podamos leer.",
+    "pose_step": "Postura {{step}} de {{total}}",
+    "pose_next": "Después: {{pose}}",
+    "capture_next": "Házla y luego una más",
+    "reason_different_person": "Las dos posturas no eran la misma cara.",
+    "reason_expired": "Ese intento quedo sin terminar, asi que se cerro y las fotos se borraron."
   },
   "likes": {
     "title": "Les gustas",
@@ -611,5 +617,23 @@
     "likes": "Me gusta",
     "messages": "Mensajes",
     "profile": "Perfil"
+  },
+  "consent": {
+    "title": "Lenguaje explícito",
+    "ask": "Pedir desactivar el filtro",
+    "ask_explainer": "{{name}} tiene que aceptar. Hasta entonces no cambia nada, y después cualquiera de los dos puede volver a activarlo por su cuenta.",
+    "asked_title": "{{name}} ha pedido desactivar el filtro",
+    "asked_body": "Si ambos aceptáis, se permite el lenguaje explícito en esta conversación y en ninguna otra. Puedes volver a activarlo cuando quieras, tú solo.",
+    "accept": "Acepto",
+    "decline": "No, gracias",
+    "waiting": "Esperando la respuesta de {{name}}.",
+    "answer_in_chat": "{{name}} ha pedido desactivar el filtro. Responde en la conversación.",
+    "active_short": "El filtro está desactivado en esta conversación.",
+    "active_explainer": "Los dos aceptásteis, así que aquí se permite el lenguaje explícito. Volver a activarlo surte efecto al instante y no necesita su acuerdo.",
+    "turn_back_on": "Volver a activar el filtro",
+    "declined_by_them": "{{name}} ha dicho que no. Puede pedirlo si cambia de opinión.",
+    "revoked_by_them": "{{name}} ha vuelto a activar el filtro. Puede pedirlo si cambia de opinión.",
+    "refused": "No, salvo que los dos lo hayáis acordado. Puedes pedirlo en su perfil, y puede decir que no.",
+    "withdraw": "Retirar la pregunta"
   }
 }

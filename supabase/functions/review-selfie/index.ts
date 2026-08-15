@@ -26,7 +26,7 @@ serveJson(async (request) => {
 
   const { data: attempt, error: attemptError } = await admin
     .from('verification_attempts')
-    .select('id, profile_id, status, selfie_r2_key')
+    .select('id, profile_id, status, challenge, challenge_two, selfie_r2_key, selfie_two_r2_key')
     .eq('id', attemptId)
     .maybeSingle();
 
@@ -54,11 +54,25 @@ serveJson(async (request) => {
 
   const r2 = createR2Client();
 
-  const selfieUrl = await presignDownload(r2, attempt.selfie_r2_key, VIEW_URL_TTL_SECONDS);
+  // Every pose the attempt actually holds. A moderator shown one of two, or not
+  // told there was a second, approves on half the evidence.
+  const poses = [{ challenge: attempt.challenge, key: attempt.selfie_r2_key }];
 
-  const photoUrls = await Promise.all(
-    (photos ?? []).map((photo) => presignDownload(r2, photo.r2_key, VIEW_URL_TTL_SECONDS)),
-  );
+  if (attempt.selfie_two_r2_key && attempt.challenge_two) {
+    poses.push({ challenge: attempt.challenge_two, key: attempt.selfie_two_r2_key });
+  }
 
-  return jsonResponse({ selfie_url: selfieUrl, photo_urls: photoUrls }, 200);
+  const [selfies, photoUrls] = await Promise.all([
+    Promise.all(
+      poses.map(async (pose) => ({
+        challenge: pose.challenge,
+        url: await presignDownload(r2, pose.key, VIEW_URL_TTL_SECONDS),
+      })),
+    ),
+    Promise.all(
+      (photos ?? []).map((photo) => presignDownload(r2, photo.r2_key, VIEW_URL_TTL_SECONDS)),
+    ),
+  ]);
+
+  return jsonResponse({ selfies, photo_urls: photoUrls }, 200);
 });

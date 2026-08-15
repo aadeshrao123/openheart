@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { checkText, normalise } from './text-safety';
+import { checkMessage, checkText, normalise } from './text-safety';
 
 describe('normalise', () => {
   it('folds lookalike characters', () => {
@@ -82,6 +82,47 @@ describe('checkText', () => {
   it('catches a slur padded, spaced or spelled with symbols', () => {
     for (const phrase of ['r e t a r d', 'r.e.t.a.r.d', 'reeetard', 'r3t4rd', 'r.e.t.a.a.r.d']) {
       expect(checkText(phrase)?.category, phrase).toBe('slur');
+    }
+  });
+});
+
+describe('checkMessage', () => {
+  // Two people who matched swapping numbers is ordinary. The profile rules are
+  // about what is published; these are about what one person sends another.
+  it('does not police contact details or selling', () => {
+    for (const phrase of [
+      'my number is 07700 900123',
+      'add me on telegram',
+      'reach me at someone@example.com',
+      'cashapp me for the tickets',
+    ]) {
+      expect(checkMessage(phrase, false), phrase).toBeNull();
+      expect(checkMessage(phrase, true), phrase).toBeNull();
+    }
+  });
+
+  it('refuses explicit language until both have agreed', () => {
+    expect(checkMessage('send nudes', false)?.category).toBe('sexual');
+    expect(checkMessage('d.i.c.k', false)?.category).toBe('sexual');
+    expect(checkMessage('send nudes', true)).toBeNull();
+    expect(checkMessage('d.i.c.k', true)).toBeNull();
+  });
+
+  // The line the agreement does not move. Nobody consented to being abused, and
+  // an agreement about explicit language is not one about slurs.
+  it('refuses slurs with or without an agreement', () => {
+    for (const allowed of [false, true]) {
+      expect(checkMessage('you are a retard', allowed)?.category, String(allowed)).toBe('slur');
+      expect(checkMessage('r3t4rd', allowed)?.category, String(allowed)).toBe('slur');
+    }
+  });
+
+  it('leaves ordinary messages and mild swearing alone either way', () => {
+    for (const allowed of [false, true]) {
+      expect(checkMessage('heyyyyy', allowed)).toBeNull();
+      expect(checkMessage('this weather is shit', allowed)).toBeNull();
+      expect(checkMessage('I am bisexual', allowed)).toBeNull();
+      expect(checkMessage('', allowed)).toBeNull();
     }
   });
 });

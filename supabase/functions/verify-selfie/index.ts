@@ -20,6 +20,13 @@ const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
 // now, and the comparison stops at the first match.
 const COMPARISON_PHOTO_LIMIT = 3;
 
+type Capture = {
+  key: string;
+  challenge: VerificationChallenge;
+  bytes: Uint8Array<ArrayBuffer>;
+  format: string;
+};
+
 serveJson(async (request) => {
   if (request.method !== 'POST') {
     return errorResponse('method_not_allowed', 405);
@@ -41,7 +48,7 @@ serveJson(async (request) => {
 
   const { data: attempt, error: attemptError } = await admin
     .from('verification_attempts')
-    .select('id, profile_id, challenge, status, selfie_r2_key')
+    .select('id, profile_id, challenge, challenge_two, status, selfie_r2_key, selfie_two_r2_key')
     .eq('id', attemptId)
     .maybeSingle();
 
@@ -62,41 +69,66 @@ serveJson(async (request) => {
     return jsonResponse({ status: attempt.status }, 200);
   }
 
+  // The row decides how many poses this attempt wants, not the request. An
+  // attempt started before the second pose existed is still owed its verdict on
+  // the terms it was issued under.
+  const wanted: { key: string; challenge: VerificationChallenge }[] = [
+    { key: attempt.selfie_r2_key, challenge: attempt.challenge as VerificationChallenge },
+  ];
+
+  if (attempt.selfie_two_r2_key && attempt.challenge_two) {
+    wanted.push({
+      key: attempt.selfie_two_r2_key,
+      challenge: attempt.challenge_two as VerificationChallenge,
+    });
+  }
+
+  const keys = wanted.map((capture) => capture.key);
   const r2 = createR2Client();
-  let selfie: Response;
+  const captures: Capture[] = [];
 
-  try {
-    selfie = await getObject(r2, attempt.selfie_r2_key);
-  } catch (error) {
-    console.error('r2 fetch failed', error);
-    return errorResponse('verification_unavailable', 503);
+  for (const { key, challenge } of wanted) {
+    let stored: Response;
+
+    try {
+      stored = await getObject(r2, key);
+    } catch (error) {
+      console.error('r2 fetch failed', error);
+      return errorResponse('verification_unavailable', 503);
+    }
+
+    // Both or neither. Half an attempt is not a failed check, it is one that
+    // never ran, and it must not spend a verdict or one of the daily tries.
+    if (!stored.ok) {
+      return errorResponse('selfie_not_uploaded', 409);
+    }
+
+    const bytes = new Uint8Array(await stored.arrayBuffer());
+    const format = detectImageFormat(bytes);
+
+    if (format === null || bytes.byteLength > MAX_UPLOAD_BYTES) {
+      return await finish(admin, attempt.id, keys, 'rejected', 'not_an_image');
+    }
+
+    captures.push({ key, challenge, bytes, format });
   }
 
-  if (!selfie.ok) {
-    return errorResponse('selfie_not_uploaded', 409);
-  }
+  // Every selfie goes through the same scan an uploaded photo does. None are
+  // ever shown to anyone, but a moderator opens the failures, and "we only look
+  // at it in the review queue" is not a reason to skip it.
+  for (const capture of captures) {
+    let moderation: ModerationResult;
 
-  const selfieBytes = new Uint8Array(await selfie.arrayBuffer());
-  const selfieType = detectImageFormat(selfieBytes);
+    try {
+      moderation = await createModerationProvider().scanImage(capture.bytes, capture.format);
+    } catch (error) {
+      console.error('selfie moderation failed', error);
+      return errorResponse('verification_unavailable', 503);
+    }
 
-  if (selfieType === null || selfieBytes.byteLength > MAX_UPLOAD_BYTES) {
-    return await finish(admin, attempt.id, attempt.selfie_r2_key, 'rejected', 'not_an_image');
-  }
-
-  // The selfie goes through the same scan every uploaded photo does. It is
-  // never shown to anyone, but a moderator opens the failures, and "we only
-  // look at it in the review queue" is not a reason to skip it.
-  let moderation: ModerationResult;
-
-  try {
-    moderation = await createModerationProvider().scanImage(selfieBytes, selfieType);
-  } catch (error) {
-    console.error('selfie moderation failed', error);
-    return errorResponse('verification_unavailable', 503);
-  }
-
-  if (moderation.verdict === 'rejected') {
-    return await finish(admin, attempt.id, attempt.selfie_r2_key, 'rejected', 'unsafe_image');
+    if (moderation.verdict === 'rejected') {
+      return await finish(admin, attempt.id, keys, 'rejected', 'unsafe_image');
+    }
   }
 
   const { data: photos, error: photosError } = await admin
@@ -116,20 +148,10 @@ serveJson(async (request) => {
   }
 
   const provider = createRekognitionVerificationProvider();
-  let liveness: VerificationOutcome;
-  let match: VerificationOutcome;
+  let outcome: VerificationOutcome;
 
   try {
-    liveness = await provider.checkLiveness(
-      selfieBytes,
-      attempt.challenge as VerificationChallenge,
-    );
-
-    // Only if the pose held. A failed pose already means a human is looking at
-    // it, and the comparison is the expensive half.
-    match = liveness.passed
-      ? await provider.matchFace(selfieBytes, await readPhotos(r2, photos))
-      : { passed: false, reason: 'not_checked' };
+    outcome = await judge(provider, captures, await readPhotos(r2, photos));
   } catch (error) {
     // The attempt stays pending and retryable. An outage must not verify
     // anyone, and must not spend one of their five daily tries either.
@@ -137,16 +159,46 @@ serveJson(async (request) => {
     return errorResponse('verification_unavailable', 503);
   }
 
-  if (liveness.passed && match.passed) {
-    return await finish(admin, attempt.id, attempt.selfie_r2_key, 'passed', null);
+  if (outcome.passed) {
+    return await finish(admin, attempt.id, keys, 'passed', null);
   }
 
   // Not rejected. Face comparison is measurably less accurate on darker skin,
   // so a machine saying no is a reason for a person to look, not a verdict.
-  const reason = liveness.passed ? match.reason : liveness.reason;
-
-  return await finish(admin, attempt.id, attempt.selfie_r2_key, 'review', reason);
+  return await finish(admin, attempt.id, keys, 'review', outcome.reason);
 });
+
+// The whole decision, in the order that spends the least money. Pose checks are
+// one DetectFaces each and come first; the comparisons are the expensive half
+// and never run behind a pose that did not hold.
+async function judge(
+  provider: ReturnType<typeof createRekognitionVerificationProvider>,
+  captures: Capture[],
+  photos: Uint8Array<ArrayBuffer>[],
+): Promise<VerificationOutcome> {
+  for (const capture of captures) {
+    const liveness = await provider.checkLiveness(capture.bytes, capture.challenge);
+
+    if (!liveness.passed) {
+      return liveness;
+    }
+  }
+
+  // The check that makes a second pose worth taking. Without it the poses can
+  // come from two different faces: one prepared photo of the victim holding the
+  // pose that was asked for, and the attacker's own live face for the other.
+  // One comparison rather than running the profile photos twice, because the
+  // faces only have to agree with each other and then with the profile once.
+  if (captures.length > 1) {
+    const sameFace = await provider.matchFace(captures[0].bytes, [captures[1].bytes]);
+
+    if (!sameFace.passed) {
+      return { passed: false, reason: 'different_person' };
+    }
+  }
+
+  return await provider.matchFace(captures[0].bytes, photos);
+}
 
 async function readPhotos(
   r2: ReturnType<typeof createR2Client>,
@@ -168,19 +220,19 @@ async function readPhotos(
 async function finish(
   admin: AdminClient,
   attemptId: string,
-  selfieKey: string,
+  selfieKeys: string[],
   status: 'passed' | 'rejected' | 'review',
   reason: string | null,
 ): Promise<Response> {
-  // Held until a moderator has looked at it. Every other outcome is final, so
-  // the selfie has done its only job and goes.
+  // Held until a moderator has looked at them. Every other outcome is final, so
+  // the selfies have done their only job and go.
   if (status !== 'review') {
-    const { error: queueError } = await admin
-      .from('deleted_media')
-      .insert({ r2_key: selfieKey });
+    for (const key of selfieKeys) {
+      const { error: queueError } = await admin.from('deleted_media').insert({ r2_key: key });
 
-    if (queueError && queueError.code !== UNIQUE_VIOLATION) {
-      throw queueError;
+      if (queueError && queueError.code !== UNIQUE_VIOLATION) {
+        throw queueError;
+      }
     }
   }
 
