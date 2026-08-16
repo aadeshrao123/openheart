@@ -74,6 +74,49 @@ npx expo start
 Press `i`, `a`, or `w`. All three must work - a change that works on one
 platform is not finished.
 
+## 5. Push notifications, if you are building Android natively
+
+Only needed to build the Android app itself. `npx expo start` and the web build
+do not touch any of this, and notifications on web are raised by the page and
+need nothing here.
+
+Android push goes through Firebase Cloud Messaging, because FCM is the only
+route to a sleeping Android device. You need your own Firebase project:
+
+1. Create a project at https://console.firebase.google.com. Turn Google
+   Analytics off - nothing here uses it, and enabling it starts collecting data
+   `docs/legal/store-data-disclosures.md` says this app does not collect.
+2. Add an Android app with the package name from `app.json`, currently
+   `org.openheartapp`. Leave the SHA-1 blank: it is only for Firebase Auth,
+   which this app does not use, and leaving it out means push works on debug
+   builds too.
+3. Download `google-services.json` to the repository root. It is gitignored,
+   for the reasons written next to that entry.
+4. Skip the "Add Firebase SDK" Gradle instructions entirely. The
+   `expo-notifications` config plugin writes all of it during prebuild, and
+   following them by hand fights it.
+5. Restrict the API key at
+   https://console.cloud.google.com/apis/credentials to the Firebase
+   Installations API and the FCM Registration API, which are the two Cloud
+   Messaging needs.
+
+Sending also needs an FCM V1 service account key, from Firebase project
+settings, uploaded to the Expo project through `eas credentials` or the Expo
+dashboard. That one is a real private key: it never goes in the repository, and
+`*-service-account.json` is gitignored so a stray download in the tree cannot
+be committed by accident.
+
+Then:
+
+```bash
+npx expo prebuild --clean --platform android
+npx expo run:android
+```
+
+A device rather than an emulator, unless the emulator image carries Google Play
+services. FCM needs them, and without them the app runs and silently never gets
+a token.
+
 ## Before pushing
 
 ```bash

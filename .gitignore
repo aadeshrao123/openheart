@@ -75,3 +75,17 @@ yarn-error.*
 # which is the check .env.production needed and did not get.
 play-service-account.json
 *-service-account.json
+
+# The Firebase Android config. Firebase documents it as safe to check in, and
+# that is true of the file's contents: it is a project id and an API key that
+# identifies rather than authorises, and this project has no Authentication and
+# no data services behind it.
+#
+# It is ignored anyway. GitHub's secret scanner flags the key on sight and
+# cannot see any of that context, so a public repository carrying one collects
+# an alert that has to be dismissed rather than fixed, and a dismissed alert is
+# a worse habit than an ignored file. A fork should also be pointing at its own
+# Firebase project rather than registering its users' devices against this one.
+#
+# Needed for a local Android build. See SETUP.md.
+google-services.json

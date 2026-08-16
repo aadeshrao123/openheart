@@ -91,6 +91,7 @@
         "backgroundColor": "#FEFCFD"
       },
       "package": "org.openheartapp",
+      "googleServicesFile": "./google-services.json",
       "versionCode": 5,
       "permissions": [
         "android.permission.ACCESS_COARSE_LOCATION",
