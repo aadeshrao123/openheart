@@ -136,6 +136,13 @@ then, as SQL against the same project, with the same value:
 select vault.create_secret('<that value>', 'push_hook_secret');
 select vault.create_secret('https://<ref>.supabase.co/functions/v1/send-push',
                            'push_function_url');
+
+-- Not a secret. It ships in the web bundle and in every copy of the app, and it
+-- is here because it differs per environment. The gateway in front of every
+-- Edge Function refuses a request without it, before the function is reached,
+-- and answers UNAUTHORIZED_NO_AUTH_HEADER. `supabase functions serve` does not
+-- enforce that, so this is invisible until production.
+select vault.create_secret('<the project anon key>', 'push_function_anon_key');
 ```
 
 With either Vault entry missing, `queue_push` returns without doing anything

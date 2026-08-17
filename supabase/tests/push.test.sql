@@ -10,7 +10,7 @@
 -- sent must never be able to fail the write that prompted it.
 
 begin;
-select plan(20);
+select plan(21);
 
 insert into auth.users (id, instance_id, aud, role, email) values
   ('11111111-1111-1111-1111-111111111111',
@@ -61,6 +61,7 @@ update messages set read_at = now()
 
 select vault.create_secret('https://example.test/functions/v1/send-push', 'push_function_url');
 select vault.create_secret('a-shared-secret', 'push_hook_secret');
+select vault.create_secret('an-anon-key', 'push_function_anon_key');
 
 select lives_ok(
   $$ insert into messages (match_id, sender_id, body)
@@ -99,6 +100,17 @@ select is(
   (select headers ->> 'X-Push-Secret' from net.http_request_queue),
   'a-shared-secret',
   'authenticated with the shared secret rather than a user JWT'
+);
+
+-- The header the function does not check and the request cannot arrive without.
+-- 0029 omitted it and every notification came back UNAUTHORIZED_NO_AUTH_HEADER
+-- from the Edge Function gateway, which sits in front of the function and which
+-- nothing local has. This assertion is the only place that difference is
+-- visible from a test.
+select is(
+  (select headers ->> 'Authorization' from net.http_request_queue),
+  'Bearer an-anon-key',
+  'and carries the bearer token the gateway refuses the request without'
 );
 
 -- one per conversation, not one per message ------------------------------------
