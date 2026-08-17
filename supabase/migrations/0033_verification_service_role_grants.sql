@@ -1,0 +1,29 @@
+-- OpenHeart :: the grants 0017 owed service_role
+--
+-- request-verification has never worked. Its insert into verification_attempts
+-- failed with 42501 "permission denied for table verification_attempts", the
+-- function threw, and the app showed a generic error, so photo verification was
+-- unreachable for every user since 0017 shipped.
+--
+-- 0009 exists because of this exact failure on photos, documents that
+-- service_role bypasses RLS but is still subject to GRANT, and ends with:
+--
+--   Rule for new tables: if an Edge Function touches it, grant it here in the
+--   same migration, next to the client grants.
+--
+-- 0017 created the table, granted select to authenticated, and stopped. The
+-- rule was written down and the next table did not follow it.
+--
+-- What each function needs, and nothing beyond it:
+--
+--   request-verification  insert, then select the id it just wrote
+--   verify-selfie         select the attempt and its keys
+--   review-selfie         select, to sign a URL for a moderator
+--
+-- No update. record_verification_result and review_verification are the only
+-- things that write a verdict, both are security definer, and both run as the
+-- owner rather than as service_role. A function that could update this table
+-- directly could write itself a passed attempt, which is the whole reason
+-- photo_verified has never been client-writable.
+
+grant select, insert on verification_attempts to service_role;

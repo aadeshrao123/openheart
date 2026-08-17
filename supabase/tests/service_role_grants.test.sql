@@ -9,7 +9,7 @@
 -- return a plausible 500.
 
 begin;
-select plan(15);
+select plan(21);
 
 -- ------------------------------------------------- what the functions need
 
@@ -43,6 +43,61 @@ select ok(
   'the purge job can stamp a key as purged'
 );
 
+-- Added after request-verification turned out never to have worked. 0017
+-- created the table, granted select to authenticated, and did not grant
+-- anything to service_role, so the insert failed with 42501 and the app showed
+-- a generic error. The rule at the top of 0009 predates that table by eight
+-- migrations.
+
+select ok(
+  has_table_privilege('service_role', 'verification_attempts', 'INSERT'),
+  'request-verification can write the attempt row'
+);
+
+select ok(
+  has_table_privilege('service_role', 'verification_attempts', 'SELECT'),
+  'verify-selfie and review-selfie can read the attempt back'
+);
+
+select ok(
+  not has_table_privilege('service_role', 'verification_attempts', 'UPDATE'),
+  'and cannot write a verdict, which only the security definer functions may do'
+);
+
+select ok(
+  has_table_privilege('service_role', 'push_tokens', 'SELECT'),
+  'send-push can read a recipient''s devices'
+);
+
+select ok(
+  has_table_privilege('service_role', 'push_tokens', 'DELETE'),
+  'and can drop a token Expo reported as dead'
+);
+
+-- The guard that catches the next one. Listing tables by hand is exactly how
+-- verification_attempts was missed: this file was written when photos and
+-- deleted_media were the only two, and adding a table did not add a line here.
+--
+-- Pinning the whole set means a new write grant fails this test until somebody
+-- writes down why it exists, and a grant that disappears fails it too.
+--
+-- Filtered on row security rather than by name. Every table this project owns
+-- has RLS, asserted in rls_everywhere.test.sql, and nothing else in public
+-- does: the three PostGIS relations carry write grants from the extension and
+-- are not ours to reason about.
+select is(
+  (select string_agg(distinct g.table_name, ', ' order by g.table_name)
+     from information_schema.role_table_grants g
+     join pg_class c on c.relname = g.table_name
+     join pg_namespace n on n.oid = c.relnamespace and n.nspname = 'public'
+    where g.grantee = 'service_role'
+      and g.table_schema = 'public'
+      and g.privilege_type in ('INSERT', 'UPDATE', 'DELETE')
+      and c.relrowsecurity),
+  'csam_incidents, deleted_media, photos, push_tokens, verification_attempts',
+  'exactly these tables are writable by an Edge Function, no more and no fewer'
+);
+
 -- --------------------------------------------- and nothing beyond that
 --
 -- The column list is the whitelist. A function that could rewrite r2_key or
@@ -69,12 +124,15 @@ select ok(
   'service_role cannot delete photo rows'
 );
 
--- photo_verified is the anti-bot gate. The verification flow does not exist yet,
--- so nothing should be able to set it, including the service role. When that
--- flow lands it adds the column grant here and flips this assertion.
+-- photo_verified is the anti-bot gate. This used to say the verification flow
+-- did not exist yet and that landing it would flip this assertion. The flow
+-- landed in 0017 and this stayed false, which is the better outcome: the verdict
+-- is written by record_verification_result and review_verification, both
+-- security definer, so the grant was never needed. A key that could set
+-- photo_verified directly is a key that can verify an impostor.
 select ok(
   not has_column_privilege('service_role', 'profiles', 'photo_verified', 'UPDATE'),
-  'nothing can set photo_verified until the verification flow exists'
+  'the anti-bot gate is reachable only through the functions allowed to set it'
 );
 
 -- Added after the same bug happened a fifth time. 0020 added
