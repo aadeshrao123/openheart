@@ -10,6 +10,7 @@ const BATCH_SIZE = 100;
 
 type Ticket = {
   status?: string;
+  message?: string;
   details?: { error?: string };
 };
 
@@ -29,12 +30,23 @@ serveJson(async (request) => {
   const recipient = body?.recipient;
   const kind = body?.kind;
   const matchId = body?.match_id;
+  const givenTitle = body?.title;
+  const givenBody = body?.body;
 
-  if (
-    typeof recipient !== 'string' ||
-    typeof matchId !== 'string' ||
-    (kind !== 'match' && kind !== 'message')
-  ) {
+  if (typeof recipient !== 'string') {
+    return errorResponse('invalid_request', 400);
+  }
+
+  // An announcement is the one kind that carries its own words and belongs to
+  // no conversation. A match or a message is the opposite: it names a
+  // conversation and says nothing about it.
+  const announcement = kind === 'announcement';
+
+  if (announcement) {
+    if (typeof givenTitle !== 'string' || typeof givenBody !== 'string') {
+      return errorResponse('invalid_request', 400);
+    }
+  } else if (typeof matchId !== 'string' || (kind !== 'match' && kind !== 'message')) {
     return errorResponse('invalid_request', 400);
   }
 
@@ -56,7 +68,9 @@ serveJson(async (request) => {
   }
 
   const messages = tokens.map((row) => {
-    const text = pushText(row.locale, kind as PushKind);
+    const text = announcement
+      ? { title: givenTitle as string, body: givenBody as string }
+      : pushText(row.locale, kind as PushKind);
 
     return {
       to: row.token,
@@ -64,6 +78,8 @@ serveJson(async (request) => {
       body: text.body,
       // What the tap needs to open the right screen, and nothing more. No
       // message text: see the note in 0019 and the one in push-strings.ts.
+      // An announcement has no conversation to open, so the tap just opens the
+      // app, which is what the client does when match_id is absent.
       data: { kind, match_id: matchId },
       sound: 'default',
       // Created by the client on Android. Without it a notification arrives
@@ -86,6 +102,7 @@ serveJson(async (request) => {
 
   let sent = 0;
   const dead: string[] = [];
+  const failures: string[] = [];
 
   for (let start = 0; start < messages.length; start += BATCH_SIZE) {
     const batch = messages.slice(start, start + BATCH_SIZE);
@@ -98,6 +115,7 @@ serveJson(async (request) => {
       // write that prompted this has already committed, so failing loudly here
       // achieves nothing a log does not.
       console.error('expo push failed', sendError);
+      failures.push(sendError instanceof Error ? sendError.message : 'send failed');
       continue;
     }
 
@@ -106,6 +124,15 @@ serveJson(async (request) => {
         sent += 1;
         return;
       }
+
+      // Every other outcome used to be counted as nothing and dropped, which
+      // made "Expo refused this" and "there was nobody to send to" the same
+      // answer: sent 0. They need entirely different fixes, and the difference
+      // is in the ticket rather than anywhere else in the system.
+      const reason = ticket.details?.error ?? ticket.message ?? 'unknown';
+
+      console.error('expo rejected a notification', reason, ticket.message ?? '');
+      failures.push(reason);
 
       // Expo: "stop sending messages to the corresponding Expo push token".
       // The app was uninstalled, so the row is now noise that costs a request
@@ -118,7 +145,12 @@ serveJson(async (request) => {
 
   await forget(admin, dead);
 
-  return jsonResponse({ sent, removed: dead.length }, 200);
+  // tokens rather than a bare count, so "nobody had a device" is visibly
+  // different from "every device refused it".
+  return jsonResponse(
+    { sent, removed: dead.length, tokens: messages.length, errors: [...new Set(failures)] },
+    200,
+  );
 });
 
 async function deliver(batch: unknown[]): Promise<Ticket[]> {

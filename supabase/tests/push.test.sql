@@ -10,7 +10,7 @@
 -- sent must never be able to fail the write that prompted it.
 
 begin;
-select plan(21);
+select plan(27);
 
 insert into auth.users (id, instance_id, aud, role, email) values
   ('11111111-1111-1111-1111-111111111111',
@@ -222,6 +222,58 @@ select is(
   (select locale from push_tokens where token = 'ExponentPushToken[test]'),
   'pt-BR',
   'and the locale is stored, or every notification arrives in English'
+);
+
+-- announcements ------------------------------------------------------------------
+-- The one kind that carries its own words, and the only way to reach somebody
+-- who is not currently looking at the app.
+
+reset role;
+delete from net.http_request_queue;
+
+select is(
+  broadcast_push('New feature', 'Something worth opening the app for'),
+  1,
+  'an announcement reaches every person holding a device'
+);
+
+select is(
+  (select convert_from(body, 'utf8')::jsonb ->> 'title' from net.http_request_queue),
+  'New feature',
+  'and carries its own words, which match and message deliberately never do'
+);
+
+select is(
+  (select convert_from(body, 'utf8')::jsonb ->> 'kind' from net.http_request_queue),
+  'announcement',
+  'marked as an announcement so the client knows there is no chat to open'
+);
+
+-- jsonb_strip_nulls, so the client can tell "no conversation" from "a
+-- conversation whose id happens to be null" without a special case.
+select is(
+  (select convert_from(body, 'utf8')::jsonb ? 'match_id' from net.http_request_queue),
+  false,
+  'and no match_id at all, because there is no conversation behind it'
+);
+
+select throws_ok(
+  $$ select broadcast_push('', 'no title') $$,
+  '22023', null,
+  'an announcement with no title is refused rather than sent blank'
+);
+
+-- Not a moderator action and not a user action. The SQL editor is the door.
+set local role authenticated;
+
+select is(
+  (select count(*) from pg_proc p
+     join pg_namespace n on n.oid = p.pronamespace
+    where n.nspname = 'public'
+      and p.proname = 'broadcast_push'
+      and has_function_privilege('authenticated', p.oid, 'execute'))::int,
+  0,
+  'and nobody signed in can announce anything to everybody'
 );
 
 select * from finish();
